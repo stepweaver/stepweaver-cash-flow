@@ -1,5 +1,6 @@
 import localFont from 'next/font/local';
 import './globals.css';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const ocrFont = localFont({
   src: './fonts/OCRA.woff',
@@ -45,7 +46,9 @@ export default function RootLayout({ children }) {
           strategy='beforeInteractive'
         />
       </head>
-      <body className='text-terminal-text'>{children}</body>
+      <body className='text-terminal-text'>
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </body>
     </html>
   );
 }

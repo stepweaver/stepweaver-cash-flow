@@ -32,33 +32,16 @@ import {
   generatePDFHTML,
   downloadFile,
 } from '../lib/exportUtils';
+import {
+  formatDate,
+  createLocalDate,
+  formatCurrency,
+  getCurrentDateString,
+  getMonthNames,
+  safeParseFloat,
+} from '../lib/utils';
 
-// Helper function to format date as YYYY-MM-DD
-const formatDate = (date) => {
-  if (!(date instanceof Date) || isNaN(date)) {
-    return '';
-  }
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-// Helper function to create a Date object from YYYY-MM-DD string in local timezone
-const createLocalDate = (dateString) => {
-  if (!dateString) return new Date();
-  const [year, month, day] = dateString.split('-').map(Number);
-  return new Date(year, month - 1, day); // month is 0-indexed
-};
-
-// Helper function to format currency
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  }).format(amount);
-};
+// Note: Helper functions now imported from lib/utils.js
 
 // Get initial personal data for the current month - matching Google Sheet structure
 const getInitialPersonalData = (year, month) => {
@@ -682,20 +665,7 @@ export default function PersonalTracker() {
     (bill) => bill.status === 'Paid'
   ).length;
 
-  const monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
+  const monthNames = getMonthNames();
 
   return (
     <div className='space-y-6'>
@@ -1335,8 +1305,8 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
       if (modalType === 'income') {
         setSource(transaction.source || '');
         setDate(transaction.date || '');
-        setBudget(transaction.budget || '');
-        setActual(transaction.actual || '');
+        setBudget(transaction.budget?.toString() || '');
+        setActual(transaction.actual?.toString() || '');
         setNotes(transaction.notes || '');
       } else {
         setName(transaction.name || '');
@@ -1349,7 +1319,7 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
       }
     } else if (modalType === 'income') {
       setSource('');
-      setDate(formatDate(new Date()));
+      setDate(getCurrentDateString());
       setBudget('');
       setActual('');
       setNotes('');
@@ -1371,16 +1341,16 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
       onSave({
         source: source.trim(),
         date,
-        budget: parseFloat(budget) || 0,
-        actual: actual ? parseFloat(actual) : null,
+        budget: safeParseFloat(budget),
+        actual: actual ? safeParseFloat(actual) : null,
         notes: notes.trim(),
       });
     } else {
       onSave({
         name: name.trim(),
         dueDate: dueDate || null,
-        amountDue: parseFloat(amountDue) || 0,
-        amountPaid: amountPaid ? parseFloat(amountPaid) : null,
+        amountDue: safeParseFloat(amountDue),
+        amountPaid: amountPaid ? safeParseFloat(amountPaid) : null,
         status,
         notes: notes.trim(),
         url: url.trim(),

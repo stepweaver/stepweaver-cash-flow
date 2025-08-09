@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Download, Calendar } from 'lucide-react';
+import { formatDate, createLocalDate } from '../lib/utils';
 
 export default function DateRangePicker({
   isOpen,
@@ -15,23 +16,7 @@ export default function DateRangePicker({
   const [includeReceipts, setIncludeReceipts] = useState(true);
   const [exporting, setExporting] = useState(false);
 
-  // Helper to format date as YYYY-MM-DD
-  const formatDate = (date) => {
-    if (!(date instanceof Date) || isNaN(date)) {
-      return '';
-    }
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
-  // Helper function to create a Date object from YYYY-MM-DD string in local timezone
-  const createLocalDate = (dateString) => {
-    if (!dateString) return new Date();
-    const [year, month, day] = dateString.split('-').map(Number);
-    return new Date(year, month - 1, day); // month is 0-indexed
-  };
+  // Note: Helper functions now imported from lib/utils.js
 
   // Set default dates when modal opens
   useEffect(() => {

@@ -32,33 +32,16 @@ import {
   downloadFile,
   downloadReceiptsAsZip,
 } from '../lib/exportUtils';
+import {
+  formatDate,
+  createLocalDate,
+  formatCurrency,
+  getCurrentDateString,
+  getMonthNames,
+  safeParseFloat,
+} from '../lib/utils';
 
-// Helper function to format date as YYYY-MM-DD
-const formatDate = (date) => {
-  if (!(date instanceof Date) || isNaN(date)) {
-    return '';
-  }
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-// Helper function to create a Date object from YYYY-MM-DD string in local timezone
-const createLocalDate = (dateString) => {
-  if (!dateString) return new Date();
-  const [year, month, day] = dateString.split('-').map(Number);
-  return new Date(year, month - 1, day); // month is 0-indexed
-};
-
-// Helper function to format currency
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  }).format(amount);
-};
+// Note: Helper functions now imported from lib/utils.js
 
 export default function BusinessTracker() {
   const [transactions, setTransactions] = useState([]);
@@ -67,7 +50,7 @@ export default function BusinessTracker() {
   const [newTransactionAmount, setNewTransactionAmount] = useState('');
   const [newTransactionType, setNewTransactionType] = useState('revenue');
   const [newTransactionDate, setNewTransactionDate] = useState(
-    formatDate(new Date())
+    getCurrentDateString()
   );
   // Initialize with current month and year
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -117,7 +100,7 @@ export default function BusinessTracker() {
 
     const newTransaction = {
       description: newTransactionDescription.trim(),
-      amount: parseFloat(newTransactionAmount),
+      amount: safeParseFloat(newTransactionAmount),
       type: newTransactionType,
       date: createLocalDate(newTransactionDate),
       receipts: receiptFiles.length > 0 ? receiptFiles : [],
@@ -129,7 +112,7 @@ export default function BusinessTracker() {
       setNewTransactionDescription('');
       setNewTransactionAmount('');
       setNewTransactionType('revenue');
-      setNewTransactionDate(formatDate(new Date()));
+      setNewTransactionDate(getCurrentDateString());
       setReceiptFiles([]);
     } catch (error) {
       console.error('Error adding transaction:', error);
@@ -385,20 +368,7 @@ export default function BusinessTracker() {
     annualNetProfit - annualTaxReserve - annualDraws
   );
 
-  const monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
+  const monthNames = getMonthNames();
 
   return (
     <div className='space-y-6'>
@@ -977,7 +947,7 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
 
     onSave({
       description: description.trim(),
-      amount: parseFloat(amount),
+      amount: safeParseFloat(amount),
       type,
       date: createLocalDate(date),
     });
