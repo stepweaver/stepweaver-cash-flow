@@ -14,7 +14,7 @@ export default function Home() {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 sm:py-8'>
             <div className='mb-4 sm:mb-0 text-center sm:text-left'>
-              <h1 className='text-2xl sm:text-2xl font-bold text-terminal-green font-ibm'>
+              <h1 className='text-2xl sm:text-4xl font-bold text-terminal-green font-ibm'>
                 λstepweaver Cash Flow
               </h1>
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { X, Download, Calendar, FileText } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Download, Calendar } from 'lucide-react';
 
 export default function DateRangePicker({
   isOpen,
@@ -26,8 +26,15 @@ export default function DateRangePicker({
     return `${year}-${month}-${day}`;
   };
 
+  // Helper function to create a Date object from YYYY-MM-DD string in local timezone
+  const createLocalDate = (dateString) => {
+    if (!dateString) return new Date();
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day); // month is 0-indexed
+  };
+
   // Set default dates when modal opens
-  useState(() => {
+  useEffect(() => {
     if (isOpen) {
       const today = new Date();
       const firstDayOfMonth = new Date(
@@ -52,7 +59,7 @@ export default function DateRangePicker({
       return;
     }
 
-    if (new Date(startDate) > new Date(endDate)) {
+    if (createLocalDate(startDate) > createLocalDate(endDate)) {
       alert('Start date must be before or equal to end date.');
       return;
     }
@@ -285,11 +292,11 @@ export default function DateRangePicker({
           <button
             onClick={handleExport}
             disabled={exporting || !startDate || !endDate}
-            className='flex items-center px-4 py-2 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr disabled:opacity-50 disabled:cursor-not-allowed'
+            className='flex items-center px-4 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-border hover:text-terminal-green focus:outline-none focus:ring-2 focus:ring-terminal-muted focus:ring-offset-2 transition-all duration-200 font-ocr disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
           >
             {exporting ? (
               <>
-                <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2'></div>
+                <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-terminal-text mr-2'></div>
                 Exporting...
               </>
             ) : (

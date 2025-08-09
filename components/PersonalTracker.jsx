@@ -44,6 +44,13 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+// Helper function to create a Date object from YYYY-MM-DD string in local timezone
+const createLocalDate = (dateString) => {
+  if (!dateString) return new Date();
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(year, month - 1, day); // month is 0-indexed
+};
+
 // Helper function to format currency
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
@@ -257,7 +264,7 @@ export default function PersonalTracker() {
           data.bills.sort((a, b) => {
             if (!a.dueDate) return 1;
             if (!b.dueDate) return -1;
-            return new Date(a.dueDate) - new Date(b.dueDate);
+            return createLocalDate(a.dueDate) - createLocalDate(b.dueDate);
           });
         }
 
@@ -457,14 +464,14 @@ export default function PersonalTracker() {
 
   // Export functions
   const getTransactionsForExport = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = createLocalDate(startDate);
+    const end = createLocalDate(endDate);
 
     const transactions = [];
 
     // Add income entries as transactions
     personalData.income.forEach((income) => {
-      const incomeDate = new Date(income.date);
+      const incomeDate = createLocalDate(income.date);
       if (incomeDate >= start && incomeDate <= end) {
         transactions.push({
           id: income.id,
@@ -483,7 +490,7 @@ export default function PersonalTracker() {
     // Add bills as transactions
     personalData.bills.forEach((bill) => {
       if (bill.dueDate) {
-        const billDate = new Date(bill.dueDate);
+        const billDate = createLocalDate(bill.dueDate);
         if (billDate >= start && billDate <= end) {
           transactions.push({
             id: bill.id,
@@ -566,38 +573,36 @@ export default function PersonalTracker() {
     return personalData.bills.map((bill) => {
       if (!bill.dueDate) return bill;
 
-      const billDate = new Date(bill.dueDate);
+      const billDate = createLocalDate(bill.dueDate);
       let colorPeriod = null;
 
       // Period 0: Before first income date (plain border - carry over from last month)
-      if (billDate < new Date(sortedIncome[0].date)) {
+      if (billDate < createLocalDate(sortedIncome[0].date)) {
         colorPeriod = 0; // Period 0 - plain muted border
-      }
-      // Period 1: Between first and second income dates (green)
-      else if (
-        sortedIncome.length >= 2 &&
-        billDate >= new Date(sortedIncome[0].date) &&
-        billDate < new Date(sortedIncome[1].date)
-      ) {
-        colorPeriod = 1;
-      }
-      // Period 2: Between second and third income dates (magenta)
-      else if (
-        sortedIncome.length >= 3 &&
-        billDate >= new Date(sortedIncome[1].date) &&
-        billDate < new Date(sortedIncome[2].date)
-      ) {
-        colorPeriod = 2;
-      }
-      // Period 3: After last income date (yellow for 2 incomes, blue for 3+ incomes)
-      else if (
-        billDate >= new Date(sortedIncome[sortedIncome.length - 1].date)
-      ) {
-        colorPeriod = sortedIncome.length >= 3 ? 3 : 2; // Yellow for 2 incomes, blue for 3+ incomes
-      }
-      // Fallback for any edge cases
-      else {
-        colorPeriod = 0; // Default to Period 0 with plain border
+      } else {
+        // Find which income period this bill falls into
+        let foundPeriod = false;
+
+        for (let i = 0; i < sortedIncome.length; i++) {
+          const currentIncomeDate = createLocalDate(sortedIncome[i].date);
+          const nextIncomeDate =
+            i + 1 < sortedIncome.length
+              ? createLocalDate(sortedIncome[i + 1].date)
+              : null;
+
+          // If this is the last income or the bill is before the next income
+          if (!nextIncomeDate || billDate < nextIncomeDate) {
+            // Bill falls in period after this income (i + 1)
+            colorPeriod = i + 1;
+            foundPeriod = true;
+            break;
+          }
+        }
+
+        // Fallback if no period found
+        if (!foundPeriod) {
+          colorPeriod = 0;
+        }
       }
 
       return {
@@ -608,6 +613,20 @@ export default function PersonalTracker() {
   };
 
   const billsWithColors = getBillsWithColorCoding();
+
+  // Helper function to get income with color coordination
+  const getIncomeWithColors = () => {
+    const sortedIncome = [...personalData.income].sort(
+      (a, b) => createLocalDate(a.date) - createLocalDate(b.date)
+    );
+
+    return sortedIncome.map((income, index) => ({
+      ...income,
+      colorIndex: index + 1, // Income periods start at 1
+    }));
+  };
+
+  const incomeWithColors = getIncomeWithColors();
 
   // Helper function to get color classes for income periods (left borders only)
   const getColorClasses = (colorIndex) => {
@@ -621,9 +640,12 @@ export default function PersonalTracker() {
       4: 'border-l-4 border-l-[#38beff]', // Period 4 - Terminal blue
       5: 'border-l-4 border-l-[#56b6c2]', // Period 5 - Terminal cyan
       6: 'border-l-4 border-l-[#ffa500]', // Period 6 - Terminal orange
+      7: 'border-l-4 border-l-[#a855f7]', // Period 7 - Terminal purple
+      8: 'border-l-4 border-l-[#ff3e3e]', // Period 8 - Terminal red
+      9: 'border-l-4 border-l-[#ffffff]', // Period 9 - Terminal white
     };
 
-    return colorSchemes[colorIndex] || 'border-l-4 border-l-[#a855f7]'; // Default to purple for any additional periods
+    return colorSchemes[colorIndex] || 'border-l-4 border-l-terminal-purple'; // Default to purple for any additional periods
   };
 
   // Calculate summary statistics
@@ -836,7 +858,7 @@ export default function PersonalTracker() {
           </div>
           <button
             onClick={() => setShowExportModal(true)}
-            className='flex items-center px-3 py-1 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr'
+            className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ocr cursor-pointer'
           >
             <Download className='h-3 w-3 mr-1 lucide' />
             Export
@@ -880,13 +902,18 @@ export default function PersonalTracker() {
                   </tr>
                 </thead>
                 <tbody className='bg-terminal-light divide-y divide-terminal-border'>
-                  {personalData.income.map((income) => (
-                    <tr key={income.id} className='hover:bg-terminal-dark'>
+                  {incomeWithColors.map((income) => (
+                    <tr
+                      key={income.id}
+                      className={`hover:bg-terminal-dark ${getColorClasses(
+                        income.colorIndex
+                      )}`}
+                    >
                       <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ocr'>
                         {income.source}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr'>
-                        {formatDate(new Date(income.date))}
+                        {formatDate(createLocalDate(income.date))}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ocr'>
                         {formatCurrency(income.budget)}
@@ -922,16 +949,18 @@ export default function PersonalTracker() {
             </div>
             {/* Mobile Card View */}
             <div className='md:hidden space-y-2 p-4'>
-              {personalData.income.map((income) => (
+              {incomeWithColors.map((income) => (
                 <div
                   key={income.id}
-                  className='bg-terminal-dark p-3 rounded border border-terminal-border'
+                  className={`bg-terminal-dark p-3 rounded border border-terminal-border ${getColorClasses(
+                    income.colorIndex
+                  )}`}
                 >
                   <div className='flex justify-between items-center mb-2'>
                     <div className='flex-1'>
                       <div className='flex items-center justify-between'>
                         <span className='text-xs text-terminal-muted font-ocr'>
-                          {formatDate(new Date(income.date))}
+                          {formatDate(createLocalDate(income.date))}
                         </span>
                         <p className='text-lg font-bold text-terminal-green font-ibm'>
                           {income.actual
@@ -997,30 +1026,34 @@ export default function PersonalTracker() {
             {personalData.income.length > 0 && (
               <div className='flex items-center space-x-4 text-xs font-ocr'>
                 <span className='text-terminal-muted'>Income Periods:</span>
-                {personalData.income
-                  .sort((a, b) => new Date(a.date) - new Date(b.date))
-                  .map((income, index) => {
-                    const colors = {
-                      0: 'bg-terminal-green', // Period 1 - Green
-                      1: 'bg-terminal-magenta', // Period 2 - Magenta
-                      2: 'bg-terminal-yellow', // Period 3 - Yellow
-                    };
-                    return (
+                {incomeWithColors.map((income, index) => {
+                  const colors = {
+                    1: 'bg-[#00ff41]', // Period 1 - Green
+                    2: 'bg-[#ff55ff]', // Period 2 - Magenta
+                    3: 'bg-[#ffff00]', // Period 3 - Yellow
+                    4: 'bg-[#38beff]', // Period 4 - Blue
+                    5: 'bg-[#56b6c2]', // Period 5 - Cyan
+                    6: 'bg-[#ffa500]', // Period 6 - Orange
+                    7: 'bg-[#a855f7]', // Period 7 - Purple
+                    8: 'bg-[#ff3e3e]', // Period 8 - Red
+                    9: 'bg-[#ffffff]', // Period 9 - White
+                  };
+                  return (
+                    <div
+                      key={income.id}
+                      className='flex items-center space-x-1'
+                    >
                       <div
-                        key={income.id}
-                        className='flex items-center space-x-1'
-                      >
-                        <div
-                          className={`w-3 h-3 rounded ${
-                            colors[index] || 'bg-terminal-muted'
-                          } border border-terminal-border`}
-                        ></div>
-                        <span className='text-terminal-text'>
-                          {formatDate(new Date(income.date))}
-                        </span>
-                      </div>
-                    );
-                  })}
+                        className={`w-3 h-3 rounded ${
+                          colors[income.colorIndex] || 'bg-terminal-muted'
+                        } border border-terminal-border`}
+                      ></div>
+                      <span className='text-terminal-text'>
+                        {formatDate(createLocalDate(income.date))}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -1085,7 +1118,7 @@ export default function PersonalTracker() {
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr'>
                         {bill.dueDate
-                          ? formatDate(new Date(bill.dueDate))
+                          ? formatDate(createLocalDate(bill.dueDate))
                           : '-'}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ocr'>
@@ -1158,7 +1191,7 @@ export default function PersonalTracker() {
                         <div className='flex items-center'>
                           <span className='text-xs text-terminal-muted font-ocr'>
                             {bill.dueDate
-                              ? formatDate(new Date(bill.dueDate))
+                              ? formatDate(createLocalDate(bill.dueDate))
                               : 'No due date'}
                           </span>
                           {bill.needsAttention && (
@@ -1195,11 +1228,12 @@ export default function PersonalTracker() {
                   </div>
 
                   <div className='flex items-center justify-between pt-2 border-t border-terminal-border'>
-                    <div className='flex items-center space-x-2'>
+                    <div className='flex items-start justify-between flex-1'>
                       <div className='text-xs text-terminal-muted font-ocr'>
-                        Due: {formatCurrency(bill.amountDue)}
-                        {bill.amountPaid &&
-                          ` • Paid: ${formatCurrency(bill.amountPaid)}`}
+                        <div>Due: {formatCurrency(bill.amountDue)}</div>
+                        {bill.amountPaid && (
+                          <div>Paid: {formatCurrency(bill.amountPaid)}</div>
+                        )}
                       </div>
                       <select
                         value={bill.status || ''}
@@ -1220,7 +1254,7 @@ export default function PersonalTracker() {
                       </select>
                     </div>
 
-                    <div className='flex items-center space-x-3'>
+                    <div className='flex items-center space-x-3 ml-4'>
                       <button
                         onClick={() => editItem(bill, 'bill')}
                         className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'

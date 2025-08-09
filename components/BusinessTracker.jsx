@@ -44,6 +44,13 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+// Helper function to create a Date object from YYYY-MM-DD string in local timezone
+const createLocalDate = (dateString) => {
+  if (!dateString) return new Date();
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(year, month - 1, day); // month is 0-indexed
+};
+
 // Helper function to format currency
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
@@ -112,7 +119,7 @@ export default function BusinessTracker() {
       description: newTransactionDescription.trim(),
       amount: parseFloat(newTransactionAmount),
       type: newTransactionType,
-      date: new Date(newTransactionDate),
+      date: createLocalDate(newTransactionDate),
       receipts: receiptFiles.length > 0 ? receiptFiles : [],
     };
 
@@ -249,8 +256,8 @@ export default function BusinessTracker() {
 
   // Export functions
   const getTransactionsForExport = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = createLocalDate(startDate);
+    const end = createLocalDate(endDate);
 
     return transactions.filter((transaction) => {
       const transactionDate = new Date(transaction.date);
@@ -709,7 +716,7 @@ export default function BusinessTracker() {
           </h3>
           <button
             onClick={() => setShowExportModal(true)}
-            className='flex items-center px-3 py-1 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr'
+            className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ocr cursor-pointer'
           >
             <Download className='h-3 w-3 mr-1 lucide' />
             Export
@@ -972,7 +979,7 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
       description: description.trim(),
       amount: parseFloat(amount),
       type,
-      date: new Date(date),
+      date: createLocalDate(date),
     });
   };
 
