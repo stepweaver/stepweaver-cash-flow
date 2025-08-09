@@ -9,6 +9,7 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
+  Download,
 } from 'lucide-react';
 import {
   getPersonalData,
@@ -18,6 +19,13 @@ import {
   deletePersonalIncome,
   deletePersonalBill,
 } from '../lib/firebase';
+import DateRangePicker from './DateRangePicker';
+import {
+  exportToCSV,
+  exportToJSON,
+  generatePDFHTML,
+  downloadFile,
+} from '../lib/exportUtils';
 
 // Helper function to format date as YYYY-MM-DD
 const formatDate = (date) => {
@@ -162,6 +170,9 @@ export default function PersonalTracker() {
   const [showBillModal, setShowBillModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [modalType, setModalType] = useState('income');
+
+  // Export functionality
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // Load data from Firebase on mount
   useEffect(() => {
@@ -318,6 +329,104 @@ export default function PersonalTracker() {
     }
   };
 
+  // Export functions
+  const getTransactionsForExport = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const transactions = [];
+
+    // Add income entries as transactions
+    personalData.income.forEach((income) => {
+      const incomeDate = new Date(income.date);
+      if (incomeDate >= start && incomeDate <= end) {
+        transactions.push({
+          id: income.id,
+          date: incomeDate,
+          type: 'income',
+          description: `Income from ${income.source}`,
+          amount: income.actual || income.budget || 0,
+          notes: income.notes || '',
+          source: income.source,
+          budget: income.budget,
+          actual: income.actual,
+        });
+      }
+    });
+
+    // Add bills as transactions
+    personalData.bills.forEach((bill) => {
+      if (bill.dueDate) {
+        const billDate = new Date(bill.dueDate);
+        if (billDate >= start && billDate <= end) {
+          transactions.push({
+            id: bill.id,
+            date: billDate,
+            type: 'bill',
+            description: bill.bill,
+            amount: -(bill.actual || bill.budget || 0), // Negative for expenses
+            notes: bill.notes || '',
+            budget: bill.budget,
+            actual: bill.actual,
+            status: bill.status,
+          });
+        }
+      }
+    });
+
+    // Sort by date
+    return transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+  };
+
+  const handleExport = async ({
+    startDate,
+    endDate,
+    format,
+    includeReceipts,
+  }) => {
+    const exportTransactions = getTransactionsForExport(startDate, endDate);
+
+    if (exportTransactions.length === 0) {
+      alert('No transactions found in the selected date range.');
+      return;
+    }
+
+    const dateRange = `${startDate}_to_${endDate}`;
+
+    try {
+      switch (format) {
+        case 'csv':
+          exportToCSV(
+            exportTransactions,
+            `personal_transactions_${dateRange}.csv`
+          );
+          break;
+        case 'json':
+          exportToJSON(
+            exportTransactions,
+            `personal_transactions_${dateRange}.json`
+          );
+          break;
+        case 'pdf':
+          const htmlContent = generatePDFHTML(
+            exportTransactions,
+            `Personal Transactions (${startDate} to ${endDate})`
+          );
+          downloadFile(
+            htmlContent,
+            `personal_transactions_${dateRange}.html`,
+            'text/html'
+          );
+          break;
+        default:
+          throw new Error('Unsupported export format');
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      throw error;
+    }
+  };
+
   // Calculate summary statistics
   const totalIncomeBudget = personalData.income.reduce(
     (sum, item) => sum + (item.budget || 0),
@@ -355,11 +464,8 @@ export default function PersonalTracker() {
   return (
     <div className='space-y-6'>
       {/* Header */}
-      <div className='flex justify-between items-center'>
-        <h2 className='text-3xl font-bold text-terminal-green font-ibm'>
-          Personal Budget Tracker
-        </h2>
-        <div className='flex items-center space-x-4'>
+      <div className='flex flex-col space-y-4 md:flex-row md:justify-between md:items-center md:space-y-0'>
+        <div className='flex items-center justify-center md:justify-end space-x-4'>
           <button
             onClick={() => changeMonth(-1)}
             className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr cursor-pointer'
@@ -367,7 +473,7 @@ export default function PersonalTracker() {
             ←
           </button>
           <span className='text-lg font-semibold text-terminal-text min-w-[140px] text-center font-ocr'>
-            {monthNames[currentMonth]} {currentYear}
+            [{monthNames[currentMonth]} {currentYear}]
           </span>
           <button
             onClick={() => changeMonth(1)}
@@ -469,7 +575,7 @@ export default function PersonalTracker() {
       </div>
 
       {/* Action Buttons */}
-      <div className='flex space-x-4'>
+      <div className='flex flex-wrap items-center gap-4'>
         <button
           onClick={openIncomeModal}
           className='flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr cursor-pointer'
@@ -483,6 +589,13 @@ export default function PersonalTracker() {
         >
           <Plus className='h-4 w-4 mr-2 lucide' />
           Add Bill
+        </button>
+        <button
+          onClick={() => setShowExportModal(true)}
+          className='flex items-center px-3 py-1 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr ml-auto'
+        >
+          <Download className='h-3 w-3 mr-1 lucide' />
+          Export
         </button>
       </div>
 
@@ -702,6 +815,14 @@ export default function PersonalTracker() {
           modalType='bill'
         />
       )}
+
+      {/* Export Modal */}
+      <DateRangePicker
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleExport}
+        title='Export Personal Data'
+      />
     </div>
   );
 }
@@ -776,8 +897,8 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-      <div className='bg-white rounded-lg p-6 w-full max-w-md mx-4'>
-        <h3 className='text-lg font-semibold text-gray-900 mb-4'>
+      <div className='bg-terminal-light rounded-lg p-6 w-full max-w-md mx-4 border border-terminal-border'>
+        <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm'>
           {transaction ? 'Edit' : 'Add'}{' '}
           {modalType === 'income' ? 'Income' : 'Bill'}
         </h3>
@@ -786,26 +907,26 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           {modalType === 'income' ? (
             <>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
                   Source
                 </label>
                 <input
                   type='text'
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
                   required
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
                   Date
                 </label>
                 <input
                   type='date'
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
                   required
                 />
               </div>
@@ -813,36 +934,36 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           ) : (
             <>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
                   Bill Name
                 </label>
                 <input
                   type='text'
                   value={bill}
                   onChange={(e) => setBill(e.target.value)}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
                   required
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
                   Due Date
                 </label>
                 <input
                   type='date'
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
                   Status
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
                 >
                   <option value='pending'>Pending</option>
                   <option value='paid'>Paid</option>
@@ -852,14 +973,14 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           )}
 
           <div>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>
+            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
               Budget Amount
             </label>
             <input
               type='number'
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
               min='0'
               step='0.01'
               required
@@ -867,27 +988,27 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>
+            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
               Actual Amount
             </label>
             <input
               type='number'
               value={actual}
               onChange={(e) => setActual(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
               min='0'
               step='0.01'
             />
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>
+            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
               Notes
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
               rows='3'
             />
           </div>
@@ -895,14 +1016,14 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           <div className='flex space-x-3 pt-4'>
             <button
               type='submit'
-              className='flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors cursor-pointer'
+              className='flex-1 px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors cursor-pointer font-ocr'
             >
               Save
             </button>
             <button
               type='button'
               onClick={onClose}
-              className='flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors cursor-pointer'
+              className='flex-1 px-4 py-2 bg-terminal-muted text-terminal-text rounded-md hover:bg-terminal-muted/80 focus:outline-none focus:ring-2 focus:ring-terminal-muted focus:ring-offset-2 transition-colors cursor-pointer font-ocr'
             >
               Cancel
             </button>
