@@ -87,7 +87,7 @@ export default function ReceiptViewer({
         <div className='flex items-center justify-between p-4 border-b border-terminal-border'>
           <div className='flex-1'>
             <h3 className='text-lg font-semibold text-terminal-green font-ibm'>
-              Receipt Viewer
+              Receipt(s) for
             </h3>
             <p className='text-sm text-terminal-muted font-ocr mt-1'>
               {transactionDescription}
@@ -246,11 +246,11 @@ export default function ReceiptViewer({
         </div>
 
         {/* Footer Actions */}
-        <div className='flex items-center justify-between p-4 border-t border-terminal-border bg-terminal-dark'>
-          <div className='flex items-center space-x-2'>
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-t border-terminal-border bg-terminal-dark gap-3'>
+          <div className='flex items-center space-x-2 min-w-0 flex-1'>
             {getFileIcon(currentReceipt)}
-            <div>
-              <p className='text-sm font-medium text-terminal-text font-ocr'>
+            <div className='min-w-0 flex-1'>
+              <p className='text-sm font-medium text-terminal-text font-ocr truncate'>
                 {currentReceipt?.name || 'Unknown file'}
               </p>
               <p className='text-xs text-terminal-muted font-ocr'>
@@ -261,21 +261,21 @@ export default function ReceiptViewer({
             </div>
           </div>
 
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-center space-x-2 flex-shrink-0'>
             <button
               onClick={() => handleDownload(currentReceipt)}
               className='flex items-center px-3 py-2 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr'
             >
-              <Download className='h-4 w-4 mr-1 lucide' />
-              Download
+              <Download className='h-4 w-4 sm:mr-1 lucide' />
+              <span className='hidden sm:inline'>Download</span>
             </button>
 
             <button
               onClick={() => handleDelete(currentReceipt, selectedReceiptIndex)}
               className='flex items-center px-3 py-2 text-sm bg-terminal-red text-white rounded hover:bg-terminal-red/80 transition-colors font-ocr'
             >
-              <Trash2 className='h-4 w-4 mr-1 lucide' />
-              Delete
+              <Trash2 className='h-4 w-4 sm:mr-1 lucide' />
+              <span className='hidden sm:inline'>Delete</span>
             </button>
           </div>
         </div>
