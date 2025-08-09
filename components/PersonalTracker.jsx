@@ -641,10 +641,10 @@ export default function PersonalTracker() {
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr'>
                       {income.date}
                     </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text text-right font-ocr'>
+                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ocr'>
                       {formatCurrency(income.budget)}
                     </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text text-right font-ocr'>
+                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ocr'>
                       {income.actual ? formatCurrency(income.actual) : '-'}
                     </td>
                     <td className='px-6 py-4 text-sm text-terminal-text font-ocr'>
@@ -737,11 +737,11 @@ export default function PersonalTracker() {
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr'>
                       {bill.dueDate ? bill.dueDate : '-'}
                     </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text text-right font-ocr'>
-                      {formatCurrency(bill.budget)}
+                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ocr'>
+                      -{formatCurrency(bill.budget)}
                     </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text text-right font-ocr'>
-                      {bill.actual ? formatCurrency(bill.actual) : '-'}
+                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ocr'>
+                      {bill.actual ? `-${formatCurrency(bill.actual)}` : '-'}
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-center'>
                       <button

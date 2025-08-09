@@ -689,13 +689,15 @@ export default function BusinessTracker() {
             )}
           </div>
 
-          <button
-            type='submit'
-            className='flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr cursor-pointer'
-          >
-            <Plus className='h-4 w-4 mr-2 lucide' />
-            Add Transaction
-          </button>
+          <div className='flex justify-center md:justify-start'>
+            <button
+              type='submit'
+              className='flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr cursor-pointer'
+            >
+              <Plus className='h-4 w-4 mr-2 lucide' />
+              Add Transaction
+            </button>
+          </div>
         </form>
       </div>
 
@@ -816,44 +818,40 @@ export default function BusinessTracker() {
               </table>
             </div>
             {/* Mobile Card View */}
-            <div className='md:hidden space-y-4 p-4'>
+            <div className='md:hidden space-y-2 p-4'>
               {filteredMonthlyTransactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className='bg-terminal-dark p-4 rounded-lg border border-terminal-border'
+                  className='bg-terminal-dark p-3 rounded border border-terminal-border'
                 >
-                  <div className='flex justify-between items-start mb-3'>
+                  <div className='flex justify-between items-center mb-2'>
                     <div className='flex-1'>
-                      <div className='flex items-center justify-between mb-2'>
-                        <span className='text-sm text-terminal-muted font-ocr'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-xs text-terminal-muted font-ocr'>
                           {formatDate(transaction.date)}
                         </span>
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border bg-opacity-40 ${
+                        <p
+                          className={`text-lg font-bold font-ibm ${
                             transaction.type === 'revenue'
-                              ? 'bg-terminal-dark text-terminal-green border-terminal-green'
+                              ? 'text-terminal-green'
                               : transaction.type === 'expense'
-                              ? 'bg-terminal-dark text-terminal-red border-terminal-red'
-                              : 'bg-terminal-dark text-terminal-yellow border-terminal-yellow'
+                              ? 'text-terminal-red'
+                              : 'text-terminal-yellow'
                           }`}
                         >
-                          {transaction.type === 'draw'
-                            ? 'DRAW'
-                            : transaction.type.charAt(0).toUpperCase() +
-                              transaction.type.slice(1)}
-                        </span>
+                          {transaction.type === 'revenue'
+                            ? formatCurrency(transaction.amount)
+                            : `-${formatCurrency(transaction.amount)}`}
+                        </p>
                       </div>
-                      <h4 className='text-terminal-text font-medium font-ocr mb-1'>
+                      <h4 className='text-terminal-text font-medium font-ocr text-sm mt-1'>
                         {transaction.description}
                       </h4>
-                      <p className='text-lg font-bold text-terminal-text font-ibm'>
-                        {formatCurrency(transaction.amount)}
-                      </p>
                     </div>
                   </div>
 
-                  <div className='flex items-center justify-between pt-3 border-t border-terminal-border'>
-                    <div className='flex items-center space-x-3'>
+                  <div className='flex items-center justify-between pt-2 border-t border-terminal-border'>
+                    <div className='flex items-center'>
                       {transaction.receipts &&
                       transaction.receipts.length > 0 ? (
                         <button
@@ -879,14 +877,14 @@ export default function BusinessTracker() {
                         className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
                         title='Edit transaction'
                       >
-                        <Edit3 className='h-4 w-4 lucide' />
+                        <Edit3 className='h-3 w-3 lucide' />
                       </button>
                       <button
                         onClick={() => handleDeleteTransaction(transaction.id)}
                         className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
                         title='Delete transaction'
                       >
-                        <Trash2 className='h-4 w-4 lucide' />
+                        <Trash2 className='h-3 w-3 lucide' />
                       </button>
                     </div>
                   </div>
