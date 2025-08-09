@@ -1,0 +1,72 @@
+/* Terminal UI Component Styles as CSS Module */
+
+/* Terminal container */
+.terminalDark {
+  background-color: var(--color-terminal-dark);
+  border: 1px solid var(--color-terminal-border);
+  border-radius: 6px;
+  box-shadow: var(--terminal-shadow);
+  overflow: hidden;
+}
+
+.terminalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-terminal-light);
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-terminal-border);
+}
+
+.terminalButton {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+/* Active link styling */
+.activeLink {
+  color: var(--color-terminal-green);
+  text-shadow: var(--terminal-text-glow);
+}
+
+/* Lambda Symbol Styles */
+.lambdaSymbol {
+  display: inline-block;
+  font-weight: bold;
+  transition: color 0.1s ease;
+}
+
+.lambdaNormal {
+  color: var(--color-terminal-green);
+  text-shadow: 0 0 3px rgba(0, 255, 65, 0.4);
+}
+
+.lambdaGlitching {
+  color: #ff00ff;
+  text-shadow: 0 0 5px rgba(255, 0, 255, 0.8), 0 0 10px rgba(255, 0, 255, 0.4);
+}
+
+/* Terminal cursor */
+.terminalCursor {
+  display: inline-block;
+  width: 0.5rem;
+  height: 1rem;
+  background-color: var(--color-terminal-green);
+  margin-left: 0.5rem;
+  animation: cursorBlink 1.2s infinite;
+  vertical-align: middle;
+}
+
+/* Animation for cursor blink */
+@keyframes cursorBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

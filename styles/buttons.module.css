@@ -1,0 +1,82 @@
+.glitchButton {
+  font-family: var(--font-ibm, monospace);
+  font-size: 0.875rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition-property: all;
+  transition-duration: 300ms;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-terminal-green);
+  background-color: var(--color-terminal-dark, #0d1117);
+  position: relative;
+  overflow: hidden;
+  color: var(--color-terminal-green);
+}
+
+.glitchButton:hover {
+  background-color: var(--color-terminal-light, #161b22);
+  border-color: var(--color-terminal-green, #00ff41);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+.glitchButton:hover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+
+.scaleNormal {
+  transform: scale(1);
+}
+
+.scaleHover {
+  transform: scale(1.05);
+}
+
+.bracket {
+  color: var(--color-terminal-green, #4aff4a);
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.bracketStart {
+  composes: bracket;
+  margin-right: 0.25rem;
+}
+
+.bracketEnd {
+  composes: bracket;
+  margin-left: 0.25rem;
+}
+
+.text {
+  color: var(--color-terminal-text, #e6edf3);
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.cursor {
+  color: var(--color-terminal-green, #4aff4a);
+  margin-left: 0.25rem;
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.cursorVisible {
+  opacity: 1;
+}
+
+.cursorHidden {
+  opacity: 0;
+}
+
+.hoverGlow {
+  text-shadow: var(--terminal-strong-glow);
+}

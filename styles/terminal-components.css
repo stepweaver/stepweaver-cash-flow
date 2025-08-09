@@ -1,0 +1,72 @@
+.terminal-dark {
+  background-color: var(--color-terminal-dark);
+  border: 1px solid var(--color-terminal-border);
+  border-radius: 6px;
+  box-shadow: var(--terminal-shadow);
+  overflow: hidden;
+}
+
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-terminal-light);
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-terminal-border);
+}
+
+.terminal-button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+/* Active link styling */
+.active-link {
+  color: var(--color-terminal-green);
+  text-shadow: var(--terminal-text-glow);
+}
+
+/* Lambda Symbol Styles */
+.lambda-symbol {
+  display: inline-block;
+  margin-right: 0.25rem;
+  font-weight: bold;
+  transition: color 0.1s ease;
+}
+
+.lambda-normal {
+  color: var(--color-terminal-green);
+  text-shadow: 0 0 3px rgba(0, 255, 65, 0.4);
+}
+
+.lambda-glitching {
+  color: #ff00ff;
+  text-shadow: 0 0 5px rgba(255, 0, 255, 0.8), 0 0 10px rgba(255, 0, 255, 0.4);
+}
+
+/* Animation for cursor blink */
+@keyframes cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Terminal cursor */
+.terminal-cursor {
+  display: inline-block;
+  width: 0.5rem;
+  height: 1rem;
+  background-color: var(--color-terminal-green);
+  margin-left: 0.5rem;
+  animation: cursor-blink 1.2s infinite;
+  vertical-align: middle;
+}
+
+

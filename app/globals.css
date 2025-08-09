@@ -1,0 +1,387 @@
+@import "tailwindcss";
+
+/* Font declarations */
+@font-face {
+  font-family: 'IBM 3270';
+  src: url('./fonts/IBM_3270.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'OCRA';
+  src: url('./fonts/OCRA.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* CSS Variables for theming */
+:root {
+  /* Dark Theme Colors (default) */
+  --color-terminal-dark: #0d1211;
+  --color-terminal-light: #131918;
+  --color-terminal-border: #2a302d;
+  --color-terminal-green: #00ff41;
+  --color-terminal-text: #e2e2e2;
+  --color-terminal-muted: #8b949e;
+  --color-terminal-yellow: #ffff00;
+  --color-terminal-red: #ff3e3e;
+  --color-terminal-blue: #38beff;
+  --color-terminal-cyan: #56b6c2;
+  --color-terminal-dimmed: #6a737d;
+  --color-terminal-magenta: #ff55ff;
+  --color-terminal-pink: #ff55ff;
+  --color-terminal-purple: #a855f7;
+  --color-terminal-orange: #ffa500;
+  --color-terminal-white: #ffffff;
+  --background: #0d1211;
+  --foreground: #00ff00;
+
+  /* Terminal Effects */
+  --terminal-title-glow: 0 0 3px rgba(0, 255, 65, 0.7);
+  --terminal-text-glow: 0 0 2px rgba(0, 255, 65, 0.5);
+  --terminal-shadow: 0 0 1px rgba(0, 255, 65, 0.7), 0 0 20px rgba(0, 255, 65, 0.3);
+  --terminal-inner-glow: inset 0 0 80px rgba(0, 255, 65, 0.08);
+  --terminal-strong-glow: 0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4);
+  --crt-glow: 0 0 30px rgba(0, 255, 65, 0.15);
+
+  /* Fonts */
+  --font-ibm: 'IBM 3270', monospace;
+  --font-ocr: 'OCRA', monospace;
+
+  /* Animations */
+  --animate-blink: blink 1s step-end infinite;
+  --animate-glitch: glitch 0.3s linear infinite;
+
+  /* Glitch Effect Colors */
+  --theme-glitch-color: #ff00ff;
+  --theme-glitch-shadow: 0 0 5px rgba(255, 0, 255, 0.8), 0 0 10px rgba(255, 0, 255, 0.4);
+}
+
+/* Theme-specific styles */
+[data-theme="dark"] {
+  --color-terminal-dark: #0d1211;
+  --color-terminal-light: #131918;
+  --color-terminal-border: #2a302d;
+  --color-terminal-green: #00ff41;
+  --color-terminal-text: #e2e2e2;
+  --color-terminal-muted: #8b949e;
+  --color-terminal-yellow: #ffff00;
+  --color-terminal-red: #ff3e3e;
+  --color-terminal-blue: #38beff;
+  --color-terminal-cyan: #56b6c2;
+  --color-terminal-dimmed: #6a737d;
+  --color-terminal-magenta: #ff55ff;
+  --color-terminal-pink: #ff55ff;
+  --color-terminal-purple: #a855f7;
+  --color-terminal-orange: #ffa500;
+  --color-terminal-white: #ffffff;
+  --background: transparent;
+  --foreground: #00ff00;
+}
+
+[data-theme="light"] {
+  /* Light Mode Colors - CRT Style */
+  --color-terminal-dark: #e5e7eb;
+  --color-terminal-light: #f3f4f6;
+  --color-terminal-border: #d1d5db;
+  --color-terminal-green: #009e3f;
+  --color-terminal-text: #1f2937;
+  --color-terminal-muted: #6b7280;
+  --color-terminal-yellow: #d97706;
+  --color-terminal-red: #dc2626;
+  --color-terminal-blue: #2563eb;
+  --color-terminal-cyan: #0891b2;
+  --color-terminal-dimmed: #9ca3af;
+  --color-terminal-magenta: #c026d3;
+  --color-terminal-pink: #db2777;
+  --color-terminal-purple: #7c3aed;
+  --color-terminal-orange: #ea580c;
+  --color-terminal-white: #000000;
+  --background: #e8f0e8;
+  --foreground: #1f2937;
+}
+
+/* Font weight improvements for better readability */
+.font-ocr {
+  font-weight: 500;
+}
+
+.font-ibm {
+  font-weight: 400;
+}
+
+/* Animation keyframes */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: skewX(2deg); }
+  80% { transform: skewX(-2deg); }
+}
+
+@keyframes textGlitch {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-1px, 0, 0); }
+  40% { transform: translate3d(1px, 0, 0); }
+  60% { transform: translate3d(-1px, 0, 0); }
+  80% { transform: translate3d(1px, 0, 0); }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes scanlines {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.1; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Base HTML and body styles */
+html {
+  background-color: #0d1211 !important;
+  color: #e2e2e2 !important;
+  font-family: var(--font-ocr), monospace;
+}
+
+body {
+  background-color: #0d1211 !important;
+  color: #e2e2e2 !important;
+  font-family: var(--font-ocr), monospace;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Force dark background for main containers */
+#__next,
+[data-theme="dark"] {
+  background-color: #0d1211 !important;
+  color: #e2e2e2 !important;
+}
+
+/* Override any light background classes */
+.bg-gray-50,
+.bg-white {
+  background-color: #0d1211 !important;
+}
+
+/* Ensure terminal classes work */
+.bg-terminal-dark {
+  background-color: #0d1211 !important;
+}
+
+.bg-terminal-light {
+  background-color: #131918 !important;
+}
+
+.text-terminal-green {
+  color: #00ff41 !important;
+}
+
+.text-terminal-text {
+  color: #e2e2e2 !important;
+}
+
+.text-terminal-muted {
+  color: #8b949e !important;
+}
+
+/* Additional color classes */
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
+
+.text-terminal-cyan {
+  color: #56b6c2 !important;
+}
+
+.text-terminal-magenta {
+  color: #ff55ff !important;
+}
+
+.text-terminal-purple {
+  color: #a855f7 !important;
+}
+
+.text-terminal-orange {
+  color: #ffa500 !important;
+}
+
+.text-terminal-blue {
+  color: #38beff !important;
+}
+
+.text-terminal-yellow {
+  color: #ffff00 !important;
+}
+
+.text-terminal-red {
+  color: #ff3e3e !important;
+}
+
+/* Border colors */
+.border-terminal-cyan {
+  border-color: #56b6c2 !important;
+}
+
+.border-terminal-magenta {
+  border-color: #ff55ff !important;
+}
+
+.border-terminal-purple {
+  border-color: #a855f7 !important;
+}
+
+.border-terminal-orange {
+  border-color: #ffa500 !important;
+}
+
+.border-terminal-blue {
+  border-color: #38beff !important;
+}
+
+.border-terminal-yellow {
+  border-color: #ffff00 !important;
+}
+
+.border-terminal-red {
+  border-color: #ff3e3e !important;
+}
+
+.border-terminal-green {
+  border-color: #00ff41 !important;
+}
+
+/* Background colors */
+.bg-terminal-cyan {
+  background-color: #56b6c2 !important;
+}
+
+.bg-terminal-magenta {
+  background-color: #ff55ff !important;
+}
+
+.bg-terminal-purple {
+  background-color: #a855f7 !important;
+}
+
+.bg-terminal-orange {
+  background-color: #ffa500 !important;
+}
+
+.bg-terminal-blue {
+  background-color: #38beff !important;
+}
+
+.bg-terminal-yellow {
+  background-color: #ffff00 !important;
+}
+
+.bg-terminal-red {
+  background-color: #ff3e3e !important;
+}
+
+.bg-terminal-green {
+  background-color: #00ff41 !important;
+}
+
+/* Global scanline effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 255, 65, 0.03) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1000;
+  animation: scanlines 2s linear infinite;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-terminal-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-terminal-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-terminal-muted);
+}
+
+/* Focus styles for better accessibility */
+*:focus {
+  outline: 2px solid var(--color-terminal-green);
+  outline-offset: 2px;
+}
+
+/* Icon styling for proper rendering */
+svg {
+  font-family: inherit;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.lucide {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Button styles */
+.glitch-button {
+  position: relative;
+  background: var(--color-terminal-dark);
+  border: 1px solid var(--color-terminal-green);
+  color: var(--color-terminal-green);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-ocr);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+}
+
+.glitch-button:hover {
+  background: var(--color-terminal-green);
+  color: var(--color-terminal-dark);
+  box-shadow: var(--terminal-strong-glow);
+}
+
+/* Hashtag hover effect */
+.hashtag-hover:hover {
+  color: var(--color-terminal-green);
+  text-shadow: var(--terminal-text-glow);
+}
