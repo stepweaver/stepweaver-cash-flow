@@ -877,7 +877,11 @@ export default function BusinessTracker() {
                           {transaction.type === 'draw'
                             ? 'DRAW'
                             : transaction.type === 'tax payment'
-                            ? 'TAX PAYMENT'
+                            ? 'TAX'
+                            : transaction.type === 'revenue'
+                            ? 'REVENUE'
+                            : transaction.type === 'expense'
+                            ? 'EXPENSE'
                             : transaction.type.charAt(0).toUpperCase() +
                               transaction.type.slice(1)}
                         </span>
