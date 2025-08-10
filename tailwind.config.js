@@ -107,38 +107,5 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    function ({ addUtilities }) {
-      addUtilities({
-        '.font-ocr-custom': {
-          'font-family': 'var(--font-ocr) !important',
-          'font-weight': '500',
-        },
-        '.font-ibm-custom': {
-          'font-family': 'var(--font-ibm) !important',
-          'font-weight': '400',
-        },
-        '.glitch-button': {
-          'position': 'relative',
-          'background': 'var(--color-terminal-dark)',
-          'border': '1px solid var(--color-terminal-green)',
-          'color': 'var(--color-terminal-green)',
-          'padding': '0.5rem 1rem',
-          'font-family': 'var(--font-ocr)',
-          'text-transform': 'uppercase',
-          'letter-spacing': '0.1em',
-          'transition': 'all 0.3s ease',
-        },
-        '.glitch-button:hover': {
-          'background': 'var(--color-terminal-green)',
-          'color': 'var(--color-terminal-dark)',
-          'box-shadow': 'var(--terminal-strong-glow)',
-        },
-        '.hashtag-hover:hover': {
-          'color': 'var(--color-terminal-green)',
-          'text-shadow': 'var(--terminal-text-glow)',
-        },
-      });
-    },
-  ],
+  plugins: [],
 };

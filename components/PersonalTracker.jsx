@@ -631,6 +631,26 @@ export default function PersonalTracker() {
     return colorSchemes[colorIndex] || 'border-l-4 border-l-terminal-purple'; // Default to purple for any additional periods
   };
 
+  // Helper function to get background color classes for better visibility
+  const getBackgroundColorClasses = (colorIndex) => {
+    if (colorIndex === null || colorIndex === undefined) return '';
+
+    const bgColorSchemes = {
+      0: 'bg-[#8b949e]/5', // Period 0 - Very light muted background
+      1: 'bg-[#00ff41]/5', // Period 1 - Very light green background
+      2: 'bg-[#ff55ff]/5', // Period 2 - Very light magenta background
+      3: 'bg-[#ffff00]/5', // Period 3 - Very light yellow background
+      4: 'bg-[#38beff]/5', // Period 4 - Very light blue background
+      5: 'bg-[#56b6c2]/5', // Period 5 - Very light cyan background
+      6: 'bg-[#ffa500]/5', // Period 6 - Very light orange background
+      7: 'bg-[#a855f7]/5', // Period 7 - Very light purple background
+      8: 'bg-[#ff3e3e]/5', // Period 8 - Very light red background
+      9: 'bg-[#ffffff]/5', // Period 9 - Very light white background
+    };
+
+    return bgColorSchemes[colorIndex] || 'bg-[#a855f7]/5'; // Default to light purple
+  };
+
   // Calculate summary statistics
   const totalIncomeBudget = personalData.income.reduce(
     (sum, item) => sum + (item.budget || 0),
@@ -1011,14 +1031,17 @@ export default function PersonalTracker() {
                   return (
                     <div
                       key={income.id}
-                      className='flex items-center space-x-1'
+                      className='flex items-center space-x-2'
                     >
                       <div
-                        className={`w-3 h-3 rounded ${
+                        className={`w-4 h-4 rounded-full ${
                           colors[income.colorIndex] || 'bg-terminal-muted'
-                        } border border-terminal-border`}
+                        } border-2 border-terminal-border shadow-sm`}
+                        title={`Pay Period ${income.colorIndex}: ${formatDate(
+                          createLocalDate(income.date)
+                        )}`}
                       ></div>
-                      <span className='text-terminal-text'>
+                      <span className='text-terminal-text font-medium'>
                         {formatDate(createLocalDate(income.date))}
                       </span>
                     </div>
@@ -1028,6 +1051,41 @@ export default function PersonalTracker() {
             )}
           </div>
         </div>
+
+        {/* Color Coordination Legend */}
+        {personalData.income.length > 0 && (
+          <div className='px-6 py-3 bg-terminal-dark/30 border-b border-terminal-border'>
+            <div className='flex items-center space-x-6 text-xs font-ocr-custom'>
+              <span className='text-terminal-muted'>Color Legend:</span>
+              {incomeWithColors.map((income) => {
+                const colors = {
+                  1: 'bg-[#00ff41]', // Period 1 - Green
+                  2: 'bg-[#ff55ff]', // Period 2 - Magenta
+                  3: 'bg-[#ffff00]', // Period 3 - Yellow
+                  4: 'bg-[#38beff]', // Period 4 - Blue
+                  5: 'bg-[#56b6c2]', // Period 5 - Cyan
+                  6: 'bg-[#ffa500]', // Period 6 - Orange
+                  7: 'bg-[#a855f7]', // Period 7 - Purple
+                  8: 'bg-[#ff3e3e]', // Period 8 - Red
+                  9: 'bg-[#ffffff]', // Period 9 - White
+                };
+                return (
+                  <div key={income.id} className='flex items-center space-x-2'>
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        colors[income.colorIndex] || 'bg-terminal-muted'
+                      } border border-terminal-border`}
+                    ></div>
+                    <span className='text-terminal-text'>
+                      Period {income.colorIndex}:{' '}
+                      {formatDate(createLocalDate(income.date))}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {personalData.bills.length > 0 ? (
           <>
@@ -1065,7 +1123,9 @@ export default function PersonalTracker() {
                       key={bill.id}
                       className={`hover:bg-terminal-dark ${
                         bill.needsAttention ? 'bg-terminal-dark' : ''
-                      } ${getColorClasses(bill.colorIndex)}`}
+                      } ${getColorClasses(
+                        bill.colorIndex
+                      )} ${getBackgroundColorClasses(bill.colorIndex)}`}
                     >
                       <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ocr-custom'>
                         <div className='flex items-center'>
@@ -1153,7 +1213,9 @@ export default function PersonalTracker() {
                     bill.needsAttention
                       ? 'border-terminal-yellow'
                       : 'border-terminal-border'
-                  } ${getColorClasses(bill.colorIndex)}`}
+                  } ${getColorClasses(
+                    bill.colorIndex
+                  )} ${getBackgroundColorClasses(bill.colorIndex)}`}
                 >
                   <div className='flex justify-between items-center mb-2'>
                     <div className='flex-1'>

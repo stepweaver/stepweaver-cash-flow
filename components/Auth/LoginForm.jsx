@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/lib/authContext';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
-export default function LoginForm({ onSwitchToReset, onSwitchToInvite }) {
+export default function LoginForm({ onSwitchToInvite }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,15 +30,6 @@ export default function LoginForm({ onSwitchToReset, onSwitchToInvite }) {
   return (
     <div className='w-full max-w-md mx-auto'>
       <div className='bg-terminal-light border border-terminal-border rounded-lg p-6 shadow-lg'>
-        <div className='text-center mb-6'>
-          <h2 className='text-2xl font-bold text-terminal-green font-ibm-custom'>
-            λstepweaver Login
-          </h2>
-          <p className='text-terminal-muted mt-2 font-ocr-custom'>
-            Access your cash flow dashboard
-          </p>
-        </div>
-
         <form onSubmit={handleSubmit} className='space-y-4'>
           {error && (
             <div className='bg-red-900/20 border border-red-500/50 rounded-md p-3'>
@@ -110,13 +101,6 @@ export default function LoginForm({ onSwitchToReset, onSwitchToInvite }) {
         </form>
 
         <div className='mt-6 text-center space-y-3'>
-          <button
-            onClick={onSwitchToReset}
-            className='text-terminal-blue hover:text-terminal-cyan text-sm font-ocr-custom transition-colors'
-          >
-            Forgot your password?
-          </button>
-
           <div className='text-terminal-muted text-sm font-ocr-custom'>
             Need to invite someone?{' '}
             <button
