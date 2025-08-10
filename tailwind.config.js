@@ -1,8 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -32,6 +33,14 @@ module.exports = {
         background: '#0d1211',
         foreground: '#00ff00',
       },
+      fontFamily: {
+        ocr: ['OCRA', 'monospace'],
+        ibm: ['IBM 3270', 'monospace'],
+      },
+      fontWeight: {
+        'ocr': '500',
+        'ibm': '400',
+      },
       boxShadow: {
         'terminal-green': '0 0 6px 0 rgba(0, 255, 65, 0.5)',
         'terminal-text-glow': '0 0 2px rgba(0, 255, 65, 0.5)',
@@ -39,10 +48,6 @@ module.exports = {
         'terminal-inner-glow': 'inset 0 0 80px rgba(0, 255, 65, 0.08)',
         'crt-glow': '0 0 30px rgba(0, 255, 65, 0.15)',
         'theme-glitch-shadow': '0 0 5px rgba(255, 0, 255, 0.8), 0 0 10px rgba(255, 0, 255, 0.4)',
-      },
-      fontFamily: {
-        ocr: ['OCRA', 'monospace'],
-        ibm: ['IBM 3270', 'monospace'],
       },
       animation: {
         blink: 'blink 1s step-end infinite',
@@ -53,11 +58,6 @@ module.exports = {
         textGlitch: 'textGlitch 0.3s linear infinite',
         fadeOut: 'fadeOut 0.3s ease-in-out',
         scanlines: 'scanlines 2s linear infinite',
-      },
-      animationDelay: {
-        '300': '300ms',
-        '600': '600ms',
-        '900': '900ms',
       },
       keyframes: {
         blink: {
@@ -105,16 +105,10 @@ module.exports = {
       backgroundSize: {
         'scanlines': '100% 4px',
       },
-      fontWeight: {
-        'ocr': '500',
-        'ibm': '400',
-      },
     },
   },
   plugins: [
-    require('@tailwindcss/typography'),
-    function ({ addUtilities, addComponents }) {
-      // Add custom utilities
+    function ({ addUtilities }) {
       addUtilities({
         '.font-ocr-custom': {
           'font-family': 'var(--font-ocr) !important',

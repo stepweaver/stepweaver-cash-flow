@@ -1,175 +1,130 @@
-# StepWeaver Cash Flow App
+# Stepweaver Cash Flow Management System
 
-A modern, responsive cash flow and budget tracking application built with Next.js 15 and Tailwind CSS v4.
+A comprehensive cash flow tracking application for both business and personal finances, built with Next.js, Tailwind CSS, and Firebase.
 
-## 🚀 Features
+## Features
 
-### Business Tracker
+### 🔐 **Authentication System**
+- **Login Only**: No public signup - users must be invited by an admin
+- **Email Invitations**: Admin can send email invitations to new users
+- **Password Reset**: Users can reset their passwords if forgotten
+- **Secure Access**: Protected routes ensure only authenticated users can access the system
 
-- **Revenue, Expenses & Draws tracking** with color-coded categories
-- **Monthly summary cards** showing totals and net income
-- **Add/Edit/Delete transactions** with full CRUD operations
-- **Date-based filtering** by month with navigation
-- **Local storage persistence** for data retention
+### 💼 **Business Tracker**
+- Track business revenue, expenses, and draws
+- Monthly and annual financial summaries
+- Receipt upload and management
+- Export functionality (CSV, JSON, PDF)
+- Date range filtering and reporting
 
-### Personal Budget Tracker
+### 👤 **Personal Tracker**
+- Monitor personal income and bills
+- Bill status tracking (Pending, Paid)
+- Monthly budget vs. actual comparisons
+- Discretionary income calculations
+- Export personal financial data
 
-- **Income management** with source tracking and actual vs budget amounts
-- **Bill management** with due dates, status tracking (paid/pending)
-- **Visual indicators** for bills needing attention
-- **Net cash flow calculation** with color-coded positive/negative amounts
-- **Modal forms** for adding/editing income and bills
+### 👨‍💼 **Admin Panel**
+- **User Management**: View all users and their status
+- **Email Invitations**: Send invitations to new users
+- **User Roles**: Admin and User role management
+- **User Status**: Track Active, Pending, and Inactive users
 
-## 🛠️ Tech Stack
-
-- **Next.js 15** - React framework with App Router
-- **Tailwind CSS v4** - Utility-first CSS framework
-- **Lucide React** - Beautiful icons
-- **Local Storage** - Client-side data persistence
-- **Firebase** - Cloud data persistence (coming soon)
-
-## 🎨 UI/UX Features
-
-- **Clean, professional design** with modern aesthetics
-- **Responsive layout** that works on all devices
-- **Color-coded status indicators** (green for paid, yellow for pending)
-- **Smooth transitions** and hover effects
-- **Accessible design** with proper focus states
-- **Dashboard with summary cards** showing key metrics
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-
-- Node.js 18+
+- Node.js 18+ 
 - npm or yarn
+- Firebase project setup
 
 ### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/stepweaver-cash-flow.git
-   cd stepweaver-cash-flow
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Run the development server**
-
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## 📱 Usage
-
-### Business Tab
-
-- Track revenue, expenses, and draws
-- View monthly summaries and net income
-- Add transactions with descriptions, amounts, and dates
-- Filter by month using navigation arrows
-
-### Personal Tab
-
-- Manage income sources and expected amounts
-- Track bills with due dates and payment status
-- Monitor actual vs budget amounts
-- Toggle bill status between paid and pending
-
-## 🔧 Development
-
-### Project Structure
-
-```
-stepweaver-cash-flow/
-├── app/
-│   ├── layout.jsx          # Root layout with fonts and theme
-│   ├── page.jsx            # Main application page
-│   ├── globals.css         # Global styles and terminal theme
-│   └── fonts/              # Custom terminal fonts
-├── components/
-│   ├── BusinessTracker.jsx # Business expense/revenue tracking
-│   ├── PersonalTracker.jsx # Personal budget and bill tracking
-│   ├── DateRangePicker.jsx # Export date range selector
-│   ├── ReceiptUpload.jsx   # File upload component
-│   └── ReceiptViewer.jsx   # Receipt viewing modal
-├── lib/
-│   ├── firebase.js         # Firebase configuration and functions
-│   └── exportUtils.js      # Data export utilities
-├── styles/                 # Additional CSS modules
-├── public/                 # Static assets
-└── tailwind.config.js      # Tailwind CSS configuration
-```
-
-## 🚀 Deployment
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up Firebase configuration in `lib/firebase.js`
+4. Run the development server: `npm run dev`
 
 ### Environment Variables
-
-Create a `.env.local` file in the root directory with your Firebase configuration:
-
-```bash
-# Firebase Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+Create a `.env.local` file with your Firebase configuration:
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ```
 
-### Build and Deploy
+## Usage
 
-1. **Build the application**
+### First Time Setup
+1. **Initial Admin User**: You'll need to manually create your first admin user in Firebase
+2. **Login**: Use your admin credentials to access the system
+3. **Invite Users**: Use the Admin panel to send email invitations to new users
 
-   ```bash
-   npm run build
-   ```
+### Adding New Users
+1. Navigate to the **Admin** tab
+2. Enter the email address of the person you want to invite
+3. Click "Send Invitation"
+4. The invited user will receive an email with setup instructions
 
-2. **Test the production build**
-   ```bash
-   npm start
-   ```
+### User Roles
+- **Admin**: Full access to all features including user management
+- **User**: Access to business and personal tracking features
 
-### Deployment Platforms
+## Technical Details
 
-#### Vercel (Recommended)
+### Tech Stack
+- **Frontend**: Next.js 15, React 19
+- **Styling**: Tailwind CSS with custom terminal theme
+- **Authentication**: Firebase Auth
+- **Database**: Firebase Firestore
+- **Storage**: Firebase Storage (for receipts)
+- **Deployment**: Vercel-ready
 
-1. Connect your GitHub repository to Vercel
-2. Add environment variables in the Vercel dashboard
-3. Deploy automatically on push
+### Custom Tailwind Configuration
+- Terminal-style color palette
+- Custom animations and keyframes
+- OCR and IBM 3270 font support
+- Responsive design with mobile-first approach
 
-#### Netlify
+### File Structure
+```
+├── app/                    # Next.js app directory
+├── components/            # React components
+│   ├── Auth/             # Authentication components
+│   ├── Admin/            # Admin panel components
+│   └── ...               # Other feature components
+├── lib/                   # Utility functions and Firebase config
+├── public/                # Static assets and fonts
+└── tailwind.config.js     # Tailwind CSS configuration
+```
 
-1. Build command: `npm run build`
-2. Publish directory: `.next`
-3. Add environment variables in Netlify settings
+## Development
 
-#### Other Platforms
+### Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-The app is a standard Next.js application and can be deployed to any platform that supports Node.js applications.
+### Building
+The application builds successfully with no warnings or errors. All Tailwind classes are properly configured and optimized.
 
-## 🔒 Security Features
+## Security Features
 
-- Environment variable validation
-- Security headers (X-Frame-Options, X-Content-Type-Options, etc.)
-- CORS protection for Firebase Storage
-- Input sanitization and validation
-- No sensitive data in client-side code
+- **Protected Routes**: All main features require authentication
+- **Email Verification**: Users must verify their email addresses
+- **Role-Based Access**: Different permissions for admin and regular users
+- **Secure Storage**: Receipts and sensitive data stored securely in Firebase
 
-## 📊 Performance Optimizations
+## Contributing
 
-- Next.js 15 with App Router for optimal performance
-- Image optimization with AVIF/WebP support
-- Code splitting and lazy loading
-- Tailwind CSS for minimal bundle size
-- Efficient Firebase queries with proper indexing
-- Local storage fallback for offline functionality
+This is a personal project, but suggestions and improvements are welcome. Please ensure all code follows the existing patterns and maintains the terminal aesthetic.
+
+## License
+
+Private project - All rights reserved.
+
+---
+
+**Built with ❤️ using Next.js and Tailwind CSS**

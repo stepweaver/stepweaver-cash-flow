@@ -1,6 +1,7 @@
 import localFont from 'next/font/local';
 import './globals.css';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { AuthProvider } from '@/lib/authContext';
 
 const ocrFont = localFont({
   src: './fonts/OCRA.woff',
@@ -47,7 +48,9 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className='text-terminal-text'>
-        <ErrorBoundary>{children}</ErrorBoundary>
+        <ErrorBoundary>
+          <AuthProvider>{children}</AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

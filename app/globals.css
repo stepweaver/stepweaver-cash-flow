@@ -19,119 +19,19 @@
   font-display: swap;
 }
 
-/* CSS Variables for theming */
-:root {
-  /* Dark Theme Colors (default) */
-  --color-terminal-dark: #0d1211;
-  --color-terminal-light: #131918;
-  --color-terminal-border: #2a302d;
-  --color-terminal-green: #00ff41;
-  --color-terminal-text: #e2e2e2;
-  --color-terminal-muted: #8b949e;
-  --color-terminal-yellow: #ffff00;
-  --color-terminal-red: #ff3e3e;
-  --color-terminal-blue: #38beff;
-  --color-terminal-cyan: #56b6c2;
-  --color-terminal-dimmed: #6a737d;
-  --color-terminal-magenta: #ff55ff;
-  --color-terminal-pink: #ff55ff;
-  --color-terminal-purple: #a855f7;
-  --color-terminal-orange: #ffa500;
-  --color-terminal-white: #ffffff;
-  --background: #0d1211;
-  --foreground: #00ff00;
-
-  /* Terminal Effects */
-  --terminal-title-glow: 0 0 3px rgba(0, 255, 65, 0.7);
-  --terminal-text-glow: 0 0 2px rgba(0, 255, 65, 0.5);
-  --terminal-shadow: 0 0 1px rgba(0, 255, 65, 0.7), 0 0 20px rgba(0, 255, 65, 0.3);
-  --terminal-inner-glow: inset 0 0 80px rgba(0, 255, 65, 0.08);
-  --terminal-strong-glow: 0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4);
-  --crt-glow: 0 0 30px rgba(0, 255, 65, 0.15);
-
-  /* Fonts */
-  --font-ibm: 'IBM 3270', monospace;
-  --font-ocr: 'OCRA', monospace;
-
-  /* Animations */
-  --animate-blink: blink 1s step-end infinite;
-  --animate-glitch: glitch 0.3s linear infinite;
-
-  /* Glitch Effect Colors */
-  --theme-glitch-color: #ff00ff;
-  --theme-glitch-shadow: 0 0 5px rgba(255, 0, 255, 0.8), 0 0 10px rgba(255, 0, 255, 0.4);
-}
-
-/* Theme-specific styles */
-[data-theme="dark"] {
-  --color-terminal-dark: #0d1211;
-  --color-terminal-light: #131918;
-  --color-terminal-border: #2a302d;
-  --color-terminal-green: #00ff41;
-  --color-terminal-text: #e2e2e2;
-  --color-terminal-muted: #8b949e;
-  --color-terminal-yellow: #ffff00;
-  --color-terminal-red: #ff3e3e;
-  --color-terminal-blue: #38beff;
-  --color-terminal-cyan: #56b6c2;
-  --color-terminal-dimmed: #6a737d;
-  --color-terminal-magenta: #ff55ff;
-  --color-terminal-pink: #ff55ff;
-  --color-terminal-purple: #a855f7;
-  --color-terminal-orange: #ffa500;
-  --color-terminal-white: #ffffff;
-  --background: transparent;
-  --foreground: #00ff00;
-}
-
-[data-theme="light"] {
-  /* Light Mode Colors - CRT Style */
-  --color-terminal-dark: #e5e7eb;
-  --color-terminal-light: #f3f4f6;
-  --color-terminal-border: #d1d5db;
-  --color-terminal-green: #009e3f;
-  --color-terminal-text: #1f2937;
-  --color-terminal-muted: #6b7280;
-  --color-terminal-yellow: #d97706;
-  --color-terminal-red: #dc2626;
-  --color-terminal-blue: #2563eb;
-  --color-terminal-cyan: #0891b2;
-  --color-terminal-dimmed: #9ca3af;
-  --color-terminal-magenta: #c026d3;
-  --color-terminal-pink: #db2777;
-  --color-terminal-purple: #7c3aed;
-  --color-terminal-orange: #ea580c;
-  --color-terminal-white: #000000;
-  --background: #e8f0e8;
-  --foreground: #1f2937;
-}
-
-/* Base HTML and body styles */
+/* Base HTML and body styles - using Tailwind classes instead of CSS variables */
 html {
-  background-color: #0d1211 !important;
-  color: #e2e2e2 !important;
-  font-family: var(--font-ocr), monospace;
+  background-color: #0d1211;
+  color: #e2e2e2;
+  font-family: 'OCRA', monospace;
 }
 
 body {
-  background-color: #0d1211 !important;
-  color: #e2e2e2 !important;
-  font-family: var(--font-ocr), monospace;
+  background-color: #0d1211;
+  color: #e2e2e2;
+  font-family: 'OCRA', monospace;
   position: relative;
   min-height: 100vh;
-}
-
-/* Force dark background for main containers */
-#__next,
-[data-theme="dark"] {
-  background-color: #0d1211 !important;
-  color: #e2e2e2 !important;
-}
-
-/* Override any light background classes */
-.bg-gray-50,
-.bg-white {
-  background-color: #0d1211 !important;
 }
 
 /* Global scanline effect */
@@ -159,22 +59,22 @@ body::before {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-terminal-light);
+  background: #131918;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-terminal-border);
+  background: #2a302d;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-terminal-muted);
+  background: #8b949e;
 }
 
 /* Focus styles for better accessibility */
 *:focus {
-  outline: 2px solid var(--color-terminal-green);
+  outline: 2px solid #00ff41;
   outline-offset: 2px;
 }
 
