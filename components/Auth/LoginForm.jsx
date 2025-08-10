@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/lib/authContext';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
-export default function LoginForm({ onSwitchToInvite }) {
+export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -91,7 +91,7 @@ export default function LoginForm({ onSwitchToInvite }) {
           >
             {isLoading ? (
               <div className='flex items-center justify-center'>
-                <Loader2 className='animate-spin -ml-1 mr-2' size={18} />
+                <Loader2 className='animate-spin -ml-1 mr-2' size={18} />{' '}
                 Signing In...
               </div>
             ) : (
@@ -99,18 +99,6 @@ export default function LoginForm({ onSwitchToInvite }) {
             )}
           </button>
         </form>
-
-        <div className='mt-6 text-center space-y-3'>
-          <div className='text-terminal-muted text-sm font-ocr-custom'>
-            Need to invite someone?{' '}
-            <button
-              onClick={onSwitchToInvite}
-              className='text-terminal-blue hover:text-blue-400 transition-colors'
-            >
-              Send Invitation
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

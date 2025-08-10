@@ -1,21 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import LoginForm from './LoginForm';
-import EmailInvite from './EmailInvite';
 
 export default function AuthContainer() {
-  const [authMode, setAuthMode] = useState('login');
-
-  const renderAuthForm = () => {
-    switch (authMode) {
-      case 'invite':
-        return <EmailInvite onBackToLogin={() => setAuthMode('login')} />;
-      default:
-        return <LoginForm onSwitchToInvite={() => setAuthMode('invite')} />;
-    }
-  };
-
   return (
     <div className='min-h-screen bg-terminal-dark flex items-center justify-center px-4'>
       <div className='w-full max-w-md'>
@@ -30,7 +17,7 @@ export default function AuthContainer() {
         </div>
 
         {/* Auth Form */}
-        {renderAuthForm()}
+        <LoginForm />
 
         {/* Footer */}
         <div className='text-center mt-8'>

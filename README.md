@@ -1,130 +1,86 @@
-# Stepweaver Cash Flow Management System
+# StepWeaver Cash Flow Tracker
 
-A comprehensive cash flow tracking application for both business and personal finances, built with Next.js, Tailwind CSS, and Firebase.
+A personal and business cash flow tracking application built with Next.js and Firebase.
 
 ## Features
 
-### 🔐 **Authentication System**
-- **Login Only**: No public signup - users must be invited by an admin
-- **Email Invitations**: Admin can send email invitations to new users
-- **Password Reset**: Users can reset their passwords if forgotten
-- **Secure Access**: Protected routes ensure only authenticated users can access the system
+- **Business Transactions**: Track revenue, expenses, and draws for your business
+- **Personal Finance**: Manage personal income and bills
+- **Receipt Management**: Upload and organize receipts for transactions
+- **User Management**: Add and manage additional users (Admin only)
+- **Export Functionality**: Export data in various formats
+- **Responsive Design**: Works on desktop and mobile devices
 
-### 💼 **Business Tracker**
-- Track business revenue, expenses, and draws
-- Monthly and annual financial summaries
-- Receipt upload and management
-- Export functionality (CSV, JSON, PDF)
-- Date range filtering and reporting
+## User Management
 
-### 👤 **Personal Tracker**
-- Monitor personal income and bills
-- Bill status tracking (Pending, Paid)
-- Monthly budget vs. actual comparisons
-- Discretionary income calculations
-- Export personal financial data
+### Adding New Users
 
-### 👨‍💼 **Admin Panel**
-- **User Management**: View all users and their status
-- **Email Invitations**: Send invitations to new users
-- **User Roles**: Admin and User role management
-- **User Status**: Track Active, Pending, and Inactive users
+As an admin user, you can add new users directly from the Admin tab:
+
+1. Navigate to the **Admin** tab in the main navigation
+2. Fill out the "Add New User" form:
+   - **Email Address**: The user's email (required)
+   - **Password**: A secure password, minimum 6 characters (required)
+   - **Display Name**: Optional friendly name for the user
+3. Click "Create User" to add the account
+
+**Important Note**: After creating a user account, you will be automatically signed out and need to sign in again. This is a security feature to ensure only the intended user can access the new account.
+
+### Managing Users
+
+- **View Users**: See all current users with their roles and status
+- **Change Roles**: Update user roles between "User" and "Admin"
+- **Remove Users**: Delete user accounts (users will still be able to sign in until manually removed from Firebase Console)
+
+### User Roles
+
+- **Admin**: Full access to all features including user management
+- **User**: Access to business and personal tracking features
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- Firebase project setup
+
+- Node.js 18+
+- Firebase project with Authentication and Firestore enabled
 
 ### Installation
+
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Set up Firebase configuration in `lib/firebase.js`
+3. Set up environment variables in `.env.local`:
+   ```
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+   ```
 4. Run the development server: `npm run dev`
-
-### Environment Variables
-Create a `.env.local` file with your Firebase configuration:
-```
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-```
-
-## Usage
-
-### First Time Setup
-1. **Initial Admin User**: You'll need to manually create your first admin user in Firebase
-2. **Login**: Use your admin credentials to access the system
-3. **Invite Users**: Use the Admin panel to send email invitations to new users
-
-### Adding New Users
-1. Navigate to the **Admin** tab
-2. Enter the email address of the person you want to invite
-3. Click "Send Invitation"
-4. The invited user will receive an email with setup instructions
-
-### User Roles
-- **Admin**: Full access to all features including user management
-- **User**: Access to business and personal tracking features
-
-## Technical Details
-
-### Tech Stack
-- **Frontend**: Next.js 15, React 19
-- **Styling**: Tailwind CSS with custom terminal theme
-- **Authentication**: Firebase Auth
-- **Database**: Firebase Firestore
-- **Storage**: Firebase Storage (for receipts)
-- **Deployment**: Vercel-ready
-
-### Custom Tailwind Configuration
-- Terminal-style color palette
-- Custom animations and keyframes
-- OCR and IBM 3270 font support
-- Responsive design with mobile-first approach
-
-### File Structure
-```
-├── app/                    # Next.js app directory
-├── components/            # React components
-│   ├── Auth/             # Authentication components
-│   ├── Admin/            # Admin panel components
-│   └── ...               # Other feature components
-├── lib/                   # Utility functions and Firebase config
-├── public/                # Static assets and fonts
-└── tailwind.config.js     # Tailwind CSS configuration
-```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Development
 
-### Available Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+- **Build**: `npm run build`
+- **Start**: `npm start`
+- **Lint**: `npm run lint`
 
-### Building
-The application builds successfully with no warnings or errors. All Tailwind classes are properly configured and optimized.
+## Architecture
 
-## Security Features
+- **Frontend**: Next.js 15 with React 19
+- **Styling**: Tailwind CSS with custom terminal theme
+- **Backend**: Firebase (Authentication, Firestore, Storage)
+- **State Management**: React Context for authentication
+- **Icons**: Lucide React icon library
 
-- **Protected Routes**: All main features require authentication
-- **Email Verification**: Users must verify their email addresses
-- **Role-Based Access**: Different permissions for admin and regular users
-- **Secure Storage**: Receipts and sensitive data stored securely in Firebase
+## Security Notes
 
-## Contributing
-
-This is a personal project, but suggestions and improvements are welcome. Please ensure all code follows the existing patterns and maintains the terminal aesthetic.
+- User creation is limited to authenticated admin users
+- Passwords must be at least 6 characters long
+- User deletion removes them from the system but they may still be able to sign in until manually removed from Firebase Console
+- Consider implementing Firebase Admin SDK for production use cases
 
 ## License
 
-Private project - All rights reserved.
-
----
-
-**Built with ❤️ using Next.js and Tailwind CSS**
+Private project - All rights reserved
