@@ -745,8 +745,20 @@ export default function BusinessTracker() {
                       <td className='px-6 py-4 text-sm text-terminal-text font-ocr-custom'>
                         {transaction.description}
                       </td>
-                      <td className='px-6 py-4 text-sm text-terminal-text text-right font-ocr-custom'>
-                        {formatCurrency(transaction.amount)}
+                      <td className='px-6 py-4 text-sm text-right font-ocr-custom'>
+                        <span
+                          className={
+                            transaction.type === 'revenue'
+                              ? 'text-terminal-green'
+                              : transaction.type === 'expense'
+                              ? 'text-terminal-red'
+                              : 'text-terminal-yellow'
+                          }
+                        >
+                          {transaction.type === 'revenue'
+                            ? formatCurrency(transaction.amount)
+                            : `-${formatCurrency(transaction.amount)}`}
+                        </span>
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-center'>
                         {transaction.receipts &&
