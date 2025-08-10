@@ -89,7 +89,7 @@ export default function ReceiptViewer({
             <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
               Receipt(s) for
             </h3>
-            <p className='text-sm text-terminal-muted font-ocr-custom mt-1'>
+            <p className='text-sm text-terminal-muted font-ibm mt-1'>
               {transactionDescription}
             </p>
           </div>
@@ -109,12 +109,12 @@ export default function ReceiptViewer({
                 setSelectedReceiptIndex(Math.max(0, selectedReceiptIndex - 1))
               }
               disabled={selectedReceiptIndex === 0}
-              className='px-3 py-1 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-ocr-custom'
+              className='px-3 py-1 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-ibm'
             >
               ← Previous
             </button>
 
-            <span className='text-sm text-terminal-text font-ocr-custom'>
+            <span className='text-sm text-terminal-text font-ibm'>
               {selectedReceiptIndex + 1} of {receipts.length}
             </span>
 
@@ -125,7 +125,7 @@ export default function ReceiptViewer({
                 )
               }
               disabled={selectedReceiptIndex === receipts.length - 1}
-              className='px-3 py-1 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-ocr-custom'
+              className='px-3 py-1 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-ibm'
             >
               Next →
             </button>
@@ -142,12 +142,12 @@ export default function ReceiptViewer({
                   imageError ? (
                     <div className='text-center p-8'>
                       <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-muted lucide' />
-                      <p className='text-terminal-muted font-ocr-custom mb-2'>
+                      <p className='text-terminal-muted font-ibm mb-2'>
                         Unable to display image
                       </p>
                       <button
                         onClick={() => handleDownload(currentReceipt)}
-                        className='text-terminal-blue hover:text-terminal-blue/80 underline font-ocr-custom'
+                        className='text-terminal-blue hover:text-terminal-blue/80 underline font-ibm'
                       >
                         Download to view
                       </button>
@@ -163,10 +163,10 @@ export default function ReceiptViewer({
                 ) : isPDF(currentReceipt) ? (
                   <div className='text-center p-8'>
                     <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-red lucide' />
-                    <p className='text-terminal-text font-ocr-custom mb-2'>
+                    <p className='text-terminal-text font-ibm mb-2'>
                       PDF Document
                     </p>
-                    <p className='text-sm text-terminal-muted font-ocr-custom mb-4'>
+                    <p className='text-sm text-terminal-muted font-ibm mb-4'>
                       {currentReceipt.name}
                     </p>
                     <div className='space-y-2'>
@@ -174,14 +174,14 @@ export default function ReceiptViewer({
                         onClick={() =>
                           window.open(currentReceipt.url, '_blank')
                         }
-                        className='block w-full px-4 py-2 bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr-custom'
+                        className='block w-full px-4 py-2 bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ibm'
                       >
                         <Eye className='h-4 w-4 inline mr-2 lucide' />
                         Open in New Tab
                       </button>
                       <button
                         onClick={() => handleDownload(currentReceipt)}
-                        className='block w-full px-4 py-2 bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ocr-custom'
+                        className='block w-full px-4 py-2 bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm'
                       >
                         <Download className='h-4 w-4 inline mr-2 lucide' />
                         Download
@@ -191,12 +191,12 @@ export default function ReceiptViewer({
                 ) : (
                   <div className='text-center p-8'>
                     <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-muted lucide' />
-                    <p className='text-terminal-muted font-ocr-custom mb-2'>
+                    <p className='text-terminal-muted font-ibm mb-2'>
                       Unsupported file type
                     </p>
                     <button
                       onClick={() => handleDownload(currentReceipt)}
-                      className='text-terminal-blue hover:text-terminal-blue/80 underline font-ocr-custom'
+                      className='text-terminal-blue hover:text-terminal-blue/80 underline font-ibm'
                     >
                       Download to view
                     </button>
@@ -210,7 +210,7 @@ export default function ReceiptViewer({
           {receipts.length > 1 && (
             <div className='w-64 bg-terminal-light border-l border-terminal-border overflow-y-auto'>
               <div className='p-4 border-b border-terminal-border'>
-                <h4 className='text-sm font-medium text-terminal-text font-ocr-custom'>
+                <h4 className='text-sm font-medium text-terminal-text font-ibm'>
                   All Receipts ({receipts.length})
                 </h4>
               </div>
@@ -228,10 +228,10 @@ export default function ReceiptViewer({
                     <div className='flex items-center space-x-2'>
                       {getFileIcon(receipt)}
                       <div className='flex-1 min-w-0'>
-                        <p className='text-xs font-medium text-terminal-text font-ocr-custom truncate'>
+                        <p className='text-xs font-medium text-terminal-text font-ibm truncate'>
                           {receipt.name || `Receipt ${index + 1}`}
                         </p>
-                        <p className='text-xs text-terminal-muted font-ocr-custom'>
+                        <p className='text-xs text-terminal-muted font-ibm'>
                           {receipt.size
                             ? `${(receipt.size / 1024 / 1024).toFixed(2)} MB`
                             : 'Unknown size'}
@@ -250,10 +250,10 @@ export default function ReceiptViewer({
           <div className='flex items-center space-x-2 min-w-0 flex-1'>
             {getFileIcon(currentReceipt)}
             <div className='min-w-0 flex-1'>
-              <p className='text-sm font-medium text-terminal-text font-ocr-custom truncate'>
+              <p className='text-sm font-medium text-terminal-text font-ibm truncate'>
                 {currentReceipt?.name || 'Unknown file'}
               </p>
-              <p className='text-xs text-terminal-muted font-ocr-custom'>
+              <p className='text-xs text-terminal-muted font-ibm'>
                 {currentReceipt?.size
                   ? `${(currentReceipt.size / 1024 / 1024).toFixed(2)} MB`
                   : 'Unknown size'}
@@ -264,7 +264,7 @@ export default function ReceiptViewer({
           <div className='flex items-center space-x-2 flex-shrink-0'>
             <button
               onClick={() => handleDownload(currentReceipt)}
-              className='flex items-center px-3 py-2 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr-custom'
+              className='flex items-center px-3 py-2 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ibm'
             >
               <Download className='h-4 w-4 sm:mr-1 lucide' />
               <span className='hidden sm:inline'>Download</span>
@@ -272,7 +272,7 @@ export default function ReceiptViewer({
 
             <button
               onClick={() => handleDelete(currentReceipt, selectedReceiptIndex)}
-              className='flex items-center px-3 py-2 text-sm bg-terminal-red text-white rounded hover:bg-terminal-red/80 transition-colors font-ocr-custom'
+              className='flex items-center px-3 py-2 text-sm bg-terminal-red text-white rounded hover:bg-terminal-red/80 transition-colors font-ibm'
             >
               <Trash2 className='h-4 w-4 sm:mr-1 lucide' />
               <span className='hidden sm:inline'>Delete</span>

@@ -46,17 +46,17 @@ class ErrorBoundary extends Component {
                 <h2 className='text-xl font-semibold text-terminal-red font-ibm-custom'>
                   Something went wrong
                 </h2>
-                <p className='text-sm text-terminal-muted font-ocr-custom'>
+                <p className='text-sm text-terminal-muted font-ibm'>
                   An unexpected error occurred
                 </p>
               </div>
             </div>
 
             <div className='bg-terminal-dark p-4 rounded border border-terminal-border mb-4'>
-              <p className='text-sm text-terminal-muted font-ocr-custom mb-2'>
+              <p className='text-sm text-terminal-muted font-ibm mb-2'>
                 Error Details:
               </p>
-              <p className='text-xs text-terminal-red font-ocr-custom break-words'>
+              <p className='text-xs text-terminal-red font-ibm break-words'>
                 {this.state.error && this.state.error.toString()}
               </p>
             </div>
@@ -64,7 +64,7 @@ class ErrorBoundary extends Component {
             <div className='flex flex-col space-y-3'>
               <button
                 onClick={this.handleReset}
-                className='flex items-center justify-center px-4 py-2 bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ocr-custom'
+                className='flex items-center justify-center px-4 py-2 bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm'
               >
                 <RefreshCw className='h-4 w-4 mr-2 lucide' />
                 Try Again
@@ -72,7 +72,7 @@ class ErrorBoundary extends Component {
 
               <button
                 onClick={this.handleReload}
-                className='flex items-center justify-center px-4 py-2 bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr-custom'
+                className='flex items-center justify-center px-4 py-2 bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ibm'
               >
                 <Home className='h-4 w-4 mr-2 lucide' />
                 Reload Page
@@ -81,10 +81,10 @@ class ErrorBoundary extends Component {
 
             {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
               <details className='mt-4'>
-                <summary className='text-sm text-terminal-muted cursor-pointer font-ocr-custom'>
+                <summary className='text-sm text-terminal-muted cursor-pointer font-ibm'>
                   Technical Details (Development Only)
                 </summary>
-                <pre className='text-xs text-terminal-muted bg-terminal-dark p-2 rounded mt-2 overflow-auto max-h-40 font-ocr-custom'>
+                <pre className='text-xs text-terminal-muted bg-terminal-dark p-2 rounded mt-2 overflow-auto max-h-40 font-ibm'>
                   {this.state.errorInfo.componentStack}
                 </pre>
               </details>

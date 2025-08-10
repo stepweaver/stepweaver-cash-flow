@@ -102,10 +102,10 @@ export default function ReceiptUpload({ onUpload, uploading = false }) {
         onDrop={handleDrop}
       >
         <Upload className='h-8 w-8 mx-auto mb-4 text-terminal-muted lucide' />
-        <p className='text-terminal-text font-ocr mb-2'>
+        <p className='text-terminal-text font-ibm mb-2'>
           Drag and drop receipt files here, or click to select
         </p>
-        <p className='text-sm text-terminal-muted font-ocr mb-4'>
+        <p className='text-sm text-terminal-muted font-ibm mb-4'>
           Supports: JPG, PNG, GIF, PDF (max 10MB each)
         </p>
         <input
@@ -119,7 +119,7 @@ export default function ReceiptUpload({ onUpload, uploading = false }) {
         />
         <label
           htmlFor='receipt-upload'
-          className='inline-flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr cursor-pointer'
+          className='inline-flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ibm cursor-pointer'
         >
           Choose Files
         </label>
@@ -127,7 +127,7 @@ export default function ReceiptUpload({ onUpload, uploading = false }) {
 
       {selectedFiles.length > 0 && (
         <div className='space-y-2'>
-          <h4 className='text-sm font-medium text-terminal-text font-ocr'>
+          <h4 className='text-sm font-medium text-terminal-text font-ibm'>
             Selected Files:
           </h4>
           {selectedFiles.map((file, index) => (
@@ -138,10 +138,10 @@ export default function ReceiptUpload({ onUpload, uploading = false }) {
               <div className='flex items-center space-x-3'>
                 {getFileIcon(file)}
                 <div>
-                  <p className='text-sm font-medium text-terminal-text font-ocr'>
+                  <p className='text-sm font-medium text-terminal-text font-ibm'>
                     {file.name}
                   </p>
-                  <p className='text-xs text-terminal-muted font-ocr'>
+                  <p className='text-xs text-terminal-muted font-ibm'>
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
@@ -160,7 +160,7 @@ export default function ReceiptUpload({ onUpload, uploading = false }) {
             <button
               onClick={handleUpload}
               disabled={uploading || selectedFiles.length === 0}
-              className='flex items-center px-4 py-2 bg-terminal-blue text-white rounded-md hover:bg-terminal-blue/80 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 transition-colors font-ocr disabled:opacity-50 disabled:cursor-not-allowed'
+              className='flex items-center px-4 py-2 bg-terminal-blue text-white rounded-md hover:bg-terminal-blue/80 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 transition-colors font-ibm disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {uploading ? (
                 <>

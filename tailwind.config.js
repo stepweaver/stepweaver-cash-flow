@@ -34,11 +34,9 @@ module.exports = {
         foreground: '#00ff00',
       },
       fontFamily: {
-        ocr: ['OCRA', 'monospace'],
         ibm: ['IBM 3270', 'monospace'],
       },
       fontWeight: {
-        'ocr': '500',
         'ibm': '400',
       },
       boxShadow: {

@@ -3,12 +3,6 @@ import './globals.css';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/lib/authContext';
 
-const ocrFont = localFont({
-  src: './fonts/OCRA.woff',
-  variable: '--font-ocr',
-  display: 'swap',
-});
-
 const ibm3270 = localFont({
   src: './fonts/IBM_3270.woff',
   variable: '--font-ibm',
@@ -24,7 +18,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang='en'
-      className={`${ocrFont.variable} ${ibm3270.variable} antialiased`}
+      className={`${ibm3270.variable} antialiased`}
       data-theme='dark'
       suppressHydrationWarning
     >

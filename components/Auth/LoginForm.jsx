@@ -33,7 +33,7 @@ export default function LoginForm() {
         <form onSubmit={handleSubmit} className='space-y-4'>
           {error && (
             <div className='bg-red-900/20 border border-red-500/50 rounded-md p-3'>
-              <p className='text-terminal-red text-sm font-ocr-custom'>
+              <p className='text-terminal-red text-sm font-ibm'>
                 {error}
               </p>
             </div>
@@ -42,7 +42,7 @@ export default function LoginForm() {
           <div>
             <label
               htmlFor='email'
-              className='block text-sm font-medium text-terminal-text mb-2 font-ocr-custom'
+              className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
             >
               Email Address
             </label>
@@ -52,7 +52,7 @@ export default function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent font-ocr-custom'
+              className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent font-ibm'
               placeholder='Enter your email'
             />
           </div>
@@ -60,7 +60,7 @@ export default function LoginForm() {
           <div>
             <label
               htmlFor='password'
-              className='block text-sm font-medium text-terminal-text mb-2 font-ocr-custom'
+              className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
             >
               Password
             </label>
@@ -71,7 +71,7 @@ export default function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className='w-full px-3 py-2 pr-10 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent font-ocr-custom'
+                className='w-full px-3 py-2 pr-10 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent font-ibm'
                 placeholder='Enter your password'
               />
               <button
@@ -87,7 +87,7 @@ export default function LoginForm() {
           <button
             type='submit'
             disabled={isLoading}
-            className='w-full bg-terminal-green text-black py-2 px-4 rounded-md font-medium hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 focus:ring-offset-terminal-dark disabled:opacity-50 disabled:cursor-not-allowed font-ocr-custom transition-colors'
+            className='w-full bg-terminal-green text-black py-2 px-4 rounded-md font-medium hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 focus:ring-offset-terminal-dark disabled:opacity-50 disabled:cursor-not-allowed font-ibm transition-colors'
           >
             {isLoading ? (
               <div className='flex items-center justify-center'>

@@ -11,25 +11,17 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'OCRA';
-  src: url('/fonts/OCRA.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* Base HTML and body styles - using Tailwind classes instead of CSS variables */
 html {
   background-color: #0d1211;
   color: #e2e2e2;
-  font-family: 'OCRA', monospace;
+  font-family: 'IBM 3270', monospace;
 }
 
 body {
   background-color: #0d1211;
   color: #e2e2e2;
-  font-family: 'OCRA', monospace;
+  font-family: 'IBM 3270', monospace;
   position: relative;
   min-height: 100vh;
 }

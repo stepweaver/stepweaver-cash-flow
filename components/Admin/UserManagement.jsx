@@ -165,7 +165,7 @@ export default function UserManagement() {
           <h2 className='text-2xl font-bold text-terminal-text font-ibm-custom'>
             User Management
           </h2>
-          <p className='text-terminal-muted font-ocr-custom'>
+          <p className='text-terminal-muted font-ibm'>
             Add and manage users directly
           </p>
         </div>
@@ -186,7 +186,7 @@ export default function UserManagement() {
         <div className='mb-4 p-3 bg-terminal-blue/10 border border-terminal-blue/30 rounded-md'>
           <div className='flex items-start space-x-2'>
             <AlertCircle className='h-4 w-4 text-terminal-blue mt-0.5 flex-shrink-0' />
-            <div className='text-sm text-terminal-blue font-ocr-custom'>
+            <div className='text-sm text-terminal-blue font-ibm'>
               <p className='font-medium mb-1'>Important:</p>
               <p>
                 After creating a user account, you will be signed out and need
@@ -202,7 +202,7 @@ export default function UserManagement() {
             <div>
               <label
                 htmlFor='user-email'
-                className='block text-sm font-medium text-terminal-text mb-2 font-ocr-custom'
+                className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
               >
                 Email Address
               </label>
@@ -212,7 +212,7 @@ export default function UserManagement() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ocr-custom'
+                className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ibm'
                 placeholder='Enter email address'
               />
             </div>
@@ -220,7 +220,7 @@ export default function UserManagement() {
             <div>
               <label
                 htmlFor='user-password'
-                className='block text-sm font-medium text-terminal-text mb-2 font-ocr-custom'
+                className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
               >
                 Password
               </label>
@@ -232,7 +232,7 @@ export default function UserManagement() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className='w-full px-3 py-2 pr-10 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ocr-custom'
+                  className='w-full px-3 py-2 pr-10 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ibm'
                   placeholder='Enter password (min 6 chars)'
                 />
                 <button
@@ -248,7 +248,7 @@ export default function UserManagement() {
             <div>
               <label
                 htmlFor='user-display-name'
-                className='block text-sm font-medium text-terminal-text mb-2 font-ocr-custom'
+                className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
               >
                 Display Name (Optional)
               </label>
@@ -257,7 +257,7 @@ export default function UserManagement() {
                 type='text'
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ocr-custom'
+                className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ibm'
                 placeholder='Enter display name'
               />
             </div>
@@ -267,7 +267,7 @@ export default function UserManagement() {
             <button
               type='submit'
               disabled={isLoading || !email.trim() || !password.trim()}
-              className='px-6 py-2 bg-terminal-blue text-white rounded-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 focus:ring-offset-terminal-dark disabled:opacity-50 disabled:cursor-not-allowed font-ocr-custom transition-colors flex items-center space-x-2'
+              className='px-6 py-2 bg-terminal-blue text-white rounded-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 focus:ring-offset-terminal-dark disabled:opacity-50 disabled:cursor-not-allowed font-ibm transition-colors flex items-center space-x-2'
             >
               {isLoading ? (
                 <>
@@ -299,7 +299,7 @@ export default function UserManagement() {
                 <AlertCircle className='h-4 w-4 text-terminal-red mr-2' />
               )}
               <p
-                className={`text-sm font-ocr-custom ${
+                className={`text-sm font-ibm ${
                   messageType === 'success'
                     ? 'text-terminal-green'
                     : 'text-terminal-red'
@@ -323,7 +323,7 @@ export default function UserManagement() {
         {loadingUsers ? (
           <div className='p-6 text-center'>
             <Loader2 className='animate-spin h-8 w-8 text-terminal-muted mx-auto mb-4' />
-            <p className='text-terminal-muted font-ocr-custom'>
+            <p className='text-terminal-muted font-ibm'>
               Loading users...
             </p>
           </div>
@@ -333,7 +333,7 @@ export default function UserManagement() {
             <p className='text-terminal-muted font-ibm-custom mb-2'>
               No users found
             </p>
-            <p className='text-sm text-terminal-muted font-ocr-custom'>
+            <p className='text-sm text-terminal-muted font-ibm'>
               Create your first user account using the form above
             </p>
           </div>
@@ -342,19 +342,19 @@ export default function UserManagement() {
             <table className='w-full'>
               <thead className='bg-terminal-dark/50'>
                 <tr>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
+                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
                     User
                   </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
+                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
                     Role
                   </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
+                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
                     Status
                   </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
+                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
                     Created
                   </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
+                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
                     Actions
                   </th>
                 </tr>
@@ -366,7 +366,7 @@ export default function UserManagement() {
                       <div className='text-sm font-medium text-terminal-text font-ibm-custom'>
                         {user.displayName || user.email}
                       </div>
-                      <div className='text-xs text-terminal-muted font-ocr-custom'>
+                      <div className='text-xs text-terminal-muted font-ibm'>
                         {user.email}
                       </div>
                     </td>
@@ -376,7 +376,7 @@ export default function UserManagement() {
                         onChange={(e) =>
                           handleRoleChange(user.id, e.target.value)
                         }
-                        className={`px-2 py-1 text-xs font-semibold rounded-full font-ocr-custom border-0 bg-transparent ${getRoleColor(
+                        className={`px-2 py-1 text-xs font-semibold rounded-full font-ibm border-0 bg-transparent ${getRoleColor(
                           user.role
                         )} focus:outline-none focus:ring-1 focus:ring-terminal-blue`}
                         disabled={user.role === 'Admin'}
@@ -387,14 +387,14 @@ export default function UserManagement() {
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap'>
                       <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full font-ocr-custom ${getStatusColor(
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full font-ibm ${getStatusColor(
                           user.status
                         )}`}
                       >
                         {user.status}
                       </span>
                     </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-muted font-ocr-custom'>
+                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-muted font-ibm'>
                       {user.createdAt
                         ? new Date(user.createdAt).toLocaleDateString()
                         : 'N/A'}

@@ -57,7 +57,7 @@ export default function Home() {
               <nav className='hidden md:flex space-x-8'>
                 <button
                   onClick={() => setActiveTab('business')}
-                  className={`text-sm font-medium transition-colors font-ocr-custom cursor-pointer uppercase tracking-wider ${
+                  className={`text-sm font-medium transition-colors font-ibm cursor-pointer uppercase tracking-wider ${
                     activeTab === 'business'
                       ? 'text-terminal-green'
                       : 'text-terminal-muted hover:text-terminal-text'
@@ -67,7 +67,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={() => setActiveTab('personal')}
-                  className={`text-sm font-medium transition-colors font-ocr-custom cursor-pointer uppercase tracking-wider ${
+                  className={`text-sm font-medium transition-colors font-ibm cursor-pointer uppercase tracking-wider ${
                     activeTab === 'personal'
                       ? 'text-terminal-green'
                       : 'text-terminal-muted hover:text-terminal-text'
@@ -77,7 +77,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={() => setActiveTab('admin')}
-                  className={`text-sm font-medium transition-colors font-ocr-custom cursor-pointer uppercase tracking-wider ${
+                  className={`text-sm font-medium transition-colors font-ibm cursor-pointer uppercase tracking-wider ${
                     activeTab === 'admin'
                       ? 'text-terminal-green'
                       : 'text-terminal-muted hover:text-terminal-text'
@@ -91,7 +91,7 @@ export default function Home() {
               <div className='hidden md:flex items-center'>
                 <button
                   onClick={handleLogout}
-                  className='flex items-center space-x-2 text-terminal-muted hover:text-terminal-text transition-colors font-ocr-custom uppercase tracking-wider text-sm'
+                  className='flex items-center space-x-2 text-terminal-muted hover:text-terminal-text transition-colors font-ibm uppercase tracking-wider text-sm'
                 >
                   <LogOut size={16} />
                   <span>Logout</span>
@@ -119,7 +119,7 @@ export default function Home() {
                 <nav className='flex flex-col space-y-4'>
                   <button
                     onClick={() => handleTabChange('business')}
-                    className={`text-left text-sm font-medium transition-colors font-ocr-custom cursor-pointer uppercase tracking-wider py-2 px-4 rounded ${
+                    className={`text-left text-sm font-medium transition-colors font-ibm cursor-pointer uppercase tracking-wider py-2 px-4 rounded ${
                       activeTab === 'business'
                         ? 'text-terminal-green bg-terminal-green/10'
                         : 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-dark'
@@ -129,7 +129,7 @@ export default function Home() {
                   </button>
                   <button
                     onClick={() => handleTabChange('personal')}
-                    className={`text-left text-sm font-medium transition-colors font-ocr-custom cursor-pointer uppercase tracking-wider py-2 px-4 rounded ${
+                    className={`text-left text-sm font-medium transition-colors font-ibm cursor-pointer uppercase tracking-wider py-2 px-4 rounded ${
                       activeTab === 'personal'
                         ? 'text-terminal-green bg-terminal-green/10'
                         : 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-dark'
@@ -139,7 +139,7 @@ export default function Home() {
                   </button>
                   <button
                     onClick={() => handleTabChange('admin')}
-                    className={`text-left text-sm font-medium transition-colors font-ocr-custom cursor-pointer uppercase tracking-wider py-2 px-4 rounded ${
+                    className={`text-left text-sm font-medium transition-colors font-ibm cursor-pointer uppercase tracking-wider py-2 px-4 rounded ${
                       activeTab === 'admin'
                         ? 'text-terminal-green bg-terminal-green/10'
                         : 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-dark'
@@ -150,7 +150,7 @@ export default function Home() {
                   <div className='border-t border-terminal-border pt-4 mt-2'>
                     <button
                       onClick={handleLogout}
-                      className='flex items-center space-x-2 text-terminal-muted hover:text-terminal-text transition-colors font-ocr-custom uppercase tracking-wider text-sm py-2 px-4 rounded hover:bg-terminal-dark w-full text-left'
+                      className='flex items-center space-x-2 text-terminal-muted hover:text-terminal-text transition-colors font-ibm uppercase tracking-wider text-sm py-2 px-4 rounded hover:bg-terminal-dark w-full text-left'
                     >
                       <LogOut size={16} />
                       <span>Logout</span>

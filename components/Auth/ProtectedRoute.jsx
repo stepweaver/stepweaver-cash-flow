@@ -12,7 +12,7 @@ export default function ProtectedRoute({ children }) {
       <div className='min-h-screen bg-terminal-dark flex items-center justify-center'>
         <div className='text-center'>
           <Loader2 className='animate-spin h-12 w-12 text-terminal-green mx-auto mb-4' />
-          <p className='text-terminal-muted font-ocr-custom'>Loading...</p>
+          <p className='text-terminal-muted font-ibm'>Loading...</p>
         </div>
       </div>
     );
