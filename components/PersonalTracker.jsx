@@ -893,13 +893,32 @@ export default function PersonalTracker() {
                 </thead>
                 <tbody className='bg-terminal-light divide-y divide-terminal-border'>
                   {incomeWithColors.map((income) => (
-                    <tr
-                      key={income.id}
-                      className={`hover:bg-terminal-dark ${getColorClasses(
-                        income.colorIndex
-                      )}`}
-                    >
-                      <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm'>
+                    <tr key={income.id} className='hover:bg-terminal-dark'>
+                      <td
+                        className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm ${
+                          income.colorIndex === 0
+                            ? 'border-l-4 border-l-[#8b949e]'
+                            : income.colorIndex === 1
+                            ? 'border-l-4 border-l-[#00ff41]'
+                            : income.colorIndex === 2
+                            ? 'border-l-4 border-l-[#ff55ff]'
+                            : income.colorIndex === 3
+                            ? 'border-l-4 border-l-[#ffff00]'
+                            : income.colorIndex === 4
+                            ? 'border-l-4 border-l-[#38beff]'
+                            : income.colorIndex === 5
+                            ? 'border-l-4 border-l-[#56b6c2]'
+                            : income.colorIndex === 6
+                            ? 'border-l-4 border-l-[#ffa500]'
+                            : income.colorIndex === 7
+                            ? 'border-l-4 border-l-[#a855f7]'
+                            : income.colorIndex === 8
+                            ? 'border-l-4 border-l-[#ff3e3e]'
+                            : income.colorIndex === 9
+                            ? 'border-l-4 border-l-[#ffffff]'
+                            : 'border-l-4 border-l-[#a855f7]'
+                        }`}
+                      >
                         {income.source}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ibm'>
@@ -1123,11 +1142,33 @@ export default function PersonalTracker() {
                       key={bill.id}
                       className={`hover:bg-terminal-dark ${
                         bill.needsAttention ? 'bg-terminal-dark' : ''
-                      } ${getColorClasses(
-                        bill.colorIndex
-                      )} ${getBackgroundColorClasses(bill.colorIndex)}`}
+                      }`}
                     >
-                      <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm'>
+                      <td
+                        className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm ${
+                          bill.colorIndex === 0
+                            ? 'border-l-4 border-l-[#8b949e]'
+                            : bill.colorIndex === 1
+                            ? 'border-l-4 border-l-[#00ff41]'
+                            : bill.colorIndex === 2
+                            ? 'border-l-4 border-l-[#ff55ff]'
+                            : bill.colorIndex === 3
+                            ? 'border-l-4 border-l-[#ffff00]'
+                            : bill.colorIndex === 4
+                            ? 'border-l-4 border-l-[#38beff]'
+                            : bill.colorIndex === 5
+                            ? 'border-l-4 border-l-[#56b6c2]'
+                            : bill.colorIndex === 6
+                            ? 'border-l-4 border-l-[#ffa500]'
+                            : bill.colorIndex === 7
+                            ? 'border-l-4 border-l-[#a855f7]'
+                            : bill.colorIndex === 8
+                            ? 'border-l-4 border-l-[#ff3e3e]'
+                            : bill.colorIndex === 9
+                            ? 'border-l-4 border-l-[#ffffff]'
+                            : 'border-l-4 border-l-[#a855f7]'
+                        }`}
+                      >
                         <div className='flex items-center'>
                           {bill.url ? (
                             <a
@@ -1213,9 +1254,7 @@ export default function PersonalTracker() {
                     bill.needsAttention
                       ? 'border-terminal-yellow'
                       : 'border-terminal-border'
-                  } ${getColorClasses(
-                    bill.colorIndex
-                  )} ${getBackgroundColorClasses(bill.colorIndex)}`}
+                  } ${getColorClasses(bill.colorIndex)}`}
                 >
                   <div className='flex justify-between items-center mb-2'>
                     <div className='flex-1'>

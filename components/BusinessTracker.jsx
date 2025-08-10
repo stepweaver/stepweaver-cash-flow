@@ -13,6 +13,7 @@ import {
   Download,
   Edit3,
   X,
+  Filter,
 } from 'lucide-react';
 import {
   addBusinessTransaction,
@@ -55,6 +56,12 @@ export default function BusinessTracker() {
   // Initialize with current month and year
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  // Transaction filter state
+  const [showTransactionFilter, setShowTransactionFilter] = useState(false);
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
+  const [filterType, setFilterType] = useState('all');
 
   // Receipt and file management
   const [receiptFiles, setReceiptFiles] = useState([]);
@@ -316,7 +323,32 @@ export default function BusinessTracker() {
     setCurrentYear(newDate.getFullYear());
   };
 
-  // Filter transactions for current month
+  // Filter transactions for display (all transactions with optional date/type filters)
+  const filteredDisplayTransactions = transactions.filter((transaction) => {
+    // Type filter
+    if (filterType !== 'all' && transaction.type !== filterType) {
+      return false;
+    }
+
+    // Date filter
+    if (filterStartDate || filterEndDate) {
+      const transactionDate = new Date(transaction.date);
+
+      if (filterStartDate) {
+        const startDate = createLocalDate(filterStartDate);
+        if (transactionDate < startDate) return false;
+      }
+
+      if (filterEndDate) {
+        const endDate = createLocalDate(filterEndDate);
+        if (transactionDate > endDate) return false;
+      }
+    }
+
+    return true;
+  });
+
+  // Filter transactions for current month (for summary statistics)
   const filteredMonthlyTransactions = transactions.filter((transaction) => {
     const transactionDate = new Date(transaction.date);
     return (
@@ -629,6 +661,7 @@ export default function BusinessTracker() {
                 <option value='revenue'>Revenue</option>
                 <option value='expense'>Expense</option>
                 <option value='draw'>Draw</option>
+                <option value='tax payment'>Tax Payment</option>
               </select>
             </div>
 
@@ -680,20 +713,123 @@ export default function BusinessTracker() {
 
       {/* Transactions Table */}
       <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
-        <div className='px-6 py-4 border-b border-terminal-border flex items-center justify-between'>
-          <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
-            Transactions
-          </h3>
-          <button
-            onClick={() => setShowExportModal(true)}
-            className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer'
-          >
-            <Download className='h-3 w-3 mr-1 lucide' />
-            Export
-          </button>
+        <div className='px-4 md:px-6 py-4 border-b border-terminal-border'>
+          {/* Desktop Header */}
+          <div className='hidden md:flex items-center justify-between'>
+            <div className='flex items-center space-x-4'>
+              <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
+                All Transactions
+              </h3>
+              <span className='text-sm text-terminal-muted font-ibm'>
+                {filteredDisplayTransactions.length} of {transactions.length}{' '}
+                transactions
+              </span>
+              <button
+                onClick={() => setShowTransactionFilter(!showTransactionFilter)}
+                className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer'
+              >
+                <Filter className='h-3 w-3 mr-1 lucide' />
+                Filter
+              </button>
+            </div>
+            <button
+              onClick={() => setShowExportModal(true)}
+              className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer'
+            >
+              <Download className='h-3 w-3 mr-1 lucide' />
+              Export
+            </button>
+          </div>
+
+          {/* Mobile Header */}
+          <div className='md:hidden space-y-3'>
+            <div className='flex items-center justify-between'>
+              <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
+                All Transactions
+              </h3>
+              <button
+                onClick={() => setShowExportModal(true)}
+                className='flex items-center px-2 py-1 text-xs text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer'
+              >
+                <Download className='h-3 w-3 mr-1 lucide' />
+                Export
+              </button>
+            </div>
+            <div className='flex items-center justify-between'>
+              <span className='text-sm text-terminal-muted font-ibm'>
+                {filteredDisplayTransactions.length} of {transactions.length}{' '}
+                transactions
+              </span>
+              <button
+                onClick={() => setShowTransactionFilter(!showTransactionFilter)}
+                className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer'
+              >
+                <Filter className='h-3 w-3 mr-1 lucide' />
+                {showTransactionFilter ? 'Hide' : 'Show'} Filters
+              </button>
+            </div>
+          </div>
         </div>
 
-        {filteredMonthlyTransactions.length > 0 ? (
+        {/* Transaction Filter */}
+        {showTransactionFilter && (
+          <div className='px-4 md:px-6 py-4 border-b border-terminal-border bg-terminal-dark'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+              <div>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ibm'>
+                  Start Date
+                </label>
+                <input
+                  type='date'
+                  value={filterStartDate}
+                  onChange={(e) => setFilterStartDate(e.target.value)}
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-light text-terminal-text font-ibm'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ibm'>
+                  End Date
+                </label>
+                <input
+                  type='date'
+                  value={filterEndDate}
+                  onChange={(e) => setFilterEndDate(e.target.value)}
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-light text-terminal-text font-ibm'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ibm'>
+                  Type
+                </label>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-light text-terminal-light text-terminal-text font-ibm'
+                >
+                  <option value='all'>All Types</option>
+                  <option value='revenue'>Revenue</option>
+                  <option value='expense'>Expense</option>
+                  <option value='draw'>Draw</option>
+                  <option value='tax payment'>Tax Payment</option>
+                </select>
+              </div>
+              <div className='flex items-end'>
+                <button
+                  onClick={() => {
+                    setFilterStartDate('');
+                    setFilterEndDate('');
+                    setFilterType('all');
+                  }}
+                  className='w-full px-3 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-muted/80 transition-colors font-ibm cursor-pointer'
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {filteredDisplayTransactions.length > 0 ? (
           <>
             {/* Desktop Table View */}
             <div className='hidden md:block overflow-x-auto'>
@@ -721,7 +857,7 @@ export default function BusinessTracker() {
                   </tr>
                 </thead>
                 <tbody className='bg-terminal-light divide-y divide-terminal-border'>
-                  {filteredMonthlyTransactions.map((transaction) => (
+                  {filteredDisplayTransactions.map((transaction) => (
                     <tr key={transaction.id} className='hover:bg-terminal-dark'>
                       <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ibm'>
                         {formatDate(transaction.date)}
@@ -733,11 +869,15 @@ export default function BusinessTracker() {
                               ? 'bg-terminal-dark text-terminal-green border-terminal-green'
                               : transaction.type === 'expense'
                               ? 'bg-terminal-dark text-terminal-red border-terminal-red'
+                              : transaction.type === 'draw'
+                              ? 'bg-terminal-dark text-purple-400 border-purple-400'
                               : 'bg-terminal-dark text-terminal-yellow border-terminal-yellow'
                           }`}
                         >
                           {transaction.type === 'draw'
                             ? 'DRAW'
+                            : transaction.type === 'tax payment'
+                            ? 'TAX PAYMENT'
                             : transaction.type.charAt(0).toUpperCase() +
                               transaction.type.slice(1)}
                         </span>
@@ -752,6 +892,8 @@ export default function BusinessTracker() {
                               ? 'text-terminal-green'
                               : transaction.type === 'expense'
                               ? 'text-terminal-red'
+                              : transaction.type === 'draw'
+                              ? 'text-purple-400'
                               : 'text-terminal-yellow'
                           }
                         >
@@ -808,7 +950,7 @@ export default function BusinessTracker() {
             </div>
             {/* Mobile Card View */}
             <div className='md:hidden space-y-2 p-4'>
-              {filteredMonthlyTransactions.map((transaction) => (
+              {filteredDisplayTransactions.map((transaction) => (
                 <div
                   key={transaction.id}
                   className='bg-terminal-dark p-3 rounded border border-terminal-border'
@@ -825,6 +967,8 @@ export default function BusinessTracker() {
                               ? 'text-terminal-green'
                               : transaction.type === 'expense'
                               ? 'text-terminal-red'
+                              : transaction.type === 'draw'
+                              ? 'text-purple-400'
                               : 'text-terminal-yellow'
                           }`}
                         >
@@ -882,9 +1026,11 @@ export default function BusinessTracker() {
             </div>
           </>
         ) : (
-          <div className='px-6 py-12 text-center'>
+          <div className='px-4 md:px-6 py-12 text-center'>
             <p className='text-terminal-muted font-ibm'>
-              No transactions for this month yet. Add some above!
+              {transactions.length === 0
+                ? 'No transactions yet. Add some above!'
+                : 'No transactions match the current filters. Try adjusting your filter criteria.'}
             </p>
           </div>
         )}
@@ -1027,6 +1173,7 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
               <option value='revenue'>Revenue</option>
               <option value='expense'>Expense</option>
               <option value='draw'>Draw</option>
+              <option value='tax payment'>Tax Payment</option>
             </select>
           </div>
 
