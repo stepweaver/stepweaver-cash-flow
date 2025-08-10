@@ -674,16 +674,16 @@ export default function PersonalTracker() {
         <div className='flex items-center justify-center md:justify-end space-x-4'>
           <button
             onClick={() => changeMonth(-1)}
-            className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr cursor-pointer'
+            className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr-custom cursor-pointer'
           >
             ←
           </button>
-          <span className='text-lg font-semibold text-terminal-text min-w-[140px] text-center font-ocr'>
+          <span className='text-lg font-semibold text-terminal-text min-w-[140px] text-center font-ocr-custom'>
             [{monthNames[currentMonth]} {currentYear}]
           </span>
           <button
             onClick={() => changeMonth(1)}
-            className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr cursor-pointer'
+            className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr-custom cursor-pointer'
           >
             →
           </button>
@@ -692,7 +692,7 @@ export default function PersonalTracker() {
 
       {/* Monthly Summary Cards */}
       <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
-        <h3 className='text-xl font-semibold text-terminal-green mb-4 flex items-center font-ibm'>
+        <h3 className='text-xl font-semibold text-terminal-green mb-4 flex items-center font-ibm-custom'>
           <Calendar className='h-5 w-5 mr-2 lucide' />[
           {monthNames[currentMonth]} {currentYear}]
         </h3>
@@ -703,17 +703,17 @@ export default function PersonalTracker() {
                 <DollarSign className='h-6 w-6 text-terminal-green lucide' />
               </div>
               <div className='ml-4'>
-                <p className='text-sm font-medium text-terminal-muted font-ocr'>
+                <p className='text-sm font-medium text-terminal-muted font-ocr-custom'>
                   Income Budget
                 </p>
-                <p className='text-2xl font-bold text-terminal-green font-ibm'>
+                <p className='text-2xl font-bold text-terminal-green font-ibm-custom'>
                   {formatCurrency(totalIncomeBudget)}
                 </p>
-                <p className='text-xs text-terminal-muted font-ocr'>
+                <p className='text-xs text-terminal-muted font-ocr-custom'>
                   Actual: {formatCurrency(totalIncomeActual)}
                 </p>
                 <p
-                  className={`text-xs font-ocr ${
+                  className={`text-xs font-ocr-custom ${
                     incomeVariance >= 0
                       ? 'text-terminal-green'
                       : 'text-terminal-red'
@@ -733,13 +733,13 @@ export default function PersonalTracker() {
                 <DollarSign className='h-6 w-6 text-terminal-red lucide' />
               </div>
               <div className='ml-4'>
-                <p className='text-sm font-medium text-terminal-muted font-ocr'>
+                <p className='text-sm font-medium text-terminal-muted font-ocr-custom'>
                   Bills Due
                 </p>
-                <p className='text-2xl font-bold text-terminal-red font-ibm'>
+                <p className='text-2xl font-bold text-terminal-red font-ibm-custom'>
                   {formatCurrency(totalBillsDue)}
                 </p>
-                <p className='text-xs text-terminal-muted font-ocr'>
+                <p className='text-xs text-terminal-muted font-ocr-custom'>
                   Paid: {formatCurrency(totalBillsPaid)}
                 </p>
               </div>
@@ -764,11 +764,11 @@ export default function PersonalTracker() {
                 />
               </div>
               <div className='ml-4'>
-                <p className='text-sm font-medium text-terminal-muted font-ocr'>
+                <p className='text-sm font-medium text-terminal-muted font-ocr-custom'>
                   Discretionary Income
                 </p>
                 <p
-                  className={`text-2xl font-bold font-ibm ${
+                  className={`text-2xl font-bold font-ibm-custom ${
                     discretionaryIncome >= 0
                       ? 'text-terminal-green'
                       : 'text-terminal-red'
@@ -776,7 +776,7 @@ export default function PersonalTracker() {
                 >
                   {formatCurrency(discretionaryIncome)}
                 </p>
-                <p className='text-xs text-terminal-muted font-ocr'>
+                <p className='text-xs text-terminal-muted font-ocr-custom'>
                   After Bills Paid
                 </p>
               </div>
@@ -789,13 +789,13 @@ export default function PersonalTracker() {
                 <AlertCircle className='h-6 w-6 text-terminal-purple lucide' />
               </div>
               <div className='ml-4'>
-                <p className='text-sm font-medium text-terminal-muted font-ocr'>
+                <p className='text-sm font-medium text-terminal-muted font-ocr-custom'>
                   Bills Status
                 </p>
-                <p className='text-2xl font-bold text-terminal-purple font-ibm'>
+                <p className='text-2xl font-bold text-terminal-purple font-ibm-custom'>
                   {pendingBillsCount}
                 </p>
-                <p className='text-xs text-terminal-muted font-ocr'>
+                <p className='text-xs text-terminal-muted font-ocr-custom'>
                   Pending • {paidBillsCount} Paid
                 </p>
               </div>
@@ -806,21 +806,21 @@ export default function PersonalTracker() {
 
       {/* Quick Actions Panel */}
       <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
-        <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm'>
+        <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm-custom'>
           Quick Actions
         </h3>
         <div className='flex flex-col space-y-4 md:flex-row md:justify-between md:items-center md:space-y-0'>
           <div className='flex flex-wrap items-center gap-4'>
             <button
               onClick={openIncomeModal}
-              className='flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr cursor-pointer'
+              className='flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr-custom cursor-pointer'
             >
               <Plus className='h-4 w-4 mr-2 lucide' />
               Add Income
             </button>
             <button
               onClick={openBillModal}
-              className='flex items-center px-4 py-2 bg-terminal-red text-white rounded-md hover:bg-terminal-red/80 focus:outline-none focus:ring-2 focus:ring-terminal-red focus:ring-offset-2 transition-colors font-ocr cursor-pointer'
+              className='flex items-center px-4 py-2 bg-terminal-red text-white rounded-md hover:bg-terminal-red/80 focus:outline-none focus:ring-2 focus:ring-terminal-red focus:ring-offset-2 transition-colors font-ocr-custom cursor-pointer'
             >
               <Plus className='h-4 w-4 mr-2 lucide' />
               Add Bill
@@ -828,7 +828,7 @@ export default function PersonalTracker() {
           </div>
           <button
             onClick={() => setShowExportModal(true)}
-            className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ocr cursor-pointer'
+            className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ocr-custom cursor-pointer'
           >
             <Download className='h-3 w-3 mr-1 lucide' />
             Export
@@ -839,7 +839,7 @@ export default function PersonalTracker() {
       {/* Income Section */}
       <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
         <div className='px-6 py-4 border-b border-terminal-border'>
-          <h3 className='text-lg font-semibold text-terminal-green font-ibm'>
+          <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
             Income
           </h3>
         </div>
@@ -851,22 +851,22 @@ export default function PersonalTracker() {
               <table className='min-w-full divide-y divide-terminal-border'>
                 <thead className='bg-terminal-dark'>
                   <tr>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Source
                     </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Date
                     </th>
-                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Budget
                     </th>
-                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Actual
                     </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Notes
                     </th>
-                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Actions
                     </th>
                   </tr>
@@ -879,19 +879,19 @@ export default function PersonalTracker() {
                         income.colorIndex
                       )}`}
                     >
-                      <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ocr-custom'>
                         {income.source}
                       </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr-custom'>
                         {formatDate(createLocalDate(income.date))}
                       </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ocr-custom'>
                         {formatCurrency(income.budget)}
                       </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ocr-custom'>
                         {income.actual ? formatCurrency(income.actual) : '-'}
                       </td>
-                      <td className='px-6 py-4 text-sm text-terminal-text font-ocr'>
+                      <td className='px-6 py-4 text-sm text-terminal-text font-ocr-custom'>
                         {income.notes}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-center'>
@@ -929,20 +929,20 @@ export default function PersonalTracker() {
                   <div className='flex justify-between items-center mb-2'>
                     <div className='flex-1'>
                       <div className='flex items-center justify-between'>
-                        <span className='text-xs text-terminal-muted font-ocr'>
+                        <span className='text-xs text-terminal-muted font-ocr-custom'>
                           {formatDate(createLocalDate(income.date))}
                         </span>
-                        <p className='text-lg font-bold text-terminal-green font-ibm'>
+                        <p className='text-lg font-bold text-terminal-green font-ibm-custom'>
                           {income.actual
                             ? formatCurrency(income.actual)
                             : formatCurrency(income.budget)}
                         </p>
                       </div>
-                      <h4 className='text-terminal-text font-medium font-ocr text-sm mt-1'>
+                      <h4 className='text-terminal-text font-medium font-ocr-custom text-sm mt-1'>
                         {income.source}
                       </h4>
                       {income.notes && (
-                        <p className='text-xs text-terminal-muted font-ocr mt-1'>
+                        <p className='text-xs text-terminal-muted font-ocr-custom mt-1'>
                           {income.notes}
                         </p>
                       )}
@@ -950,7 +950,7 @@ export default function PersonalTracker() {
                   </div>
 
                   <div className='flex items-center justify-between pt-2 border-t border-terminal-border'>
-                    <div className='text-xs text-terminal-muted font-ocr'>
+                    <div className='text-xs text-terminal-muted font-ocr-custom'>
                       Budget: {formatCurrency(income.budget)}
                       {income.actual &&
                         ` • Actual: ${formatCurrency(income.actual)}`}
@@ -979,7 +979,7 @@ export default function PersonalTracker() {
           </>
         ) : (
           <div className='px-6 py-12 text-center'>
-            <p className='text-terminal-muted font-ocr'>
+            <p className='text-terminal-muted font-ocr-custom'>
               No income entries yet. Add some above!
             </p>
           </div>
@@ -990,11 +990,11 @@ export default function PersonalTracker() {
       <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
         <div className='px-6 py-4 border-b border-terminal-border'>
           <div className='flex items-center justify-between'>
-            <h3 className='text-lg font-semibold text-terminal-green font-ibm'>
+            <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
               Bills
             </h3>
             {personalData.income.length > 0 && (
-              <div className='flex items-center space-x-4 text-xs font-ocr'>
+              <div className='flex items-center space-x-4 text-xs font-ocr-custom'>
                 <span className='text-terminal-muted'>Income Periods:</span>
                 {incomeWithColors.map((income, index) => {
                   const colors = {
@@ -1036,25 +1036,25 @@ export default function PersonalTracker() {
               <table className='min-w-full divide-y divide-terminal-border'>
                 <thead className='bg-terminal-dark'>
                   <tr>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Name
                     </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Due Date
                     </th>
-                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Amount Due
                     </th>
-                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Amount Paid
                     </th>
-                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Status
                     </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Notes
                     </th>
-                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Actions
                     </th>
                   </tr>
@@ -1067,7 +1067,7 @@ export default function PersonalTracker() {
                         bill.needsAttention ? 'bg-terminal-dark' : ''
                       } ${getColorClasses(bill.colorIndex)}`}
                     >
-                      <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ocr-custom'>
                         <div className='flex items-center'>
                           {bill.url ? (
                             <a
@@ -1086,15 +1086,15 @@ export default function PersonalTracker() {
                           )}
                         </div>
                       </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr-custom'>
                         {bill.dueDate
                           ? formatDate(createLocalDate(bill.dueDate))
                           : '-'}
                       </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ocr-custom'>
                         {formatCurrency(bill.amountDue)}
                       </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ocr-custom'>
                         {bill.amountPaid
                           ? formatCurrency(bill.amountPaid)
                           : '-'}
@@ -1105,7 +1105,7 @@ export default function PersonalTracker() {
                           onChange={(e) =>
                             handleStatusChange(bill.id, e.target.value)
                           }
-                          className={`rounded px-2 py-1 text-xs font-ocr focus:outline-none focus:ring-2 focus:ring-terminal-green ${
+                          className={`rounded px-2 py-1 text-xs font-ocr-custom focus:outline-none focus:ring-2 focus:ring-terminal-green ${
                             bill.status === 'Paid'
                               ? 'bg-terminal-dark text-terminal-green border border-terminal-green'
                               : bill.status === 'Pending'
@@ -1118,7 +1118,7 @@ export default function PersonalTracker() {
                           <option value='Paid'>Paid</option>
                         </select>
                       </td>
-                      <td className='px-6 py-4 text-sm text-terminal-text font-ocr'>
+                      <td className='px-6 py-4 text-sm text-terminal-text font-ocr-custom'>
                         {bill.notes}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-center'>
@@ -1159,7 +1159,7 @@ export default function PersonalTracker() {
                     <div className='flex-1'>
                       <div className='flex items-center justify-between'>
                         <div className='flex items-center'>
-                          <span className='text-xs text-terminal-muted font-ocr'>
+                          <span className='text-xs text-terminal-muted font-ocr-custom'>
                             {bill.dueDate
                               ? formatDate(createLocalDate(bill.dueDate))
                               : 'No due date'}
@@ -1168,14 +1168,14 @@ export default function PersonalTracker() {
                             <AlertCircle className='h-3 w-3 ml-1 text-terminal-yellow lucide' />
                           )}
                         </div>
-                        <p className='text-lg font-bold text-terminal-red font-ibm'>
+                        <p className='text-lg font-bold text-terminal-red font-ibm-custom'>
                           -
                           {bill.amountPaid
                             ? formatCurrency(bill.amountPaid)
                             : formatCurrency(bill.amountDue)}
                         </p>
                       </div>
-                      <h4 className='text-terminal-text font-medium font-ocr text-sm mt-1'>
+                      <h4 className='text-terminal-text font-medium font-ocr-custom text-sm mt-1'>
                         {bill.url ? (
                           <a
                             href={bill.url}
@@ -1190,7 +1190,7 @@ export default function PersonalTracker() {
                         )}
                       </h4>
                       {bill.notes && (
-                        <p className='text-xs text-terminal-muted font-ocr mt-1'>
+                        <p className='text-xs text-terminal-muted font-ocr-custom mt-1'>
                           {bill.notes}
                         </p>
                       )}
@@ -1199,7 +1199,7 @@ export default function PersonalTracker() {
 
                   <div className='flex items-center justify-between pt-2 border-t border-terminal-border'>
                     <div className='flex items-start justify-between flex-1'>
-                      <div className='text-xs text-terminal-muted font-ocr'>
+                      <div className='text-xs text-terminal-muted font-ocr-custom'>
                         <div>Due: {formatCurrency(bill.amountDue)}</div>
                         {bill.amountPaid && (
                           <div>Paid: {formatCurrency(bill.amountPaid)}</div>
@@ -1210,7 +1210,7 @@ export default function PersonalTracker() {
                         onChange={(e) =>
                           handleStatusChange(bill.id, e.target.value)
                         }
-                        className={`rounded px-2 py-1 text-xs font-ocr focus:outline-none focus:ring-2 focus:ring-terminal-green ${
+                        className={`rounded px-2 py-1 text-xs font-ocr-custom focus:outline-none focus:ring-2 focus:ring-terminal-green ${
                           bill.status === 'Paid'
                             ? 'bg-terminal-dark text-terminal-green border border-terminal-green'
                             : bill.status === 'Pending'
@@ -1247,7 +1247,7 @@ export default function PersonalTracker() {
           </>
         ) : (
           <div className='px-6 py-12 text-center'>
-            <p className='text-terminal-muted font-ocr'>
+            <p className='text-terminal-muted font-ocr-custom'>
               No bills yet. Add some above!
             </p>
           </div>
@@ -1363,7 +1363,7 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
       <div className='bg-terminal-light rounded-lg p-6 w-full max-w-md mx-4 border border-terminal-border'>
-        <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm'>
+        <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm-custom'>
           {transaction ? 'Edit' : 'Add'}{' '}
           {modalType === 'income' ? 'Income' : 'Bill'}
         </h3>
@@ -1372,26 +1372,26 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           {modalType === 'income' ? (
             <>
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Source
                 </label>
                 <input
                   type='text'
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                   required
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Date
                 </label>
                 <input
                   type='date'
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                   required
                 />
               </div>
@@ -1399,36 +1399,36 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           ) : (
             <>
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Bill Name
                 </label>
                 <input
                   type='text'
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                   required
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Due Date
                 </label>
                 <input
                   type='date'
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Status
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                 >
                   <option value=''>-</option>
                   <option value='Pending'>Pending</option>
@@ -1441,14 +1441,14 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           {modalType === 'income' ? (
             <>
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Budget Amount
                 </label>
                 <input
                   type='number'
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                   min='0'
                   step='0.01'
                   required
@@ -1456,14 +1456,14 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Actual Amount
                 </label>
                 <input
                   type='number'
                   value={actual}
                   onChange={(e) => setActual(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                   min='0'
                   step='0.01'
                 />
@@ -1472,14 +1472,14 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           ) : (
             <>
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Amount Due
                 </label>
                 <input
                   type='number'
                   value={amountDue}
                   onChange={(e) => setAmountDue(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                   min='0'
                   step='0.01'
                   required
@@ -1487,20 +1487,20 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Amount Paid
                 </label>
                 <input
                   type='number'
                   value={amountPaid}
                   onChange={(e) => setAmountPaid(e.target.value)}
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                   min='0'
                   step='0.01'
                 />
               </div>
               <div>
-                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+                <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                   Login URL (Optional)
                 </label>
                 <input
@@ -1508,20 +1508,20 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder='https://example.com/login'
-                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                  className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                 />
               </div>
             </>
           )}
 
           <div>
-            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
               Notes
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
               rows='3'
             />
           </div>
@@ -1529,14 +1529,14 @@ function TransactionModal({ isOpen, onClose, onSave, transaction, modalType }) {
           <div className='flex space-x-3 pt-4'>
             <button
               type='submit'
-              className='flex-1 px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors cursor-pointer font-ocr'
+              className='flex-1 px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors cursor-pointer font-ocr-custom'
             >
               Save
             </button>
             <button
               type='button'
               onClick={onClose}
-              className='flex-1 px-4 py-2 bg-terminal-muted text-terminal-text rounded-md hover:bg-terminal-muted/80 focus:outline-none focus:ring-2 focus:ring-terminal-muted focus:ring-offset-2 transition-colors cursor-pointer font-ocr'
+              className='flex-1 px-4 py-2 bg-terminal-muted text-terminal-text rounded-md hover:bg-terminal-muted/80 focus:outline-none focus:ring-2 focus:ring-terminal-muted focus:ring-offset-2 transition-colors cursor-pointer font-ocr-custom'
             >
               Cancel
             </button>

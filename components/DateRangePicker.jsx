@@ -116,7 +116,7 @@ export default function DateRangePicker({
         <div className='flex items-center justify-between p-6 border-b border-terminal-border'>
           <div className='flex items-center'>
             <Calendar className='h-5 w-5 mr-2 text-terminal-green lucide' />
-            <h3 className='text-lg font-semibold text-terminal-green font-ibm'>
+            <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
               {title}
             </h3>
           </div>
@@ -132,43 +132,43 @@ export default function DateRangePicker({
         <div className='p-6 space-y-6'>
           {/* Quick Date Ranges */}
           <div>
-            <label className='block text-sm font-medium text-terminal-text mb-2 font-ocr'>
+            <label className='block text-sm font-medium text-terminal-text mb-2 font-ocr-custom'>
               Quick Select
             </label>
             <div className='grid grid-cols-2 gap-2'>
               <button
                 onClick={() => getQuickDateRange('thisMonth')}
-                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr'
+                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr-custom'
               >
                 This Month
               </button>
               <button
                 onClick={() => getQuickDateRange('lastMonth')}
-                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr'
+                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr-custom'
               >
                 Last Month
               </button>
               <button
                 onClick={() => getQuickDateRange('thisYear')}
-                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr'
+                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr-custom'
               >
                 This Year
               </button>
               <button
                 onClick={() => getQuickDateRange('lastYear')}
-                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr'
+                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr-custom'
               >
                 Last Year
               </button>
               <button
                 onClick={() => getQuickDateRange('last30Days')}
-                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr'
+                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr-custom'
               >
                 Last 30 Days
               </button>
               <button
                 onClick={() => getQuickDateRange('last90Days')}
-                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr'
+                className='px-3 py-2 text-sm bg-terminal-dark text-terminal-text border border-terminal-border rounded hover:bg-terminal-dark/80 transition-colors font-ocr-custom'
               >
                 Last 90 Days
               </button>
@@ -178,26 +178,26 @@ export default function DateRangePicker({
           {/* Date Range */}
           <div className='grid grid-cols-2 gap-4'>
             <div>
-              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                 Start Date
               </label>
               <input
                 type='date'
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                 required
               />
             </div>
             <div>
-              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                 End Date
               </label>
               <input
                 type='date'
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                 required
               />
             </div>
@@ -205,7 +205,7 @@ export default function DateRangePicker({
 
           {/* Export Format */}
           <div>
-            <label className='block text-sm font-medium text-terminal-text mb-2 font-ocr'>
+            <label className='block text-sm font-medium text-terminal-text mb-2 font-ocr-custom'>
               Export Format
             </label>
             <div className='grid grid-cols-3 gap-2'>
@@ -218,7 +218,7 @@ export default function DateRangePicker({
                   onChange={(e) => setExportFormat(e.target.value)}
                   className='mr-2'
                 />
-                <span className='text-sm text-terminal-text font-ocr'>CSV</span>
+                <span className='text-sm text-terminal-text font-ocr-custom'>CSV</span>
               </label>
               <label className='flex items-center'>
                 <input
@@ -229,7 +229,7 @@ export default function DateRangePicker({
                   onChange={(e) => setExportFormat(e.target.value)}
                   className='mr-2'
                 />
-                <span className='text-sm text-terminal-text font-ocr'>
+                <span className='text-sm text-terminal-text font-ocr-custom'>
                   JSON
                 </span>
               </label>
@@ -242,7 +242,7 @@ export default function DateRangePicker({
                   onChange={(e) => setExportFormat(e.target.value)}
                   className='mr-2'
                 />
-                <span className='text-sm text-terminal-text font-ocr'>PDF</span>
+                <span className='text-sm text-terminal-text font-ocr-custom'>PDF</span>
               </label>
             </div>
           </div>
@@ -256,11 +256,11 @@ export default function DateRangePicker({
                 onChange={(e) => setIncludeReceipts(e.target.checked)}
                 className='mr-2'
               />
-              <span className='text-sm text-terminal-text font-ocr'>
+              <span className='text-sm text-terminal-text font-ocr-custom'>
                 Include receipts as ZIP file (when available)
               </span>
             </label>
-            <p className='text-xs text-terminal-muted font-ocr mt-1'>
+            <p className='text-xs text-terminal-muted font-ocr-custom mt-1'>
               Creates a separate ZIP file with receipt links and instructions
             </p>
           </div>
@@ -270,14 +270,14 @@ export default function DateRangePicker({
         <div className='flex items-center justify-end space-x-3 p-6 border-t border-terminal-border bg-terminal-dark'>
           <button
             onClick={onClose}
-            className='px-4 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-muted/80 transition-colors font-ocr'
+            className='px-4 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-muted/80 transition-colors font-ocr-custom'
           >
             Cancel
           </button>
           <button
             onClick={handleExport}
             disabled={exporting || !startDate || !endDate}
-            className='flex items-center px-4 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-border hover:text-terminal-green focus:outline-none focus:ring-2 focus:ring-terminal-muted focus:ring-offset-2 transition-all duration-200 font-ocr disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+            className='flex items-center px-4 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-border hover:text-terminal-green focus:outline-none focus:ring-2 focus:ring-terminal-muted focus:ring-offset-2 transition-all duration-200 font-ocr-custom disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
           >
             {exporting ? (
               <>

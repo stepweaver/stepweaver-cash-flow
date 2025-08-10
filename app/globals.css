@@ -1,9 +1,11 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Font declarations */
 @font-face {
   font-family: 'IBM 3270';
-  src: url('./fonts/IBM_3270.woff') format('woff');
+  src: url('/fonts/IBM_3270.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -11,7 +13,7 @@
 
 @font-face {
   font-family: 'OCRA';
-  src: url('./fonts/OCRA.woff') format('woff');
+  src: url('/fonts/OCRA.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -104,52 +106,6 @@
   --foreground: #1f2937;
 }
 
-/* Font weight improvements for better readability */
-.font-ocr {
-  font-weight: 500;
-}
-
-.font-ibm {
-  font-weight: 400;
-}
-
-/* Animation keyframes */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-@keyframes glitch {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-2px); }
-  40% { transform: translateX(2px); }
-  60% { transform: skewX(2deg); }
-  80% { transform: skewX(-2deg); }
-}
-
-@keyframes textGlitch {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  20% { transform: translate3d(-1px, 0, 0); }
-  40% { transform: translate3d(1px, 0, 0); }
-  60% { transform: translate3d(-1px, 0, 0); }
-  80% { transform: translate3d(1px, 0, 0); }
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-@keyframes scanlines {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.1; }
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
 /* Base HTML and body styles */
 html {
   background-color: #0d1211 !important;
@@ -176,130 +132,6 @@ body {
 .bg-gray-50,
 .bg-white {
   background-color: #0d1211 !important;
-}
-
-/* Ensure terminal classes work */
-.bg-terminal-dark {
-  background-color: #0d1211 !important;
-}
-
-.bg-terminal-light {
-  background-color: #131918 !important;
-}
-
-.text-terminal-green {
-  color: #00ff41 !important;
-}
-
-.text-terminal-text {
-  color: #e2e2e2 !important;
-}
-
-.text-terminal-muted {
-  color: #8b949e !important;
-}
-
-/* Additional color classes */
-.text-white {
-  color: #ffffff !important;
-}
-
-.text-black {
-  color: #000000 !important;
-}
-
-.text-terminal-cyan {
-  color: #56b6c2 !important;
-}
-
-.text-terminal-magenta {
-  color: #ff55ff !important;
-}
-
-.text-terminal-purple {
-  color: #a855f7 !important;
-}
-
-.text-terminal-orange {
-  color: #ffa500 !important;
-}
-
-.text-terminal-blue {
-  color: #38beff !important;
-}
-
-.text-terminal-yellow {
-  color: #ffff00 !important;
-}
-
-.text-terminal-red {
-  color: #ff3e3e !important;
-}
-
-/* Border colors */
-.border-terminal-cyan {
-  border-color: #56b6c2 !important;
-}
-
-.border-terminal-magenta {
-  border-color: #ff55ff !important;
-}
-
-.border-terminal-purple {
-  border-color: #a855f7 !important;
-}
-
-.border-terminal-orange {
-  border-color: #ffa500 !important;
-}
-
-.border-terminal-blue {
-  border-color: #38beff !important;
-}
-
-.border-terminal-yellow {
-  border-color: #ffff00 !important;
-}
-
-.border-terminal-red {
-  border-color: #ff3e3e !important;
-}
-
-.border-terminal-green {
-  border-color: #00ff41 !important;
-}
-
-/* Background colors */
-.bg-terminal-cyan {
-  background-color: #56b6c2 !important;
-}
-
-.bg-terminal-magenta {
-  background-color: #ff55ff !important;
-}
-
-.bg-terminal-purple {
-  background-color: #a855f7 !important;
-}
-
-.bg-terminal-orange {
-  background-color: #ffa500 !important;
-}
-
-.bg-terminal-blue {
-  background-color: #38beff !important;
-}
-
-.bg-terminal-yellow {
-  background-color: #ffff00 !important;
-}
-
-.bg-terminal-red {
-  background-color: #ff3e3e !important;
-}
-
-.bg-terminal-green {
-  background-color: #00ff41 !important;
 }
 
 /* Global scanline effect */
@@ -359,29 +191,4 @@ svg {
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-/* Button styles */
-.glitch-button {
-  position: relative;
-  background: var(--color-terminal-dark);
-  border: 1px solid var(--color-terminal-green);
-  color: var(--color-terminal-green);
-  padding: 0.5rem 1rem;
-  font-family: var(--font-ocr);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  transition: all 0.3s ease;
-}
-
-.glitch-button:hover {
-  background: var(--color-terminal-green);
-  color: var(--color-terminal-dark);
-  box-shadow: var(--terminal-strong-glow);
-}
-
-/* Hashtag hover effect */
-.hashtag-hover:hover {
-  color: var(--color-terminal-green);
-  text-shadow: var(--terminal-text-glow);
 }

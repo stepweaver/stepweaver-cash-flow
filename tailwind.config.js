@@ -27,14 +27,22 @@ module.exports = {
           purple: '#a855f7',
           orange: '#ffa500',
           white: '#ffffff',
+          black: '#000000',
         },
+        background: '#0d1211',
+        foreground: '#00ff00',
       },
       boxShadow: {
         'terminal-green': '0 0 6px 0 rgba(0, 255, 65, 0.5)',
+        'terminal-text-glow': '0 0 2px rgba(0, 255, 65, 0.5)',
+        'terminal-strong-glow': '0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4)',
+        'terminal-inner-glow': 'inset 0 0 80px rgba(0, 255, 65, 0.08)',
+        'crt-glow': '0 0 30px rgba(0, 255, 65, 0.15)',
+        'theme-glitch-shadow': '0 0 5px rgba(255, 0, 255, 0.8), 0 0 10px rgba(255, 0, 255, 0.4)',
       },
       fontFamily: {
-        ocr: ['var(--font-ocr)'],
-        ibm: ['var(--font-ibm)'],
+        ocr: ['OCRA', 'monospace'],
+        ibm: ['IBM 3270', 'monospace'],
       },
       animation: {
         blink: 'blink 1s step-end infinite',
@@ -42,6 +50,9 @@ module.exports = {
         fadeIn: 'fadeIn 0.3s ease-in-out',
         slideIn: 'slideIn 0.3s ease-out',
         typewriter: 'typewriter 2s steps(40, end)',
+        textGlitch: 'textGlitch 0.3s linear infinite',
+        fadeOut: 'fadeOut 0.3s ease-in-out',
+        scanlines: 'scanlines 2s linear infinite',
       },
       animationDelay: {
         '300': '300ms',
@@ -60,9 +71,20 @@ module.exports = {
           '60%': { transform: 'skewX(2deg)' },
           '80%': { transform: 'skewX(-2deg)' },
         },
+        textGlitch: {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0)' },
+          '20%': { transform: 'translate3d(-1px, 0, 0)' },
+          '40%': { transform: 'translate3d(1px, 0, 0)' },
+          '60%': { transform: 'translate3d(-1px, 0, 0)' },
+          '80%': { transform: 'translate3d(1px, 0, 0)' },
+        },
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
         },
         slideIn: {
           '0%': { transform: 'translateX(100%)' },
@@ -72,8 +94,57 @@ module.exports = {
           '0%': { width: '0' },
           '100%': { width: '100%' },
         },
+        scanlines: {
+          '0%, 100%': { opacity: '0.3' },
+          '50%': { opacity: '0.1' },
+        },
+      },
+      backgroundImage: {
+        'scanlines': 'linear-gradient(transparent 50%, rgba(0, 255, 65, 0.03) 50%)',
+      },
+      backgroundSize: {
+        'scanlines': '100% 4px',
+      },
+      fontWeight: {
+        'ocr': '500',
+        'ibm': '400',
       },
     },
   },
-  plugins: [require('@tailwindcss/typography')],
+  plugins: [
+    require('@tailwindcss/typography'),
+    function ({ addUtilities, addComponents }) {
+      // Add custom utilities
+      addUtilities({
+        '.font-ocr-custom': {
+          'font-family': 'var(--font-ocr) !important',
+          'font-weight': '500',
+        },
+        '.font-ibm-custom': {
+          'font-family': 'var(--font-ibm) !important',
+          'font-weight': '400',
+        },
+        '.glitch-button': {
+          'position': 'relative',
+          'background': 'var(--color-terminal-dark)',
+          'border': '1px solid var(--color-terminal-green)',
+          'color': 'var(--color-terminal-green)',
+          'padding': '0.5rem 1rem',
+          'font-family': 'var(--font-ocr)',
+          'text-transform': 'uppercase',
+          'letter-spacing': '0.1em',
+          'transition': 'all 0.3s ease',
+        },
+        '.glitch-button:hover': {
+          'background': 'var(--color-terminal-green)',
+          'color': 'var(--color-terminal-dark)',
+          'box-shadow': 'var(--terminal-strong-glow)',
+        },
+        '.hashtag-hover:hover': {
+          'color': 'var(--color-terminal-green)',
+          'text-shadow': 'var(--terminal-text-glow)',
+        },
+      });
+    },
+  ],
 };

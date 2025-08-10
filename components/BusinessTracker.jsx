@@ -377,16 +377,16 @@ export default function BusinessTracker() {
         <div className='flex items-center justify-center md:justify-end space-x-4'>
           <button
             onClick={() => changeMonth(-1)}
-            className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr cursor-pointer'
+            className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr-custom cursor-pointer'
           >
             ←
           </button>
-          <span className='text-lg font-semibold text-terminal-text min-w-[140px] text-center font-ocr'>
+          <span className='text-lg font-semibold text-terminal-text min-w-[140px] text-center font-ocr-custom'>
             [{monthNames[currentMonth]} {currentYear}]
           </span>
           <button
             onClick={() => changeMonth(1)}
-            className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr cursor-pointer'
+            className='w-12 h-10 flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:bg-terminal-light rounded-md transition-colors font-ocr-custom cursor-pointer'
           >
             →
           </button>
@@ -395,34 +395,34 @@ export default function BusinessTracker() {
 
       {/* Annual Summary Cards */}
       <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
-        <h3 className='text-xl font-semibold text-terminal-green mb-4 flex items-center font-ibm'>
+        <h3 className='text-xl font-semibold text-terminal-green mb-4 flex items-center font-ibm-custom'>
           <Calendar className='h-5 w-5 mr-2 lucide' />[{currentYear}]
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
           <div className='bg-terminal-dark p-4 rounded-lg border border-terminal-green bg-opacity-40'>
-            <p className='text-sm font-medium text-terminal-green font-ocr'>
+            <p className='text-sm font-medium text-terminal-green font-ocr-custom'>
               Annual Revenue
             </p>
-            <p className='text-2xl font-bold text-terminal-green font-ibm'>
+            <p className='text-2xl font-bold text-terminal-green font-ibm-custom'>
               {formatCurrency(annualRevenue)}
             </p>
           </div>
 
           <div className='bg-terminal-dark p-4 rounded-lg border border-terminal-red bg-opacity-40'>
-            <p className='text-sm font-medium text-terminal-red font-ocr'>
+            <p className='text-sm font-medium text-terminal-red font-ocr-custom'>
               Annual Expenses
             </p>
-            <p className='text-2xl font-bold text-terminal-red font-ibm'>
+            <p className='text-2xl font-bold text-terminal-red font-ibm-custom'>
               {formatCurrency(annualExpenses)}
             </p>
           </div>
 
           <div className='bg-terminal-dark p-4 rounded-lg border border-terminal-green bg-opacity-40'>
-            <p className='text-sm font-medium text-terminal-green font-ocr'>
+            <p className='text-sm font-medium text-terminal-green font-ocr-custom'>
               Annual Net Profit
             </p>
             <p
-              className={`text-2xl font-bold font-ibm ${
+              className={`text-2xl font-bold font-ibm-custom ${
                 annualNetProfit >= 0
                   ? 'text-terminal-green'
                   : 'text-terminal-red'
@@ -433,13 +433,13 @@ export default function BusinessTracker() {
           </div>
 
           <div className='bg-terminal-dark p-4 rounded-lg border border-terminal-yellow bg-opacity-40'>
-            <p className='text-sm font-medium text-terminal-yellow font-ocr'>
+            <p className='text-sm font-medium text-terminal-yellow font-ocr-custom'>
               Taxable Income
             </p>
-            <p className='text-2xl font-bold text-terminal-yellow font-ibm'>
+            <p className='text-2xl font-bold text-terminal-yellow font-ibm-custom'>
               {formatCurrency(annualTaxableIncome)}
             </p>
-            <p className='text-xs text-terminal-yellow font-ocr'>
+            <p className='text-xs text-terminal-yellow font-ocr-custom'>
               92.35% of net profit
             </p>
           </div>
@@ -447,32 +447,32 @@ export default function BusinessTracker() {
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mt-4'>
           <div className='bg-terminal-dark p-4 rounded-lg border border-terminal-yellow bg-opacity-40'>
-            <p className='text-sm font-medium text-terminal-yellow font-ocr'>
+            <p className='text-sm font-medium text-terminal-yellow font-ocr-custom'>
               Tax Reserve
             </p>
-            <p className='text-2xl font-bold text-terminal-yellow font-ibm'>
+            <p className='text-2xl font-bold text-terminal-yellow font-ibm-custom'>
               {formatCurrency(annualTaxReserve)}
             </p>
-            <p className='text-xs text-terminal-yellow font-ocr'>
+            <p className='text-xs text-terminal-yellow font-ocr-custom'>
               25% of taxable income
             </p>
           </div>
 
           <div className='bg-terminal-dark p-4 rounded-lg border border-terminal-purple bg-opacity-40'>
-            <p className='text-sm font-medium text-terminal-purple font-ocr'>
+            <p className='text-sm font-medium text-terminal-purple font-ocr-custom'>
               Total Draws
             </p>
-            <p className='text-2xl font-bold text-terminal-purple font-ibm'>
+            <p className='text-2xl font-bold text-terminal-purple font-ibm-custom'>
               {formatCurrency(annualDraws)}
             </p>
           </div>
 
           <div className='bg-terminal-dark p-4 rounded-lg border border-terminal-magenta bg-opacity-40'>
-            <p className='text-sm font-medium text-terminal-magenta font-ocr'>
+            <p className='text-sm font-medium text-terminal-magenta font-ocr-custom'>
               Drawable Cash
             </p>
             <p
-              className={`text-2xl font-bold font-ibm ${
+              className={`text-2xl font-bold font-ibm-custom ${
                 annualDrawableCash > 0
                   ? 'text-terminal-magenta'
                   : annualDrawableCash < 0
@@ -482,7 +482,7 @@ export default function BusinessTracker() {
             >
               {formatCurrency(annualDrawableCash)}
             </p>
-            <p className='text-xs text-terminal-magenta font-ocr'>
+            <p className='text-xs text-terminal-magenta font-ocr-custom'>
               Available for owner's draw
             </p>
           </div>
@@ -491,7 +491,7 @@ export default function BusinessTracker() {
 
       {/* Monthly Summary Cards */}
       <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
-        <h3 className='text-xl font-semibold text-terminal-green mb-4 flex items-center font-ibm'>
+        <h3 className='text-xl font-semibold text-terminal-green mb-4 flex items-center font-ibm-custom'>
           <Calendar className='h-5 w-5 mr-2 lucide' />[
           {monthNames[currentMonth]} {currentYear}]
         </h3>
@@ -502,10 +502,10 @@ export default function BusinessTracker() {
                 <TrendingUp className='h-6 w-6 text-terminal-green lucide' />
               </div>
               <div className='ml-4'>
-                <p className='text-sm font-medium text-terminal-muted font-ocr'>
+                <p className='text-sm font-medium text-terminal-muted font-ocr-custom'>
                   Revenue
                 </p>
-                <p className='text-2xl font-bold text-terminal-green font-ibm'>
+                <p className='text-2xl font-bold text-terminal-green font-ibm-custom'>
                   {formatCurrency(monthlyRevenue)}
                 </p>
               </div>
@@ -518,10 +518,10 @@ export default function BusinessTracker() {
                 <TrendingDown className='h-6 w-6 text-terminal-red lucide' />
               </div>
               <div className='ml-4'>
-                <p className='text-sm font-medium text-terminal-muted font-ocr'>
+                <p className='text-sm font-medium text-terminal-muted font-ocr-custom'>
                   Expenses
                 </p>
-                <p className='text-2xl font-bold text-terminal-red font-ibm'>
+                <p className='text-2xl font-bold text-terminal-red font-ibm-custom'>
                   {formatCurrency(monthlyExpenses)}
                 </p>
               </div>
@@ -534,10 +534,10 @@ export default function BusinessTracker() {
                 <DollarSign className='h-6 w-6 text-terminal-purple lucide' />
               </div>
               <div className='ml-4'>
-                <p className='text-sm font-medium text-terminal-muted font-ocr'>
+                <p className='text-sm font-medium text-terminal-muted font-ocr-custom'>
                   Draws
                 </p>
-                <p className='text-2xl font-bold text-terminal-purple font-ibm'>
+                <p className='text-2xl font-bold text-terminal-purple font-ibm-custom'>
                   {formatCurrency(monthlyDraws)}
                 </p>
               </div>
@@ -562,11 +562,11 @@ export default function BusinessTracker() {
                 />
               </div>
               <div className='ml-4'>
-                <p className='text-sm font-medium text-terminal-muted font-ocr'>
+                <p className='text-sm font-medium text-terminal-muted font-ocr-custom'>
                   Net Income
                 </p>
                 <p
-                  className={`text-2xl font-bold font-ibm ${
+                  className={`text-2xl font-bold font-ibm-custom ${
                     monthlyNetIncome >= 0
                       ? 'text-terminal-green'
                       : 'text-terminal-red'
@@ -582,13 +582,13 @@ export default function BusinessTracker() {
 
       {/* Add Transaction Form */}
       <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
-        <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm'>
+        <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm-custom'>
           Add Transaction
         </h3>
         <form onSubmit={handleAddTransaction} className='space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
             <div>
-              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                 Description
               </label>
               <input
@@ -596,13 +596,13 @@ export default function BusinessTracker() {
                 value={newTransactionDescription}
                 onChange={(e) => setNewTransactionDescription(e.target.value)}
                 placeholder='Transaction description'
-                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                 required
               />
             </div>
 
             <div>
-              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                 Amount
               </label>
               <input
@@ -610,7 +610,7 @@ export default function BusinessTracker() {
                 value={newTransactionAmount}
                 onChange={(e) => setNewTransactionAmount(e.target.value)}
                 placeholder='0.00'
-                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                 min='0'
                 step='0.01'
                 required
@@ -618,13 +618,13 @@ export default function BusinessTracker() {
             </div>
 
             <div>
-              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                 Type
               </label>
               <select
                 value={newTransactionType}
                 onChange={(e) => setNewTransactionType(e.target.value)}
-                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
               >
                 <option value='revenue'>Revenue</option>
                 <option value='expense'>Expense</option>
@@ -633,14 +633,14 @@ export default function BusinessTracker() {
             </div>
 
             <div>
-              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+              <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
                 Date
               </label>
               <input
                 type='date'
                 value={newTransactionDate}
                 onChange={(e) => setNewTransactionDate(e.target.value)}
-                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+                className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
                 required
               />
             </div>
@@ -648,7 +648,7 @@ export default function BusinessTracker() {
 
           {/* Receipt Upload Section - Integrated */}
           <div className='border-t border-terminal-border pt-4'>
-            <label className='block text-sm font-medium text-terminal-text mb-2 font-ocr'>
+            <label className='block text-sm font-medium text-terminal-text mb-2 font-ocr-custom'>
               <Paperclip className='h-4 w-4 inline mr-1 lucide' />
               Attach Receipts (Optional)
             </label>
@@ -658,7 +658,7 @@ export default function BusinessTracker() {
             />
             {receiptFiles.length > 0 && (
               <div className='mt-3 p-3 bg-terminal-dark rounded-md border border-terminal-green'>
-                <p className='text-sm text-terminal-green font-ocr'>
+                <p className='text-sm text-terminal-green font-ocr-custom'>
                   {receiptFiles.length} receipt
                   {receiptFiles.length !== 1 ? 's' : ''} ready to attach
                 </p>
@@ -669,7 +669,7 @@ export default function BusinessTracker() {
           <div className='flex justify-center md:justify-start'>
             <button
               type='submit'
-              className='flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr cursor-pointer'
+              className='flex items-center px-4 py-2 bg-terminal-green text-black rounded-md hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr-custom cursor-pointer'
             >
               <Plus className='h-4 w-4 mr-2 lucide' />
               Add Transaction
@@ -681,12 +681,12 @@ export default function BusinessTracker() {
       {/* Transactions Table */}
       <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
         <div className='px-6 py-4 border-b border-terminal-border flex items-center justify-between'>
-          <h3 className='text-lg font-semibold text-terminal-green font-ibm'>
+          <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
             Transactions
           </h3>
           <button
             onClick={() => setShowExportModal(true)}
-            className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ocr cursor-pointer'
+            className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ocr-custom cursor-pointer'
           >
             <Download className='h-3 w-3 mr-1 lucide' />
             Export
@@ -700,22 +700,22 @@ export default function BusinessTracker() {
               <table className='min-w-full divide-y divide-terminal-border'>
                 <thead className='bg-terminal-dark'>
                   <tr>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Date
                     </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Type
                     </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Description
                     </th>
-                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Amount
                     </th>
-                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Receipts
                     </th>
-                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr'>
+                    <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ocr-custom'>
                       Actions
                     </th>
                   </tr>
@@ -723,7 +723,7 @@ export default function BusinessTracker() {
                 <tbody className='bg-terminal-light divide-y divide-terminal-border'>
                   {filteredMonthlyTransactions.map((transaction) => (
                     <tr key={transaction.id} className='hover:bg-terminal-dark'>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr'>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ocr-custom'>
                         {formatDate(transaction.date)}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap'>
@@ -742,10 +742,10 @@ export default function BusinessTracker() {
                               transaction.type.slice(1)}
                         </span>
                       </td>
-                      <td className='px-6 py-4 text-sm text-terminal-text font-ocr'>
+                      <td className='px-6 py-4 text-sm text-terminal-text font-ocr-custom'>
                         {transaction.description}
                       </td>
-                      <td className='px-6 py-4 text-sm text-terminal-text text-right font-ocr'>
+                      <td className='px-6 py-4 text-sm text-terminal-text text-right font-ocr-custom'>
                         {formatCurrency(transaction.amount)}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-center'>
@@ -753,7 +753,7 @@ export default function BusinessTracker() {
                         transaction.receipts.length > 0 ? (
                           <button
                             onClick={() => openReceiptViewer(transaction)}
-                            className='inline-flex items-center px-2 py-1 text-xs bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr'
+                            className='inline-flex items-center px-2 py-1 text-xs bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr-custom'
                             title={`View ${
                               transaction.receipts.length
                             } receipt${
@@ -764,7 +764,7 @@ export default function BusinessTracker() {
                             {transaction.receipts.length}
                           </button>
                         ) : (
-                          <span className='text-terminal-muted text-xs font-ocr'>
+                          <span className='text-terminal-muted text-xs font-ocr-custom'>
                             -
                           </span>
                         )}
@@ -804,11 +804,11 @@ export default function BusinessTracker() {
                   <div className='flex justify-between items-center mb-2'>
                     <div className='flex-1'>
                       <div className='flex items-center justify-between'>
-                        <span className='text-xs text-terminal-muted font-ocr'>
+                        <span className='text-xs text-terminal-muted font-ocr-custom'>
                           {formatDate(transaction.date)}
                         </span>
                         <p
-                          className={`text-lg font-bold font-ibm ${
+                          className={`text-lg font-bold font-ibm-custom ${
                             transaction.type === 'revenue'
                               ? 'text-terminal-green'
                               : transaction.type === 'expense'
@@ -821,7 +821,7 @@ export default function BusinessTracker() {
                             : `-${formatCurrency(transaction.amount)}`}
                         </p>
                       </div>
-                      <h4 className='text-terminal-text font-medium font-ocr text-sm mt-1'>
+                      <h4 className='text-terminal-text font-medium font-ocr-custom text-sm mt-1'>
                         {transaction.description}
                       </h4>
                     </div>
@@ -833,7 +833,7 @@ export default function BusinessTracker() {
                       transaction.receipts.length > 0 ? (
                         <button
                           onClick={() => openReceiptViewer(transaction)}
-                          className='inline-flex items-center px-2 py-1 text-xs bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr'
+                          className='inline-flex items-center px-2 py-1 text-xs bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ocr-custom'
                           title={`View ${transaction.receipts.length} receipt${
                             transaction.receipts.length !== 1 ? 's' : ''
                           }`}
@@ -842,7 +842,7 @@ export default function BusinessTracker() {
                           {transaction.receipts.length}
                         </button>
                       ) : (
-                        <span className='text-terminal-muted text-xs font-ocr'>
+                        <span className='text-terminal-muted text-xs font-ocr-custom'>
                           No receipts
                         </span>
                       )}
@@ -871,7 +871,7 @@ export default function BusinessTracker() {
           </>
         ) : (
           <div className='px-6 py-12 text-center'>
-            <p className='text-terminal-muted font-ocr'>
+            <p className='text-terminal-muted font-ocr-custom'>
               No transactions for this month yet. Add some above!
             </p>
           </div>
@@ -960,7 +960,7 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
       <div className='bg-terminal-light rounded-lg max-w-md w-full mx-4 border border-terminal-border'>
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-terminal-border'>
-          <h3 className='text-lg font-semibold text-terminal-green font-ibm'>
+          <h3 className='text-lg font-semibold text-terminal-green font-ibm-custom'>
             Edit Transaction
           </h3>
           <button
@@ -974,7 +974,7 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
         {/* Content */}
         <form onSubmit={handleSubmit} className='p-6 space-y-4'>
           <div>
-            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
               Description
             </label>
             <input
@@ -982,13 +982,13 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder='Transaction description'
-              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
               required
             />
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
               Amount
             </label>
             <input
@@ -996,7 +996,7 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder='0.00'
-              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
               min='0'
               step='0.01'
               required
@@ -1004,13 +1004,13 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
               Type
             </label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
             >
               <option value='revenue'>Revenue</option>
               <option value='expense'>Expense</option>
@@ -1019,14 +1019,14 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr'>
+            <label className='block text-sm font-medium text-terminal-text mb-1 font-ocr-custom'>
               Date
             </label>
             <input
               type='date'
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr'
+              className='w-full px-3 py-2 border border-terminal-border rounded-md focus:outline-none focus:ring-2 focus:ring-terminal-green focus:border-transparent bg-terminal-dark text-terminal-text font-ocr-custom'
               required
             />
           </div>
@@ -1036,13 +1036,13 @@ function EditTransactionModal({ isOpen, onClose, onSave, transaction }) {
             <button
               type='button'
               onClick={onClose}
-              className='px-4 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-muted/80 transition-colors font-ocr'
+              className='px-4 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-muted/80 transition-colors font-ocr-custom'
             >
               Cancel
             </button>
             <button
               type='submit'
-              className='px-4 py-2 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr'
+              className='px-4 py-2 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ocr-custom'
             >
               Save Changes
             </button>
