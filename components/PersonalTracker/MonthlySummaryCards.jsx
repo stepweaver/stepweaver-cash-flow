@@ -16,6 +16,7 @@ export default function MonthlySummaryCards({
   discretionaryIncome,
   pendingBillsCount,
   paidBillsCount,
+  unsetBillsCount,
 }) {
   return (
     <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
@@ -120,10 +121,13 @@ export default function MonthlySummaryCards({
                 Bills Status
               </p>
               <p className='text-2xl font-bold text-terminal-purple font-ibm-custom'>
-                {pendingBillsCount}
+                {pendingBillsCount + unsetBillsCount}
               </p>
               <p className='text-xs text-terminal-muted font-ibm'>
-                Pending • {paidBillsCount} Paid
+                {pendingBillsCount} Pending • {paidBillsCount} Paid
+              </p>
+              <p className='text-xs text-terminal-muted font-ibm'>
+                {unsetBillsCount} -
               </p>
             </div>
           </div>

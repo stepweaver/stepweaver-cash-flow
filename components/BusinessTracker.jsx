@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Download } from 'lucide-react';
 import ReceiptViewer from './ReceiptViewer';
 import DateRangePicker from './DateRangePicker';
-import { useBusinessTracker } from '../hooks/useBusinessTracker';
+import { useBusinessTracker } from '@/hooks/useBusinessTracker';
 import SummaryCards from './BusinessTracker/SummaryCards';
 import AnnualSummaryCards from './BusinessTracker/AnnualSummaryCards';
 import MonthNavigation from './BusinessTracker/MonthNavigation';

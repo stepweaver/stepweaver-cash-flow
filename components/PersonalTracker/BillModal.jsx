@@ -16,7 +16,7 @@ export default function BillModal({
     name: '',
     amount: '',
     dueDate: '',
-    status: 'pending',
+    status: null, // Start with null (which shows as "-")
     notes: '',
   });
 
@@ -26,7 +26,7 @@ export default function BillModal({
         name: editingBill.name || '',
         amount: editingBill.amount?.toString() || '',
         dueDate: editingBill.dueDate || '',
-        status: editingBill.status || 'pending',
+        status: editingBill.status || null, // Keep null if no status
         notes: editingBill.notes || '',
       });
     } else {
@@ -34,7 +34,7 @@ export default function BillModal({
         name: '',
         amount: '',
         dueDate: '',
-        status: 'pending',
+        status: null, // Start with null (which shows as "-")
         notes: '',
       });
     }
@@ -45,7 +45,7 @@ export default function BillModal({
     const billData = {
       ...formData,
       amount: parseFloat(formData.amount) || 0,
-      dueDate: formData.dueDate || new Date().toISOString().split('T')[0],
+      dueDate: formData.dueDate || '', // Keep blank if no date set
     };
 
     onSave(billData);
@@ -120,7 +120,6 @@ export default function BillModal({
               value={formData.dueDate}
               onChange={handleChange}
               className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-red focus:border-transparent font-ibm'
-              required
             />
           </div>
 
@@ -130,13 +129,13 @@ export default function BillModal({
             </label>
             <select
               name='status'
-              value={formData.status}
+              value={formData.status || ''}
               onChange={handleChange}
               className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text focus:outline-none focus:ring-2 focus:ring-terminal-red focus:border-transparent font-ibm'
             >
+              <option value=''>-</option>
               <option value='pending'>Pending</option>
               <option value='paid'>Paid</option>
-              <option value='overdue'>Overdue</option>
             </select>
           </div>
 

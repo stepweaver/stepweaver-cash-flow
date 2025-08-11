@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Download, Calendar } from 'lucide-react';
-import { formatDate, createLocalDate } from '../lib/utils';
+import { formatDate, createLocalDate } from '@/lib/utils';
 
 export default function DateRangePicker({
   isOpen,

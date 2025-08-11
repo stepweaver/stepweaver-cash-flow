@@ -1,12 +1,11 @@
 'use client';
 
-import { usePersonalTracker } from '../hooks/usePersonalTracker';
+import { usePersonalTracker } from '@/hooks/usePersonalTracker';
 import MonthNavigation from './PersonalTracker/MonthNavigation';
 import MonthlySummaryCards from './PersonalTracker/MonthlySummaryCards';
 import QuickActionsPanel from './PersonalTracker/QuickActionsPanel';
 import IncomeSection from './PersonalTracker/IncomeSection';
 import BillsSection from './PersonalTracker/BillsSection';
-import BillTemplatesSection from './PersonalTracker/BillTemplatesSection';
 import IncomeModal from './PersonalTracker/IncomeModal';
 import BillModal from './PersonalTracker/BillModal';
 import ExportModal from './PersonalTracker/ExportModal';
@@ -37,6 +36,7 @@ export default function PersonalTracker() {
     paidBillsCount,
     incomeWithColors,
     billsWithColorCoding,
+    unsetBillsCount,
 
     // Actions
     changeMonth,
@@ -53,6 +53,7 @@ export default function PersonalTracker() {
     handleDeleteTemplate,
     handleUpdateTemplate,
     handleGenerateBills,
+    loadData,
 
     // Modal controls
     setShowIncomeModal,
@@ -90,6 +91,7 @@ export default function PersonalTracker() {
         discretionaryIncome={discretionaryIncome}
         pendingBillsCount={pendingBillsCount}
         paidBillsCount={paidBillsCount}
+        unsetBillsCount={unsetBillsCount}
       />
 
       {/* Quick Actions Panel */}
@@ -97,6 +99,9 @@ export default function PersonalTracker() {
         onAddIncome={openIncomeModal}
         onAddBill={openBillModal}
         onExport={() => setShowExportModal(true)}
+        onGenerateBills={handleGenerateBills}
+        currentMonth={currentMonth}
+        currentYear={currentYear}
       />
 
       {/* Income Section */}
@@ -116,18 +121,6 @@ export default function PersonalTracker() {
         onEdit={editItem}
         onDelete={handleDeleteBill}
         onStatusChange={handleStatusChange}
-      />
-
-      {/* Bill Templates Section */}
-      <BillTemplatesSection
-        billTemplates={billTemplates}
-        onSaveTemplate={handleSaveTemplate}
-        onDeleteTemplate={handleDeleteTemplate}
-        onUpdateTemplate={handleUpdateTemplate}
-        onGenerateBills={handleGenerateBills}
-        currentMonth={currentMonth}
-        currentYear={currentYear}
-        monthNames={monthNames}
       />
 
       {/* Income Modal */}

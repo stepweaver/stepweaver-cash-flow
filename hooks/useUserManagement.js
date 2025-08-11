@@ -4,7 +4,7 @@ import {
   getUsers,
   deleteUserAccount,
   updateUserRole,
-} from '../lib/firebase';
+} from '@/lib/firebase';
 
 export function useUserManagement() {
   const [email, setEmail] = useState('');

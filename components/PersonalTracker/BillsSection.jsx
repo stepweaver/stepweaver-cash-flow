@@ -1,6 +1,13 @@
 'use client';
 
-import { Trash2, Edit3, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import {
+  Trash2,
+  Edit3,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  ChevronDown,
+} from 'lucide-react';
 import { formatDate, formatCurrency, createLocalDate } from '@/lib/utils';
 
 export default function BillsSection({
@@ -11,6 +18,39 @@ export default function BillsSection({
   onDelete,
   onStatusChange,
 }) {
+  // Status options with their corresponding colors and icons
+  const statusOptions = [
+    {
+      value: null,
+      label: '-',
+      color: 'bg-terminal-muted/20 text-terminal-muted',
+      icon: AlertCircle,
+    },
+    {
+      value: 'pending',
+      label: 'Pending',
+      color: 'bg-terminal-yellow/20 text-terminal-yellow',
+      icon: Clock,
+    },
+    {
+      value: 'paid',
+      label: 'Paid',
+      color: 'bg-terminal-green/20 text-terminal-green',
+      icon: CheckCircle,
+    },
+  ];
+
+  const getStatusOption = (status) => {
+    return (
+      statusOptions.find((option) => option.value === status) ||
+      statusOptions[0]
+    );
+  };
+
+  const handleStatusChange = (billId, newStatus) => {
+    onStatusChange(billId, newStatus);
+  };
+
   return (
     <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
       <div className='px-6 py-4 border-b border-terminal-border'>
@@ -47,138 +87,166 @@ export default function BillsSection({
                 </tr>
               </thead>
               <tbody className='bg-terminal-light divide-y divide-terminal-border'>
-                {billsWithColorCoding.map((bill) => (
-                  <tr key={bill.id} className='hover:bg-terminal-dark'>
-                    <td
-                      className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm'
-                      style={getColorStyles(bill.colorIndex)}
-                    >
-                      {bill.name}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ibm'>
-                      {formatDate(createLocalDate(bill.dueDate))}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ibm'>
-                      {formatCurrency(bill.amountDue)}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-center'>
-                      <button
-                        onClick={() => onStatusChange(bill.id)}
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-ibm cursor-pointer transition-colors ${
-                          (bill.status || '').toLowerCase() === 'paid'
-                            ? 'bg-terminal-green/20 text-terminal-green hover:bg-terminal-green/30'
-                            : (bill.status || '').toLowerCase() === 'pending'
-                            ? 'bg-terminal-yellow/20 text-terminal-yellow hover:bg-terminal-yellow/30'
-                            : 'bg-terminal-red/20 text-terminal-red hover:bg-terminal-red/30'
-                        }`}
+                {billsWithColorCoding.map((bill) => {
+                  const currentStatus = getStatusOption(bill.status);
+                  const StatusIcon = currentStatus.icon;
+
+                  return (
+                    <tr key={bill.id} className='hover:bg-terminal-dark'>
+                      <td
+                        className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm'
+                        style={getColorStyles(bill.colorIndex)}
                       >
-                        {(bill.status || '').toLowerCase() === 'paid' ? (
-                          <CheckCircle className='h-3 w-3 mr-1 lucide' />
-                        ) : (bill.status || '').toLowerCase() === 'pending' ? (
-                          <Clock className='h-3 w-3 mr-1 lucide' />
-                        ) : (
-                          <AlertCircle className='h-3 w-3 mr-1 lucide' />
-                        )}
-                        {(bill.status || 'pending').charAt(0).toUpperCase() +
-                          (bill.status || 'pending').slice(1)}
-                      </button>
-                    </td>
-                    <td className='px-6 py-4 text-sm text-terminal-text font-ibm'>
-                      {bill.notes}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-center'>
-                      <div className='flex justify-center space-x-2'>
-                        <button
-                          onClick={() => onEdit(bill, 'bill')}
-                          className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
-                          title='Edit bill'
-                        >
-                          <Edit3 className='h-4 w-4 lucide' />
-                        </button>
-                        <button
-                          onClick={() => onDelete(bill.id)}
-                          className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
-                          title='Delete bill'
-                        >
-                          <Trash2 className='h-4 w-4 lucide' />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                        {bill.name}
+                      </td>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ibm'>
+                        {bill.dueDate
+                          ? formatDate(createLocalDate(bill.dueDate))
+                          : '-'}
+                      </td>
+                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ibm'>
+                        {formatCurrency(bill.amountDue)}
+                      </td>
+                      <td className='px-6 py-4 whitespace-nowrap text-center'>
+                        <div className='relative inline-block'>
+                          <select
+                            value={bill.status || ''}
+                            onChange={(e) =>
+                              handleStatusChange(
+                                bill.id,
+                                e.target.value || null
+                              )
+                            }
+                            className={`appearance-none inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium font-ibm cursor-pointer transition-colors border-0 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 ${currentStatus.color}`}
+                          >
+                            {statusOptions.map((option) => {
+                              const OptionIcon = option.icon;
+                              return (
+                                <option
+                                  key={option.value}
+                                  value={option.value || ''}
+                                  className='bg-terminal-dark text-terminal-text'
+                                >
+                                  {option.label}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
+                            <ChevronDown className='h-3 w-3 lucide' />
+                          </div>
+                        </div>
+                      </td>
+                      <td className='px-6 py-4 text-sm text-terminal-text font-ibm'>
+                        {bill.notes}
+                      </td>
+                      <td className='px-6 py-4 whitespace-nowrap text-center'>
+                        <div className='flex justify-center space-x-2'>
+                          <button
+                            onClick={() => onEdit(bill, 'bill')}
+                            className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
+                            title='Edit bill'
+                          >
+                            <Edit3 className='h-4 w-4 lucide' />
+                          </button>
+                          <button
+                            onClick={() => onDelete(bill.id)}
+                            className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
+                            title='Delete bill'
+                          >
+                            <Trash2 className='h-4 w-4 lucide' />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
           {/* Mobile Card View */}
           <div className='md:hidden space-y-2 p-4'>
-            {billsWithColorCoding.map((bill) => (
-              <div
-                key={bill.id}
-                className='bg-terminal-dark p-3 rounded border border-terminal-border'
-                style={getColorStyles(bill.colorIndex)}
-              >
-                <div className='flex justify-between items-center mb-2'>
-                  <div className='flex-1'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-xs text-terminal-muted font-ibm'>
-                        {formatDate(createLocalDate(bill.dueDate))}
-                      </span>
-                      <p className='text-lg font-bold text-terminal-red font-ibm-custom'>
-                        {formatCurrency(bill.amountDue)}
-                      </p>
+            {billsWithColorCoding.map((bill) => {
+              const currentStatus = getStatusOption(bill.status);
+              const StatusIcon = currentStatus.icon;
+
+              return (
+                <div
+                  key={bill.id}
+                  className='bg-terminal-dark p-3 rounded border border-terminal-border'
+                  style={getColorStyles(bill.colorIndex)}
+                >
+                  <div className='flex justify-between items-center mb-2'>
+                    <div className='flex-1'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-xs text-terminal-muted font-ibm'>
+                          {bill.dueDate
+                            ? formatDate(createLocalDate(bill.dueDate))
+                            : '-'}
+                        </span>
+                        <p className='text-lg font-bold text-terminal-red font-ibm-custom'>
+                          {formatCurrency(bill.amountDue)}
+                        </p>
+                      </div>
+                      <h4 className='text-terminal-text font-medium font-ibm text-sm mt-1'>
+                        {bill.name}
+                      </h4>
+                      {bill.notes && (
+                        <p className='text-xs text-terminal-muted font-ibm mt-1'>
+                          {bill.notes}
+                        </p>
+                      )}
                     </div>
-                    <h4 className='text-terminal-text font-medium font-ibm text-sm mt-1'>
-                      {bill.name}
-                    </h4>
-                    {bill.notes && (
-                      <p className='text-xs text-terminal-muted font-ibm mt-1'>
-                        {bill.notes}
-                      </p>
-                    )}
+                  </div>
+
+                  <div className='flex items-center justify-between pt-2 border-t border-terminal-border'>
+                    <div className='relative inline-block'>
+                      <select
+                        value={bill.status || ''}
+                        onChange={(e) =>
+                          handleStatusChange(bill.id, e.target.value || null)
+                        }
+                        className={`appearance-none inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium font-ibm cursor-pointer transition-colors border-0 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 ${currentStatus.color}`}
+                      >
+                        {statusOptions.map((option) => {
+                          const OptionIcon = option.icon;
+                          return (
+                            <option
+                              key={option.value}
+                              value={option.value || ''}
+                              className='bg-terminal-dark text-terminal-text'
+                            >
+                              {option.label}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
+                        <ChevronDown className='h-3 w-3 lucide' />
+                      </div>
+                    </div>
+
+                    <div className='flex items-center space-x-3'>
+                      <button
+                        onClick={() => onEdit(bill, 'bill')}
+                        className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
+                        title='Edit bill'
+                      >
+                        <Edit3 className='h-3 w-3 lucide' />
+                      </button>
+                      <button
+                        onClick={() => onDelete(bill.id)}
+                        className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
+                        title='Delete bill'
+                      >
+                        <Trash2 className='h-3 w-3 lucide' />
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                <div className='flex items-center justify-between pt-2 border-t border-terminal-border'>
-                  <button
-                    onClick={() => onStatusChange(bill.id)}
-                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium font-ibm cursor-pointer transition-colors ${
-                      (bill.status || '').toLowerCase() === 'paid'
-                        ? 'bg-terminal-green/20 text-terminal-green hover:bg-terminal-green/30'
-                        : (bill.status || '').toLowerCase() === 'pending'
-                        ? 'bg-terminal-yellow/20 text-terminal-yellow hover:bg-terminal-yellow/30'
-                        : 'bg-terminal-red/20 text-terminal-red hover:bg-terminal-red/30'
-                    }`}
-                  >
-                    {bill.status === 'paid' ? (
-                      <CheckCircle className='h-3 w-3 mr-1 lucide' />
-                    ) : bill.status === 'pending' ? (
-                      <Clock className='h-3 w-3 mr-1 lucide' />
-                    ) : (
-                      <AlertCircle className='h-3 w-3 mr-1 lucide' />
-                    )}
-                    {bill.status.charAt(0).toUpperCase() + bill.status.slice(1)}
-                  </button>
-
-                  <div className='flex items-center space-x-3'>
-                    <button
-                      onClick={() => onEdit(bill, 'bill')}
-                      className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
-                      title='Edit bill'
-                    >
-                      <Edit3 className='h-3 w-3 lucide' />
-                    </button>
-                    <button
-                      onClick={() => onDelete(bill.id)}
-                      className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
-                      title='Delete bill'
-                    >
-                      <Trash2 className='h-3 w-3 lucide' />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       ) : (

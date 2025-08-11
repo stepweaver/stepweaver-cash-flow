@@ -1,7 +1,7 @@
 'use client';
 
-import PageLayout from '../../components/Layout/PageLayout';
-import PersonalTracker from '../../components/PersonalTracker';
+import PageLayout from '@/components/Layout/PageLayout';
+import PersonalTracker from '@/components/PersonalTracker';
 
 export default function PersonalPage() {
   return (

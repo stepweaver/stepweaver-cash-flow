@@ -1,13 +1,24 @@
 'use client';
 
 import UserManagement from '@/components/Admin/UserManagement.jsx';
+import BillTemplatesAdmin from '@/components/Admin/BillTemplatesAdmin.jsx';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import Link from 'next/link';
 import { useAuth } from '@/lib/authContext';
+import { usePersonalTracker } from '@/hooks/usePersonalTracker';
 import { LogOut } from 'lucide-react';
 
 export default function AdminPage() {
   const { logout } = useAuth();
+  const {
+    billTemplates,
+    handleSaveTemplate,
+    handleDeleteTemplate,
+    handleUpdateTemplate,
+    currentMonth,
+    currentYear,
+    monthNames,
+  } = usePersonalTracker();
 
   const handleLogout = async () => {
     await logout();
@@ -65,6 +76,15 @@ export default function AdminPage() {
 
         {/* Main Content */}
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12'>
+          <BillTemplatesAdmin
+            billTemplates={billTemplates}
+            onSaveTemplate={handleSaveTemplate}
+            onDeleteTemplate={handleDeleteTemplate}
+            onUpdateTemplate={handleUpdateTemplate}
+            currentMonth={currentMonth}
+            currentYear={currentYear}
+            monthNames={monthNames}
+          />
           <UserManagement />
         </div>
       </div>

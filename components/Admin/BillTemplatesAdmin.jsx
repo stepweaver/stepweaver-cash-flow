@@ -3,12 +3,11 @@
 import { useState } from 'react';
 import { Trash2, Edit3, Plus, X } from 'lucide-react';
 
-export default function BillTemplatesSection({
+export default function BillTemplatesAdmin({
   billTemplates,
   onSaveTemplate,
   onDeleteTemplate,
   onUpdateTemplate,
-  onGenerateBills,
   currentMonth,
   currentYear,
   monthNames,
@@ -77,19 +76,13 @@ export default function BillTemplatesSection({
   };
 
   return (
-    <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
+    <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden mb-8'>
       <div className='px-6 py-4 border-b border-terminal-border'>
         <div className='flex items-center justify-between'>
           <h3 className='text-lg font-semibold text-terminal-purple font-ibm-custom'>
-            Bill Templates
+            Bill Templates Management
           </h3>
-          <div className='flex items-center space-x-3'>
-            <button
-              onClick={() => onGenerateBills(currentMonth, currentYear)}
-              className='px-3 py-1 text-sm bg-terminal-purple text-white rounded hover:bg-terminal-purple/80 transition-colors font-ibm cursor-pointer'
-            >
-              Generate Bills
-            </button>
+          <div className='flex items-center space-x-2'>
             <button
               onClick={() => setShowTemplateForm(true)}
               className='flex items-center px-3 py-1 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm cursor-pointer'

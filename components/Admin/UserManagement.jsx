@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserManagement } from '../../hooks/useUserManagement';
+import { useUserManagement } from '@/hooks/useUserManagement';
 import UserCreationForm from './UserCreationForm';
 import UsersList from './UsersList';
 import { Users } from 'lucide-react';

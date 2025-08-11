@@ -10,7 +10,7 @@ import {
   addBillTemplate,
   updateBillTemplate,
   deleteBillTemplate,
-  deletePersonalBillFromCurrentAndFuture,
+
   generateBillsForMonth,
 } from '@/lib/firebase';
 import {
@@ -30,6 +30,17 @@ import {
 
 // Get initial personal data for the current month - matching Google Sheet structure
 const getInitialPersonalData = (year, month) => {
+  const currentDate = new Date();
+  const requestedDate = new Date(year, month - 1, 1);
+
+  // Only return sample data for current month, not for future months
+  if (requestedDate > currentDate) {
+    return {
+      income: [],
+      bills: [],
+    };
+  }
+
   // Return flat structure directly instead of nested month-keyed structure
   return {
     income: [
@@ -120,106 +131,186 @@ export function usePersonalTracker() {
   // Export functionality
   const [showExportModal, setShowExportModal] = useState(false);
 
-  // Load data from Firebase on mount
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Load bill templates
-        const templates = await getBillTemplates();
-        setBillTemplates(templates);
+  // Load data function - moved outside useEffect so it can be reused
+  const loadData = async (skipFutureMonthCheck = false) => {
+    try {
+      // Load bill templates
+      const templates = await getBillTemplates();
+      setBillTemplates(templates);
 
-        // Load personal data for the month
-        const data = await getPersonalData(currentYear, currentMonth + 1);
+      // Load personal data for the month
+      const monthParam = currentMonth + 1; // Convert 0-indexed to 1-indexed
+      console.log('Loading data for month/year:', { monthParam, currentYear });
 
-        // Debug logging to help identify data structure issues
-        console.log('Loaded personal data:', data);
-        if (data.bills && data.bills.length > 0) {
-          console.log('Sample bill structure:', data.bills[0]);
+      const data = await getPersonalData(currentYear, monthParam);
+
+      // Debug logging to help identify data structure issues
+      console.log('Loaded personal data:', data);
+      console.log('Month parameters:', {
+        currentYear,
+        currentMonth,
+        calculatedMonth: monthParam,
+        viewingMonth: monthParam,
+        viewingYear: currentYear
+      });
+      if (data.bills && data.bills.length > 0) {
+        console.log('Sample bill structure:', data.bills[0]);
+        console.log('Total bills loaded:', data.bills.length);
+      } else {
+        console.log('No bills loaded for this month');
+      }
+      if (data.income && data.income.length > 0) {
+        console.log('Sample income structure:', data.income[0]);
+        console.log('Total income loaded:', data.income.length);
+      } else {
+        console.log('No income loaded for this month');
+      }
+
+      // Clear notes for future months (notes should not persist forward)
+      const currentDate = new Date();
+      const viewingDate = new Date(currentYear, currentMonth, 1);
+
+      console.log('Date comparison:', {
+        currentDate: currentDate.toISOString(),
+        viewingDate: viewingDate.toISOString(),
+        isFutureMonth: viewingDate > currentDate,
+        currentYear,
+        currentMonth: currentMonth + 1,
+        skipFutureMonthCheck
+      });
+
+      // Only clear bills for future months if we're not skipping the check (e.g., after generating bills)
+      if (viewingDate > currentDate && !skipFutureMonthCheck) {
+        // For future months, start with empty bills array - bills must be generated manually
+        console.log('Viewing future month, clearing bills array');
+        data.bills = [];
+        data.income = data.income.map((income) => ({
+          ...income,
+          notes: '', // Clear notes for future months
+        }));
+      } else if (viewingDate > currentDate && skipFutureMonthCheck) {
+        console.log('Skipping future month bill clearing (bills were just generated)');
+      }
+
+      // Sort bills by due date
+      if (data.bills) {
+        data.bills.sort((a, b) => {
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return 1;
+          return createLocalDate(a.dueDate) - createLocalDate(b.dueDate);
+        });
+      }
+
+      // Ensure data has the expected structure with fallbacks
+      const safeData = {
+        income: data.income || [],
+        bills: data.bills || [],
+      };
+
+      // Final check: if this is a future month, ensure bills array is empty (unless skipping)
+      if (viewingDate > currentDate && !skipFutureMonthCheck) {
+        console.log('Final check: ensuring future month has empty bills array');
+        safeData.bills = [];
+        // Also clear any income notes for future months
+        safeData.income = safeData.income.map(income => ({
+          ...income,
+          notes: ''
+        }));
+
+        // Force the state update to ensure UI reflects empty bills
+        console.log('Setting personal data for future month with empty bills:', safeData);
+
+        // Additional safety: ensure we're not showing any bills for future months
+        if (safeData.bills.length > 0) {
+          console.warn('WARNING: Bills array still has data for future month, forcing empty array');
+          safeData.bills = [];
         }
-        if (data.income && data.income.length > 0) {
-          console.log('Sample income structure:', data.income[0]);
-        }
+      } else if (viewingDate > currentDate && skipFutureMonthCheck) {
+        console.log('Final check: preserving generated bills in future month');
+      }
 
-        // Generate bills from templates if needed (for future months)
+      setPersonalData(safeData);
+    } catch (error) {
+      console.error('Error loading personal data:', error);
+      // Fallback to localStorage if Firebase fails
+      const savedData = localStorage.getItem('personalData');
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData);
+          // Ensure parsed data has the expected structure
+          const safeParsedData = {
+            income: parsedData.income || [],
+            bills: parsedData.bills || [],
+          };
+          setPersonalData(safeParsedData);
+        } catch (parseError) {
+          console.error('Error parsing localStorage data:', parseError);
+          // Only load initial sample data for current month, not future months
+          const currentDate = new Date();
+          const viewingDate = new Date(currentYear, currentMonth, 1);
+
+          if (viewingDate <= currentDate) {
+            // Load initial sample data only for current/past months
+            const monthParam = currentMonth + 1;
+            const initialData = getInitialPersonalData(
+              currentYear,
+              monthParam
+            );
+            setPersonalData(initialData);
+          } else {
+            // For future months, start with empty data
+            console.log('Future month fallback: starting with empty data');
+            setPersonalData({ income: [], bills: [] });
+          }
+        }
+      } else {
+        // Only load initial sample data for current month, not future months
         const currentDate = new Date();
         const viewingDate = new Date(currentYear, currentMonth, 1);
 
-        if (viewingDate >= currentDate) {
-          // Only auto-generate for current month and future months
-          const generatedBills = await generateBillsForMonth(
-            currentYear,
-            currentMonth + 1,
-            templates
-          );
-          if (generatedBills.length > 0) {
-            data.bills = [...data.bills, ...generatedBills];
-          }
-        }
-
-        // Clear notes for future months (notes should not persist forward)
-        if (viewingDate > currentDate) {
-          data.bills = data.bills.map((bill) => ({
-            ...bill,
-            notes: '', // Clear notes for future months
-          }));
-        }
-
-        // Sort bills by due date
-        if (data.bills) {
-          data.bills.sort((a, b) => {
-            if (!a.dueDate) return 1;
-            if (!b.dueDate) return 1;
-            return createLocalDate(a.dueDate) - createLocalDate(b.dueDate);
-          });
-        }
-
-        // Ensure data has the expected structure with fallbacks
-        const safeData = {
-          income: data.income || [],
-          bills: data.bills || [],
-        };
-
-        setPersonalData(safeData);
-      } catch (error) {
-        console.error('Error loading personal data:', error);
-        // Fallback to localStorage if Firebase fails
-        const savedData = localStorage.getItem('personalData');
-        if (savedData) {
-          try {
-            const parsedData = JSON.parse(savedData);
-            // Ensure parsed data has the expected structure
-            const safeParsedData = {
-              income: parsedData.income || [],
-              bills: parsedData.bills || [],
-            };
-            setPersonalData(safeParsedData);
-          } catch (parseError) {
-            console.error('Error parsing localStorage data:', parseError);
-            // Load initial sample data if parsing fails
-            const initialData = getInitialPersonalData(
-              currentYear,
-              currentMonth + 1
-            );
-            setPersonalData(initialData);
-          }
-        } else {
-          // Load initial sample data
+        if (viewingDate <= currentDate) {
+          // Load initial sample data only for current/past months
+          const monthParam = currentMonth + 1;
           const initialData = getInitialPersonalData(
             currentYear,
-            currentMonth + 1
+            monthParam
           );
           setPersonalData(initialData);
+        } else {
+          // For future months, start with empty data
+          console.log('Future month fallback: starting with empty data');
+          setPersonalData({ income: [], bills: [] });
         }
       }
-    };
+    }
+  };
 
-    loadData();
-  }, [currentYear, currentMonth]);
+  // Load data from Firebase on mount
+  useEffect(() => {
+    loadData(); // Only load data on mount, not on month/year changes
+  }, []); // Empty dependency array - only run on mount
 
   const changeMonth = (offset) => {
     const newDate = new Date(currentYear, currentMonth + offset, 1);
-    setCurrentMonth(newDate.getMonth());
-    setCurrentYear(newDate.getFullYear());
+    const newMonth = newDate.getMonth();
+    const newYear = newDate.getFullYear();
+
+    console.log('Month navigation:', {
+      currentMonth,
+      currentYear,
+      offset,
+      newMonth,
+      newYear,
+      newDate: newDate.toISOString()
+    });
+
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+
+    // Load data for the new month after state update
+    setTimeout(() => {
+      loadData();
+    }, 0);
   };
 
   const handleSaveBill = async (bill) => {
@@ -229,7 +320,7 @@ export function usePersonalTracker() {
         const billData = {
           ...bill,
           amountDue: bill.amount,
-          amountPaid: bill.status === 'paid' ? bill.amount : 0,
+          amountPaid: bill.status === 'paid' ? bill.amount : 0, // 0 for null, pending, or any other status
         };
 
         await updatePersonalBill(editingItem.id, billData);
@@ -248,8 +339,8 @@ export function usePersonalTracker() {
           const templateUpdates = {
             amount: bill.amount,
             dueDate: bill.dueDate,
-            notes: bill.notes,
-            url: bill.url,
+            notes: bill.notes || '',
+            url: bill.url || '',
           };
           await updateBillTemplate(existingTemplate.id, templateUpdates);
         }
@@ -261,7 +352,7 @@ export function usePersonalTracker() {
         const billData = {
           ...bill,
           amountDue: bill.amount,
-          amountPaid: bill.status === 'paid' ? bill.amount : 0,
+          amountPaid: bill.status === 'paid' ? bill.amount : 0, // 0 for null, pending, or any other status
         };
 
         const newBill = await addPersonalBill(billData);
@@ -279,8 +370,8 @@ export function usePersonalTracker() {
             name: bill.name,
             amount: bill.amount,
             dueDate: bill.dueDate,
-            notes: bill.notes,
-            url: bill.url,
+            notes: bill.notes || '',
+            url: bill.url || '',
           });
           setBillTemplates((prev) => [...prev, newTemplate]);
         }
@@ -334,18 +425,11 @@ export function usePersonalTracker() {
 
   const handleDeleteBill = async (id) => {
     try {
-      const billToDelete = (personalData?.bills || []).find((b) => b.id === id);
-      if (billToDelete) {
-        await deletePersonalBillFromCurrentAndFuture(
-          id,
-          currentYear,
-          currentMonth + 1
-        );
-        setPersonalData((prev) => ({
-          ...prev,
-          bills: (prev.bills || []).filter((bill) => bill.id !== id),
-        }));
-      }
+      await deletePersonalBill(id);
+      setPersonalData((prev) => ({
+        ...prev,
+        bills: (prev.bills || []).filter((bill) => bill.id !== id),
+      }));
     } catch (error) {
       console.error('Error deleting bill:', error);
       throw error;
@@ -359,7 +443,13 @@ export function usePersonalTracker() {
       if (!bill) return;
 
       // Update amountPaid based on status
-      const amountPaid = newStatus === 'paid' ? bill.amountDue : 0;
+      let amountPaid = 0;
+      if (newStatus === 'paid') {
+        amountPaid = bill.amountDue;
+      } else if (newStatus === 'pending') {
+        amountPaid = 0; // Pending bills haven't been paid yet
+      }
+      // For null status (-), amountPaid remains 0
 
       const updatedBill = await updatePersonalBill(id, {
         status: newStatus,
@@ -408,12 +498,20 @@ export function usePersonalTracker() {
 
   const handleGenerateBills = async (month, year) => {
     try {
-      await generateBillsForMonth(month, year);
-      await loadData(); // Reload data to reflect changes
+      console.log('Generating bills for month:', month, 'year:', year);
+      console.log('Bill templates available:', billTemplates.length);
+
+      await generateBillsForMonth(year, month, billTemplates);
+      console.log('Bills generated successfully, reloading data...');
+
+      await loadData(true); // Reload data to reflect changes, skip future month check
+      console.log('Data reloaded after bill generation');
     } catch (error) {
       console.error('Error generating bills:', error);
     }
   };
+
+
 
   const openIncomeModal = () => {
     setModalType('income');
@@ -546,41 +644,56 @@ export function usePersonalTracker() {
         ...bill,
         amountDue: bill.amountDue || bill.amount || 0,
         amountPaid: bill.amountPaid || 0,
-        status: bill.status || 'pending',
-        dueDate: bill.dueDate || new Date().toISOString().split('T')[0],
+        status: bill.status || null, // Don't default to 'pending', allow null
+        dueDate: bill.dueDate || '',
       };
 
+      // If no due date, use muted color
+      if (!safeBill.dueDate) {
+        return { ...safeBill, colorIndex: 0 }; // Muted
+      }
+
       // Get the income dates for this month to determine color coordination
-      const currentMonthIncome = personalData?.income || [];
-      const firstIncomeDate = currentMonthIncome[0]?.date;
-      const secondIncomeDate = currentMonthIncome[1]?.date;
+      const currentMonthIncome = [...(personalData?.income || [])].sort((a, b) => {
+        const dateA = new Date(a.date || 0);
+        const dateB = new Date(b.date || 0);
+        return dateA - dateB;
+      });
 
       // Color bills based on due date to coordinate with income periods
       const dueDate = new Date(safeBill.dueDate);
-      const firstIncome = firstIncomeDate ? new Date(firstIncomeDate) : null;
-      const secondIncome = secondIncomeDate ? new Date(secondIncomeDate) : null;
 
-      // Period 0: Before first income date (muted)
-      if (firstIncome && dueDate < firstIncome) {
-        return { ...safeBill, colorIndex: 0 }; // Muted
+      // Find which income period this bill falls into
+      let colorIndex = 0; // Default to muted
+
+      for (let i = 0; i < currentMonthIncome.length; i++) {
+        const incomeDate = new Date(currentMonthIncome[i].date);
+        if (dueDate >= incomeDate) {
+          // Map to color scheme: 1=green, 2=purple, 3=blue, 4=yellow, etc.
+          colorIndex = i + 1;
+        } else {
+          break; // Bill is before this income period
+        }
       }
-      // First income period: On or after first income date, but before second income date (green)
-      else if (firstIncome && dueDate >= firstIncome && (!secondIncome || dueDate < secondIncome)) {
-        return { ...safeBill, colorIndex: 1 }; // Green
+
+      // If colorIndex exceeds our color scheme, wrap around or use muted
+      if (colorIndex > 9) {
+        colorIndex = 0; // Muted
       }
-      // Second income period: On or after second income date (magenta)
-      else if (secondIncome && dueDate >= secondIncome) {
-        return { ...safeBill, colorIndex: 2 }; // Magenta
-      }
-      // Fallback: If no income dates, use muted
-      else {
-        return { ...safeBill, colorIndex: 0 }; // Muted
-      }
+
+      return { ...safeBill, colorIndex };
     });
   };
 
   const getIncomeWithColors = () => {
-    return (personalData?.income || []).map((income, index) => {
+    // Sort income by date to ensure proper color coordination
+    const sortedIncome = [...(personalData?.income || [])].sort((a, b) => {
+      const dateA = new Date(a.date || 0);
+      const dateB = new Date(b.date || 0);
+      return dateA - dateB;
+    });
+
+    return sortedIncome.map((income, index) => {
       // Ensure income has required properties with fallbacks
       const safeIncome = {
         ...income,
@@ -589,18 +702,10 @@ export function usePersonalTracker() {
         date: income.date || new Date().toISOString().split('T')[0],
       };
 
-      // First income period (around day 8) - green
-      if (index === 0) {
-        return { ...safeIncome, colorIndex: 1 }; // Green
-      }
-      // Second income period (around day 22) - magenta
-      else if (index === 1) {
-        return { ...safeIncome, colorIndex: 2 }; // Magenta
-      }
-      // Default to muted for any additional periods
-      else {
-        return { ...safeIncome, colorIndex: 0 }; // Muted
-      }
+      // Map index to color scheme: 0=muted, 1=green, 2=purple, 3=blue, 4=yellow, etc.
+      const colorIndex = index === 0 ? 1 : index === 1 ? 2 : index === 2 ? 3 : index === 3 ? 4 : index === 4 ? 5 : index === 5 ? 6 : index === 6 ? 7 : index === 7 ? 8 : index === 8 ? 9 : 0;
+
+      return { ...safeIncome, colorIndex };
     });
   };
 
@@ -610,51 +715,51 @@ export function usePersonalTracker() {
 
   const getColorClasses = (colorIndex) => {
     const colorSchemes = {
-      0: 'border-l-4 border-l-gray-400', // Muted gray
-      1: 'border-l-4 border-l-green-400', // Green
-      2: 'border-l-4 border-l-pink-400', // Magenta
-      3: 'border-l-4 border-l-yellow-400', // Yellow
-      4: 'border-l-4 border-l-blue-400', // Blue
-      5: 'border-l-4 border-l-cyan-400', // Cyan
-      6: 'border-l-4 border-l-orange-400', // Orange
-      7: 'border-l-4 border-l-purple-400', // Purple
-      8: 'border-l-4 border-l-red-400', // Red
-      9: 'border-l-4 border-l-white', // White
+      0: 'border-l-4 border-l-terminal-muted', // Muted gray
+      1: 'border-l-4 border-l-terminal-green', // Green
+      2: 'border-l-4 border-l-terminal-purple', // Magenta/Purple
+      3: 'border-l-4 border-l-terminal-blue', // Blue
+      4: 'border-l-4 border-l-terminal-yellow', // Yellow
+      5: 'border-l-4 border-l-terminal-cyan', // Cyan
+      6: 'border-l-4 border-l-terminal-orange', // Orange
+      7: 'border-l-4 border-l-terminal-red', // Red
+      8: 'border-l-4 border-l-terminal-pink', // Pink
+      9: 'border-l-4 border-l-terminal-white', // White
     };
-    return colorSchemes[colorIndex] || 'border-l-4 border-l-purple-400'; // Default to purple
+    return colorSchemes[colorIndex] || 'border-l-4 border-l-terminal-purple'; // Default to purple
   };
 
   // Alternative function that returns inline styles if Tailwind classes aren't working
   const getColorStyles = (colorIndex) => {
     const colorSchemes = {
-      0: { borderLeft: '4px solid #9ca3af' }, // Muted gray
-      1: { borderLeft: '4px solid #4ade80' }, // Green
-      2: { borderLeft: '4px solid #f472b6' }, // Magenta
-      3: { borderLeft: '4px solid #facc15' }, // Yellow
-      4: { borderLeft: '4px solid #60a5fa' }, // Blue
-      5: { borderLeft: '4px solid #22d3ee' }, // Cyan
-      6: { borderLeft: '4px solid #fb923c' }, // Orange
-      7: { borderLeft: '4px solid #a78bfa' }, // Purple
-      8: { borderLeft: '4px solid #f87171' }, // Red
-      9: { borderLeft: '4px solid #ffffff' }, // White
+      0: { borderLeft: '4px solid var(--terminal-muted)' }, // Muted gray
+      1: { borderLeft: '4px solid var(--terminal-green)' }, // Green
+      2: { borderLeft: '4px solid var(--terminal-purple)' }, // Magenta/Purple
+      3: { borderLeft: '4px solid var(--terminal-blue)' }, // Blue
+      4: { borderLeft: '4px solid var(--terminal-yellow)' }, // Yellow
+      5: { borderLeft: '4px solid var(--terminal-cyan)' }, // Cyan
+      6: { borderLeft: '4px solid var(--terminal-orange)' }, // Orange
+      7: { borderLeft: '4px solid var(--terminal-red)' }, // Red
+      8: { borderLeft: '4px solid var(--terminal-pink)' }, // Pink
+      9: { borderLeft: '4px solid var(--terminal-white)' }, // White
     };
-    return colorSchemes[colorIndex] || { borderLeft: '4px solid #a78bfa' }; // Default to purple
+    return colorSchemes[colorIndex] || { borderLeft: '4px solid var(--terminal-purple)' }; // Default to purple
   };
 
   const getBackgroundColorClasses = (colorIndex) => {
     const bgColorSchemes = {
-      0: 'bg-[#8b949e]/5',
-      1: 'bg-[#00ff41]/5',
-      2: 'bg-[#ff55ff]/5',
-      3: 'bg-[#ffff00]/5',
-      4: 'bg-[#38beff]/5',
-      5: 'bg-[#56b6c2]/5',
-      6: 'bg-[#ffa500]/5',
-      7: 'bg-[#a855f7]/5',
-      8: 'bg-[#ff3e3e]/5',
-      9: 'bg-[#ffffff]/5',
+      0: 'bg-terminal-muted/5',
+      1: 'bg-terminal-green/5',
+      2: 'bg-terminal-purple/5',
+      3: 'bg-terminal-blue/5',
+      4: 'bg-terminal-yellow/5',
+      5: 'bg-terminal-cyan/5',
+      6: 'bg-terminal-orange/5',
+      7: 'bg-terminal-red/5',
+      8: 'bg-terminal-pink/5',
+      9: 'bg-terminal-white/5',
     };
-    return bgColorSchemes[colorIndex] || 'bg-[#a855f7]/5'; // Default to light purple
+    return bgColorSchemes[colorIndex] || 'bg-terminal-purple/5'; // Default to light purple
   };
 
   // Calculate summary statistics with defensive programming
@@ -683,12 +788,25 @@ export function usePersonalTracker() {
   // Discretionary income calculation (actual income - bills paid)
   const discretionaryIncome = totalIncomeActual - totalBillsPaid;
 
+  // Debug logging for discretionary calculation
+  console.log('Discretionary calculation debug:', {
+    totalIncomeActual,
+    totalBillsPaid,
+    discretionaryIncome,
+    incomeCount: personalData?.income?.length || 0,
+    billsCount: personalData?.bills?.length || 0,
+    bills: personalData?.bills || []
+  });
+
   const netCashFlow = totalIncomeActual - totalBillsPaid;
   const pendingBillsCount = (personalData?.bills || []).filter(
-    (bill) => (bill.status || '').toLowerCase() === 'pending'
+    (bill) => bill.status === 'pending'
   ).length;
   const paidBillsCount = (personalData?.bills || []).filter(
-    (bill) => (bill.status || '').toLowerCase() === 'paid'
+    (bill) => bill.status === 'paid'
+  ).length;
+  const unsetBillsCount = (personalData?.bills || []).filter(
+    (bill) => bill.status === null || bill.status === undefined
   ).length;
 
   const monthNames = getMonthNames();
@@ -717,6 +835,7 @@ export function usePersonalTracker() {
     netCashFlow,
     pendingBillsCount,
     paidBillsCount,
+    unsetBillsCount,
     monthNames,
 
     // Color coding
@@ -745,6 +864,7 @@ export function usePersonalTracker() {
     openBillModal,
     editItem,
     handleExport,
+    loadData,
 
     // Modal controls
     setShowIncomeModal,
