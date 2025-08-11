@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Download, Trash2, Eye, FileText, Image } from 'lucide-react';
+import { X, Trash2, Eye, FileText, Image } from 'lucide-react';
 
 export default function ReceiptViewer({
   isOpen,
@@ -26,27 +26,6 @@ export default function ReceiptViewer({
     receipts.length > 0 && selectedReceiptIndex < receipts.length
       ? receipts[selectedReceiptIndex]
       : null;
-
-  const handleDownload = async (receipt) => {
-    try {
-      const response = await fetch(receipt.url);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download =
-        receipt.name ||
-        `receipt-${Date.now()}.${receipt.type?.split('/')[1] || 'file'}`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading receipt:', error);
-      // Fallback: open in new tab
-      window.open(receipt.url, '_blank');
-    }
-  };
 
   const handleDelete = async (receipt, index) => {
     if (
@@ -166,14 +145,9 @@ export default function ReceiptViewer({
                         <p className='text-terminal-muted font-ibm mb-2'>
                           Unable to display image
                         </p>
-                        <button
-                          onClick={() =>
-                            currentReceipt && handleDownload(currentReceipt)
-                          }
-                          className='text-terminal-blue hover:text-terminal-blue/80 underline font-ibm'
-                        >
-                          Download to view
-                        </button>
+                        <p className='text-sm text-terminal-muted font-ibm'>
+                          Use the export feature to download receipts
+                        </p>
                       </div>
                     ) : (
                       <img
@@ -202,15 +176,6 @@ export default function ReceiptViewer({
                           <Eye className='h-4 w-4 inline mr-2 lucide' />
                           Open in New Tab
                         </button>
-                        <button
-                          onClick={() =>
-                            currentReceipt && handleDownload(currentReceipt)
-                          }
-                          className='block w-full px-4 py-2 bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm'
-                        >
-                          <Download className='h-4 w-4 inline mr-2 lucide' />
-                          Download
-                        </button>
                       </div>
                     </div>
                   ) : (
@@ -219,14 +184,9 @@ export default function ReceiptViewer({
                       <p className='text-terminal-muted font-ibm mb-2'>
                         Unsupported file type
                       </p>
-                      <button
-                        onClick={() =>
-                          currentReceipt && handleDownload(currentReceipt)
-                        }
-                        className='text-terminal-blue hover:text-terminal-blue/80 underline font-ibm'
-                      >
-                        Download to view
-                      </button>
+                      <p className='text-sm text-terminal-muted font-ibm'>
+                        Use the export feature to download receipts
+                      </p>
                     </div>
                   )}
                 </div>
@@ -291,15 +251,6 @@ export default function ReceiptViewer({
             </div>
 
             <div className='flex items-center space-x-2 flex-shrink-0'>
-              <button
-                onClick={() => currentReceipt && handleDownload(currentReceipt)}
-                disabled={!currentReceipt}
-                className='flex items-center px-3 py-2 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ibm disabled:opacity-50 disabled:cursor-not-allowed'
-              >
-                <Download className='h-4 w-4 sm:mr-1 lucide' />
-                <span className='hidden sm:inline'>Download</span>
-              </button>
-
               <button
                 onClick={() =>
                   currentReceipt &&
