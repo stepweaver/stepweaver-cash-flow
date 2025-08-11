@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Download, Trash2, Eye, FileText, Image } from 'lucide-react';
 
 export default function ReceiptViewer({
@@ -13,9 +13,19 @@ export default function ReceiptViewer({
   const [selectedReceiptIndex, setSelectedReceiptIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
 
-  if (!isOpen || receipts.length === 0) return null;
+  // Reset selected receipt index when receipts change
+  useEffect(() => {
+    if (receipts.length > 0 && selectedReceiptIndex >= receipts.length) {
+      setSelectedReceiptIndex(0);
+    }
+  }, [receipts, selectedReceiptIndex]);
 
-  const currentReceipt = receipts[selectedReceiptIndex];
+  if (!isOpen) return null;
+
+  const currentReceipt =
+    receipts.length > 0 && selectedReceiptIndex < receipts.length
+      ? receipts[selectedReceiptIndex]
+      : null;
 
   const handleDownload = async (receipt) => {
     try {
@@ -136,73 +146,91 @@ export default function ReceiptViewer({
         <div className='flex-1 overflow-hidden flex'>
           {/* Main Receipt View */}
           <div className='flex-1 flex items-center justify-center p-4 bg-terminal-dark'>
-            {currentReceipt && (
-              <div className='max-w-full max-h-full flex items-center justify-center'>
-                {isImage(currentReceipt) ? (
-                  imageError ? (
+            {receipts.length === 0 ? (
+              <div className='text-center p-8'>
+                <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-muted lucide' />
+                <p className='text-terminal-muted font-ibm mb-2'>
+                  No receipts attached to this transaction
+                </p>
+                <p className='text-sm text-terminal-muted font-ibm'>
+                  Receipts will appear here once they are uploaded
+                </p>
+              </div>
+            ) : (
+              currentReceipt && (
+                <div className='max-w-full max-h-full flex items-center justify-center'>
+                  {isImage(currentReceipt) ? (
+                    imageError ? (
+                      <div className='text-center p-8'>
+                        <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-muted lucide' />
+                        <p className='text-terminal-muted font-ibm mb-2'>
+                          Unable to display image
+                        </p>
+                        <button
+                          onClick={() =>
+                            currentReceipt && handleDownload(currentReceipt)
+                          }
+                          className='text-terminal-blue hover:text-terminal-blue/80 underline font-ibm'
+                        >
+                          Download to view
+                        </button>
+                      </div>
+                    ) : (
+                      <img
+                        src={currentReceipt.url}
+                        alt={currentReceipt.name || 'Receipt'}
+                        className='max-w-full max-h-full object-contain rounded border border-terminal-border'
+                        onError={() => setImageError(true)}
+                      />
+                    )
+                  ) : isPDF(currentReceipt) ? (
+                    <div className='text-center p-8'>
+                      <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-red lucide' />
+                      <p className='text-terminal-text font-ibm mb-2'>
+                        PDF Document
+                      </p>
+                      <p className='text-sm text-terminal-muted font-ibm mb-4'>
+                        {currentReceipt.name}
+                      </p>
+                      <div className='space-y-2'>
+                        <button
+                          onClick={() =>
+                            window.open(currentReceipt.url, '_blank')
+                          }
+                          className='block w-full px-4 py-2 bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ibm'
+                        >
+                          <Eye className='h-4 w-4 inline mr-2 lucide' />
+                          Open in New Tab
+                        </button>
+                        <button
+                          onClick={() =>
+                            currentReceipt && handleDownload(currentReceipt)
+                          }
+                          className='block w-full px-4 py-2 bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm'
+                        >
+                          <Download className='h-4 w-4 inline mr-2 lucide' />
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
                     <div className='text-center p-8'>
                       <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-muted lucide' />
                       <p className='text-terminal-muted font-ibm mb-2'>
-                        Unable to display image
+                        Unsupported file type
                       </p>
                       <button
-                        onClick={() => handleDownload(currentReceipt)}
+                        onClick={() =>
+                          currentReceipt && handleDownload(currentReceipt)
+                        }
                         className='text-terminal-blue hover:text-terminal-blue/80 underline font-ibm'
                       >
                         Download to view
                       </button>
                     </div>
-                  ) : (
-                    <img
-                      src={currentReceipt.url}
-                      alt={currentReceipt.name || 'Receipt'}
-                      className='max-w-full max-h-full object-contain rounded border border-terminal-border'
-                      onError={() => setImageError(true)}
-                    />
-                  )
-                ) : isPDF(currentReceipt) ? (
-                  <div className='text-center p-8'>
-                    <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-red lucide' />
-                    <p className='text-terminal-text font-ibm mb-2'>
-                      PDF Document
-                    </p>
-                    <p className='text-sm text-terminal-muted font-ibm mb-4'>
-                      {currentReceipt.name}
-                    </p>
-                    <div className='space-y-2'>
-                      <button
-                        onClick={() =>
-                          window.open(currentReceipt.url, '_blank')
-                        }
-                        className='block w-full px-4 py-2 bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ibm'
-                      >
-                        <Eye className='h-4 w-4 inline mr-2 lucide' />
-                        Open in New Tab
-                      </button>
-                      <button
-                        onClick={() => handleDownload(currentReceipt)}
-                        className='block w-full px-4 py-2 bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm'
-                      >
-                        <Download className='h-4 w-4 inline mr-2 lucide' />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className='text-center p-8'>
-                    <FileText className='h-16 w-16 mx-auto mb-4 text-terminal-muted lucide' />
-                    <p className='text-terminal-muted font-ibm mb-2'>
-                      Unsupported file type
-                    </p>
-                    <button
-                      onClick={() => handleDownload(currentReceipt)}
-                      className='text-terminal-blue hover:text-terminal-blue/80 underline font-ibm'
-                    >
-                      Download to view
-                    </button>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )
             )}
           </div>
 
@@ -246,39 +274,46 @@ export default function ReceiptViewer({
         </div>
 
         {/* Footer Actions */}
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-t border-terminal-border bg-terminal-dark gap-3'>
-          <div className='flex items-center space-x-2 min-w-0 flex-1'>
-            {getFileIcon(currentReceipt)}
-            <div className='min-w-0 flex-1'>
-              <p className='text-sm font-medium text-terminal-text font-ibm truncate'>
-                {currentReceipt?.name || 'Unknown file'}
-              </p>
-              <p className='text-xs text-terminal-muted font-ibm'>
-                {currentReceipt?.size
-                  ? `${(currentReceipt.size / 1024 / 1024).toFixed(2)} MB`
-                  : 'Unknown size'}
-              </p>
+        {currentReceipt && (
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-t border-terminal-border bg-terminal-dark gap-3'>
+            <div className='flex items-center space-x-2 min-w-0 flex-1'>
+              {currentReceipt && getFileIcon(currentReceipt)}
+              <div className='min-w-0 flex-1'>
+                <p className='text-sm font-medium text-terminal-text font-ibm truncate'>
+                  {currentReceipt?.name || 'Unknown file'}
+                </p>
+                <p className='text-xs text-terminal-muted font-ibm'>
+                  {currentReceipt?.size
+                    ? `${(currentReceipt.size / 1024 / 1024).toFixed(2)} MB`
+                    : 'Unknown size'}
+                </p>
+              </div>
+            </div>
+
+            <div className='flex items-center space-x-2 flex-shrink-0'>
+              <button
+                onClick={() => currentReceipt && handleDownload(currentReceipt)}
+                disabled={!currentReceipt}
+                className='flex items-center px-3 py-2 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ibm disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                <Download className='h-4 w-4 sm:mr-1 lucide' />
+                <span className='hidden sm:inline'>Download</span>
+              </button>
+
+              <button
+                onClick={() =>
+                  currentReceipt &&
+                  handleDelete(currentReceipt, selectedReceiptIndex)
+                }
+                disabled={!currentReceipt}
+                className='flex items-center px-3 py-2 text-sm bg-terminal-red text-white rounded hover:bg-terminal-red/80 transition-colors font-ibm disabled:opacity-50 disabled:cursor-not-allowed'
+              >
+                <Trash2 className='h-4 w-4 sm:mr-1 lucide' />
+                <span className='hidden sm:inline'>Delete</span>
+              </button>
             </div>
           </div>
-
-          <div className='flex items-center space-x-2 flex-shrink-0'>
-            <button
-              onClick={() => handleDownload(currentReceipt)}
-              className='flex items-center px-3 py-2 text-sm bg-terminal-blue text-white rounded hover:bg-terminal-blue/80 transition-colors font-ibm'
-            >
-              <Download className='h-4 w-4 sm:mr-1 lucide' />
-              <span className='hidden sm:inline'>Download</span>
-            </button>
-
-            <button
-              onClick={() => handleDelete(currentReceipt, selectedReceiptIndex)}
-              className='flex items-center px-3 py-2 text-sm bg-terminal-red text-white rounded hover:bg-terminal-red/80 transition-colors font-ibm'
-            >
-              <Trash2 className='h-4 w-4 sm:mr-1 lucide' />
-              <span className='hidden sm:inline'>Delete</span>
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

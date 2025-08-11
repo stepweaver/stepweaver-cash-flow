@@ -120,14 +120,13 @@ export default function BusinessTracker() {
       />
 
       {/* Receipt Viewer Modal */}
-      {showReceiptViewer && (
-        <ReceiptViewer
-          receipts={selectedTransactionReceipts}
-          transactionDescription={selectedTransactionDescription}
-          onClose={() => setShowReceiptViewer(false)}
-          onDeleteReceipt={handleDeleteReceipt}
-        />
-      )}
+      <ReceiptViewer
+        isOpen={showReceiptViewer}
+        receipts={selectedTransactionReceipts}
+        transactionDescription={selectedTransactionDescription}
+        onClose={() => setShowReceiptViewer(false)}
+        onDeleteReceipt={handleDeleteReceipt}
+      />
 
       {/* Export Modal */}
       {showExportModal && (
