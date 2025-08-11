@@ -19,142 +19,64 @@ export default function IncomeSection({
       </div>
 
       {incomeWithColors && incomeWithColors.length > 0 ? (
-        <>
-          {/* Desktop Table View */}
-          <div className='hidden md:block overflow-x-auto'>
-            <table className='min-w-full divide-y divide-terminal-border'>
-              <thead className='bg-terminal-dark'>
-                <tr>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Source
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Date
-                  </th>
-                  <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Budget
-                  </th>
-                  <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Actual
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Notes
-                  </th>
-                  <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className='bg-terminal-light divide-y divide-terminal-border'>
-                {incomeWithColors.map((income) => (
-                  <tr key={income.id} className='hover:bg-terminal-dark'>
-                    <td
-                      className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm'
-                      style={getColorStyles(income.colorIndex)}
-                    >
-                      {income.source}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ibm'>
-                      {formatDate(createLocalDate(income.date))}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ibm'>
-                      {formatCurrency(income.budget)}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-green text-right font-ibm'>
-                      {income.actual ? formatCurrency(income.actual) : '-'}
-                    </td>
-                    <td className='px-6 py-4 text-sm text-terminal-text font-ibm'>
-                      {income.notes}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-center'>
-                      <div className='flex justify-center space-x-2'>
-                        <button
-                          onClick={() => onEdit(income, 'income')}
-                          className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
-                          title='Edit income'
-                        >
-                          <Edit3 className='h-4 w-4 lucide' />
-                        </button>
-                        <button
-                          onClick={() => onDelete(income.id)}
-                          className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
-                          title='Delete income'
-                        >
-                          <Trash2 className='h-4 w-4 lucide' />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {/* Mobile Card View */}
-          <div className='md:hidden space-y-2 p-4'>
-            {incomeWithColors.map((income) => (
+        <div className='space-y-4 p-6'>
+          {incomeWithColors.map((income, index) => (
+            <div key={income.id} className='space-y-3'>
+              {/* Income Details */}
               <div
-                key={income.id}
-                className='bg-terminal-dark p-3 rounded border border-terminal-border'
+                className='bg-terminal-dark p-4 rounded border border-terminal-border'
                 style={getColorStyles(income.colorIndex)}
               >
-                <div className='flex justify-between items-center mb-2'>
-                  <div className='flex-1'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-xs text-terminal-muted font-ibm'>
-                        {formatDate(createLocalDate(income.date))}
-                      </span>
-                      <p className='text-lg font-bold text-terminal-green font-ibm-custom'>
-                        {income.actual
-                          ? formatCurrency(income.actual)
-                          : formatCurrency(income.budget)}
-                      </p>
-                    </div>
-                    <h4 className='text-terminal-text font-medium font-ibm text-sm mt-1'>
+                <div className='grid grid-cols-1 md:grid-cols-5 gap-4 items-center'>
+                  <div className='md:col-span-1'>
+                    <span className='text-sm font-medium text-terminal-text font-ibm'>
                       {income.source}
-                    </h4>
-                    {income.notes && (
-                      <p className='text-xs text-terminal-muted font-ibm mt-1'>
-                        {income.notes}
-                      </p>
-                    )}
+                    </span>
                   </div>
-                </div>
-
-                <div className='flex items-center justify-between pt-2 border-t border-terminal-border'>
-                  <div className='text-xs text-terminal-muted font-ibm'>
-                    Budget: {formatCurrency(income.budget)}
-                    {income.actual &&
-                      ` • Actual: ${formatCurrency(income.actual)}`}
+                  <div className='md:col-span-1'>
+                    <span className='text-sm text-terminal-text font-ibm'>
+                      {formatDate(createLocalDate(income.date))}
+                    </span>
                   </div>
-
-                  <div className='flex items-center space-x-3'>
-                    <button
-                      onClick={() => onEdit(income, 'income')}
-                      className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
-                      title='Edit income'
-                    >
-                      <Edit3 className='h-3 w-3 lucide' />
-                    </button>
-                    <button
-                      onClick={() => onDelete(income.id)}
-                      className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
-                      title='Delete income'
-                    >
-                      <Trash2 className='h-3 w-3 lucide' />
-                    </button>
+                  <div className='md:col-span-1 text-right'>
+                    <span className='text-sm text-terminal-green font-ibm'>
+                      {formatCurrency(income.budget)}
+                    </span>
+                  </div>
+                  <div className='md:col-span-1 text-right'>
+                    <span className='text-sm text-terminal-green font-ibm'>
+                      {income.actual ? formatCurrency(income.actual) : '-'}
+                    </span>
+                  </div>
+                  <div className='md:col-span-1 flex items-center justify-between'>
+                    <span className='text-sm text-terminal-text font-ibm flex-1'>
+                      {income.notes}
+                    </span>
+                    <div className='flex items-center space-x-2 ml-2'>
+                      <button
+                        onClick={() => onEdit(income, 'income')}
+                        className='p-1 text-terminal-muted hover:text-terminal-text transition-colors'
+                        title='Edit income'
+                      >
+                        <Edit3 size={16} />
+                      </button>
+                      <button
+                        onClick={() => onDelete(income.id)}
+                        className='p-1 text-terminal-muted hover:text-terminal-red transition-colors'
+                        title='Delete income'
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </>
+            </div>
+          ))}
+        </div>
       ) : (
-        <div className='px-6 py-12 text-center'>
-          <p className='text-terminal-muted font-ibm'>
-            {!incomeWithColors
-              ? 'Loading income data...'
-              : 'No income entries yet. Add some above!'}
-          </p>
+        <div className='p-6 text-center text-terminal-muted font-ibm'>
+          No income found for this month.
         </div>
       )}
     </div>

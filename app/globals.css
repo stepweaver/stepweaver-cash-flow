@@ -11,6 +11,20 @@
   font-display: swap;
 }
 
+/* Terminal color CSS variables */
+:root {
+  --terminal-muted: #8b949e;
+  --terminal-green: #00ff41;
+  --terminal-purple: #a855f7;
+  --terminal-blue: #38beff;
+  --terminal-yellow: #ffff00;
+  --terminal-cyan: #56b6c2;
+  --terminal-orange: #ffa500;
+  --terminal-red: #ff3e3e;
+  --terminal-pink: #ff55ff;
+  --terminal-white: #ffffff;
+}
+
 /* Base HTML and body styles - using Tailwind classes instead of CSS variables */
 html {
   background-color: #0d1211;

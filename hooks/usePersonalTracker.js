@@ -732,18 +732,18 @@ export function usePersonalTracker() {
   // Alternative function that returns inline styles if Tailwind classes aren't working
   const getColorStyles = (colorIndex) => {
     const colorSchemes = {
-      0: { borderLeft: '4px solid var(--terminal-muted)' }, // Muted gray
-      1: { borderLeft: '4px solid var(--terminal-green)' }, // Green
-      2: { borderLeft: '4px solid var(--terminal-purple)' }, // Magenta/Purple
-      3: { borderLeft: '4px solid var(--terminal-blue)' }, // Blue
-      4: { borderLeft: '4px solid var(--terminal-yellow)' }, // Yellow
-      5: { borderLeft: '4px solid var(--terminal-cyan)' }, // Cyan
-      6: { borderLeft: '4px solid var(--terminal-orange)' }, // Orange
-      7: { borderLeft: '4px solid var(--terminal-red)' }, // Red
-      8: { borderLeft: '4px solid var(--terminal-pink)' }, // Pink
-      9: { borderLeft: '4px solid var(--terminal-white)' }, // White
+      0: { borderLeft: '4px solid #8b949e' }, // Muted gray
+      1: { borderLeft: '4px solid #00ff41' }, // Green
+      2: { borderLeft: '4px solid #a855f7' }, // Purple
+      3: { borderLeft: '4px solid #38beff' }, // Blue
+      4: { borderLeft: '4px solid #ffff00' }, // Yellow
+      5: { borderLeft: '4px solid #56b6c2' }, // Cyan
+      6: { borderLeft: '4px solid #ffa500' }, // Orange
+      7: { borderLeft: '4px solid #ff3e3e' }, // Red
+      8: { borderLeft: '4px solid #ff55ff' }, // Pink
+      9: { borderLeft: '4px solid #ffffff' }, // White
     };
-    return colorSchemes[colorIndex] || { borderLeft: '4px solid var(--terminal-purple)' }; // Default to purple
+    return colorSchemes[colorIndex] || { borderLeft: '4px solid #a855f7' }; // Default to purple
   };
 
   const getBackgroundColorClasses = (colorIndex) => {

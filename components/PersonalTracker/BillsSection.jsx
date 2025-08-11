@@ -17,6 +17,7 @@ export default function BillsSection({
   onEdit,
   onDelete,
   onStatusChange,
+  incomeWithColors, // Add this prop to access income periods
 }) {
   // Status options with their corresponding colors and icons
   const statusOptions = [
@@ -54,206 +55,135 @@ export default function BillsSection({
   return (
     <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
       <div className='px-6 py-4 border-b border-terminal-border'>
-        <h3 className='text-lg font-semibold text-terminal-red font-ibm-custom'>
+        <h3 className='text-lg font-semibold text-terminal-red font-ibm-custom mb-2'>
           Bills
         </h3>
+        {incomeWithColors && incomeWithColors.length > 0 && (
+          <div className='flex items-center space-x-2'>
+            <span className='text-xs text-terminal-muted font-ibm'>
+              Income Periods:
+            </span>
+          </div>
+        )}
+        <p className='text-sm text-terminal-muted font-ibm mt-1'>
+          {incomeWithColors && incomeWithColors.length > 0 ? (
+            <span>
+              {incomeWithColors.map((income, index) => {
+                const periodNumber = index + 1;
+                const source = income.source || 'Unknown';
+                const amount = formatCurrency(income.actual || income.budget);
+                const date = formatDate(createLocalDate(income.date));
+                const color =
+                  [
+                    '#00ff41', // Green
+                    '#a855f7', // Purple
+                    '#38beff', // Blue
+                    '#ffff00', // Yellow
+                    '#56b6c2', // Cyan
+                    '#ffa500', // Orange
+                    '#ff3e3e', // Red
+                    '#ff55ff', // Magenta
+                    '#ffffff', // White
+                  ][index] || '#00ff41';
+
+                return (
+                  <span key={index}>
+                    <span style={{ color }} className='font-medium'>
+                      P{periodNumber}: {source} ({amount}) - {date}
+                    </span>
+                    {index < incomeWithColors.length - 1 && (
+                      <span className='text-terminal-muted'> | </span>
+                    )}
+                  </span>
+                );
+              })}
+            </span>
+          ) : (
+            'No income periods'
+          )}
+        </p>
       </div>
 
       {billsWithColorCoding && billsWithColorCoding.length > 0 ? (
-        <>
-          {/* Desktop Table View */}
-          <div className='hidden md:block overflow-x-auto'>
-            <table className='min-w-full divide-y divide-terminal-border'>
-              <thead className='bg-terminal-dark'>
-                <tr>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Bill
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Due Date
-                  </th>
-                  <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Amount
-                  </th>
-                  <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Status
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Notes
-                  </th>
-                  <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className='bg-terminal-light divide-y divide-terminal-border'>
-                {billsWithColorCoding.map((bill) => {
-                  const currentStatus = getStatusOption(bill.status);
-                  const StatusIcon = currentStatus.icon;
+        <div className='p-6 space-y-3'>
+          {billsWithColorCoding.map((bill) => {
+            const currentStatus = getStatusOption(bill.status);
+            const StatusIcon = currentStatus.icon;
 
-                  return (
-                    <tr key={bill.id} className='hover:bg-terminal-dark'>
-                      <td
-                        className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm'
-                        style={getColorStyles(bill.colorIndex)}
-                      >
-                        {bill.name}
-                      </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text font-ibm'>
+            return (
+              <div
+                key={bill.id}
+                className='bg-terminal-dark p-3 rounded border border-terminal-border'
+                style={getColorStyles(bill.colorIndex)}
+              >
+                <div className='flex justify-between items-center mb-2'>
+                  <div className='flex-1'>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-xs text-terminal-muted font-ibm'>
                         {bill.dueDate
                           ? formatDate(createLocalDate(bill.dueDate))
                           : '-'}
-                      </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ibm'>
+                      </span>
+                      <p className='text-lg font-bold text-terminal-red font-ibm-custom'>
                         {formatCurrency(bill.amountDue)}
-                      </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-center'>
-                        <div className='relative inline-block'>
-                          <select
-                            value={bill.status || ''}
-                            onChange={(e) =>
-                              handleStatusChange(
-                                bill.id,
-                                e.target.value || null
-                              )
-                            }
-                            className={`appearance-none inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium font-ibm cursor-pointer transition-colors border-0 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 ${currentStatus.color}`}
-                          >
-                            {statusOptions.map((option) => {
-                              const OptionIcon = option.icon;
-                              return (
-                                <option
-                                  key={option.value}
-                                  value={option.value || ''}
-                                  className='bg-terminal-dark text-terminal-text'
-                                >
-                                  {option.label}
-                                </option>
-                              );
-                            })}
-                          </select>
-                          <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
-                            <ChevronDown className='h-3 w-3 lucide' />
-                          </div>
-                        </div>
-                      </td>
-                      <td className='px-6 py-4 text-sm text-terminal-text font-ibm'>
+                      </p>
+                    </div>
+                    <h4 className='text-terminal-text font-medium font-ibm text-sm mt-1'>
+                      {bill.name}
+                    </h4>
+                    {bill.notes && (
+                      <p className='text-xs text-terminal-muted font-ibm mt-1'>
                         {bill.notes}
-                      </td>
-                      <td className='px-6 py-4 whitespace-nowrap text-center'>
-                        <div className='flex justify-center space-x-2'>
-                          <button
-                            onClick={() => onEdit(bill, 'bill')}
-                            className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
-                            title='Edit bill'
-                          >
-                            <Edit3 className='h-4 w-4 lucide' />
-                          </button>
-                          <button
-                            onClick={() => onDelete(bill.id)}
-                            className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
-                            title='Delete bill'
-                          >
-                            <Trash2 className='h-4 w-4 lucide' />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Card View */}
-          <div className='md:hidden space-y-2 p-4'>
-            {billsWithColorCoding.map((bill) => {
-              const currentStatus = getStatusOption(bill.status);
-              const StatusIcon = currentStatus.icon;
-
-              return (
-                <div
-                  key={bill.id}
-                  className='bg-terminal-dark p-3 rounded border border-terminal-border'
-                  style={getColorStyles(bill.colorIndex)}
-                >
-                  <div className='flex justify-between items-center mb-2'>
-                    <div className='flex-1'>
-                      <div className='flex items-center justify-between'>
-                        <span className='text-xs text-terminal-muted font-ibm'>
-                          {bill.dueDate
-                            ? formatDate(createLocalDate(bill.dueDate))
-                            : '-'}
-                        </span>
-                        <p className='text-lg font-bold text-terminal-red font-ibm-custom'>
-                          {formatCurrency(bill.amountDue)}
-                        </p>
-                      </div>
-                      <h4 className='text-terminal-text font-medium font-ibm text-sm mt-1'>
-                        {bill.name}
-                      </h4>
-                      {bill.notes && (
-                        <p className='text-xs text-terminal-muted font-ibm mt-1'>
-                          {bill.notes}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className='flex items-center justify-between pt-2 border-t border-terminal-border'>
-                    <div className='relative inline-block'>
-                      <select
-                        value={bill.status || ''}
-                        onChange={(e) =>
-                          handleStatusChange(bill.id, e.target.value || null)
-                        }
-                        className={`appearance-none inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium font-ibm cursor-pointer transition-colors border-0 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 ${currentStatus.color}`}
-                      >
-                        {statusOptions.map((option) => {
-                          const OptionIcon = option.icon;
-                          return (
-                            <option
-                              key={option.value}
-                              value={option.value || ''}
-                              className='bg-terminal-dark text-terminal-text'
-                            >
-                              {option.label}
-                            </option>
-                          );
-                        })}
-                      </select>
-                      <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
-                        <ChevronDown className='h-3 w-3 lucide' />
-                      </div>
-                    </div>
-
-                    <div className='flex items-center space-x-3'>
-                      <button
-                        onClick={() => onEdit(bill, 'bill')}
-                        className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer'
-                        title='Edit bill'
-                      >
-                        <Edit3 className='h-3 w-3 lucide' />
-                      </button>
-                      <button
-                        onClick={() => onDelete(bill.id)}
-                        className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer'
-                        title='Delete bill'
-                      >
-                        <Trash2 className='h-3 w-3 lucide' />
-                      </button>
-                    </div>
+                      </p>
+                    )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </>
+
+                {/* Status and Actions */}
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center space-x-2'>
+                    <select
+                      value={bill.status || ''}
+                      onChange={(e) =>
+                        handleStatusChange(bill.id, e.target.value || null)
+                      }
+                      className={`px-2 py-1 text-xs rounded font-ibm ${currentStatus.color}`}
+                    >
+                      {statusOptions.map((option) => (
+                        <option
+                          key={option.value || 'null'}
+                          value={option.value || ''}
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className='flex items-center space-x-2'>
+                    <button
+                      onClick={() => onEdit(bill, 'bill')}
+                      className='p-1 text-terminal-muted hover:text-terminal-text transition-colors'
+                      title='Edit bill'
+                    >
+                      <Edit3 size={16} />
+                    </button>
+                    <button
+                      onClick={() => onDelete(bill.id)}
+                      className='p-1 text-terminal-muted hover:text-terminal-red transition-colors'
+                      title='Delete bill'
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       ) : (
-        <div className='px-6 py-12 text-center'>
-          <p className='text-terminal-muted font-ibm'>
-            No bills yet. Add some above!
-          </p>
+        <div className='p-6 text-center text-terminal-muted font-ibm'>
+          No bills found for this month.
         </div>
       )}
     </div>

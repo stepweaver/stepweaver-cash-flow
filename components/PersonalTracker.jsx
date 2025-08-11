@@ -116,6 +116,7 @@ export default function PersonalTracker() {
       {/* Bills Section */}
       <BillsSection
         billsWithColorCoding={billsWithColorCoding}
+        incomeWithColors={incomeWithColors}
         getColorClasses={getColorClasses}
         getColorStyles={getColorStyles}
         onEdit={editItem}
