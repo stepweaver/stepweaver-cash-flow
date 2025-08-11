@@ -59,15 +59,15 @@ export default function BillsSection({
           Bills
         </h3>
         {incomeWithColors && incomeWithColors.length > 0 && (
-          <div className='flex items-center space-x-2'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-1 sm:space-y-0'>
             <span className='text-xs text-terminal-muted font-ibm'>
               Income Periods:
             </span>
           </div>
         )}
-        <p className='text-sm text-terminal-muted font-ibm mt-1'>
+        <div className='text-sm text-terminal-muted font-ibm mt-1'>
           {incomeWithColors && incomeWithColors.length > 0 ? (
-            <span>
+            <div className='space-y-1'>
               {incomeWithColors.map((income, index) => {
                 const periodNumber = index + 1;
                 const source = income.source || 'Unknown';
@@ -87,25 +87,22 @@ export default function BillsSection({
                   ][index] || '#00ff41';
 
                 return (
-                  <span key={index}>
+                  <div key={index} className='block'>
                     <span style={{ color }} className='font-medium'>
-                      P{periodNumber}: {source} ({amount}) - {date}
+                      P{periodNumber}: {source} | {date}
                     </span>
-                    {index < incomeWithColors.length - 1 && (
-                      <span className='text-terminal-muted'> | </span>
-                    )}
-                  </span>
+                  </div>
                 );
               })}
-            </span>
+            </div>
           ) : (
             'No income periods'
           )}
-        </p>
+        </div>
       </div>
 
       {billsWithColorCoding && billsWithColorCoding.length > 0 ? (
-        <div className='p-6 space-y-3'>
+        <div className='p-3 sm:p-6 space-y-2 sm:space-y-3'>
           {billsWithColorCoding.map((bill) => {
             const currentStatus = getStatusOption(bill.status);
             const StatusIcon = currentStatus.icon;
@@ -116,32 +113,41 @@ export default function BillsSection({
                 className='bg-terminal-dark p-3 rounded border border-terminal-border'
                 style={getColorStyles(bill.colorIndex)}
               >
-                <div className='flex justify-between items-center mb-2'>
-                  <div className='flex-1'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-xs text-terminal-muted font-ibm'>
+                {/* Mobile Layout - Stacked with Labels */}
+                <div className='block sm:hidden space-y-2'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex-1'>
+                      <h4 className='text-terminal-text font-medium font-ibm text-sm mb-1'>
+                        <span className='text-terminal-muted text-xs'>
+                          Bill:{' '}
+                        </span>
+                        {bill.name}
+                      </h4>
+                      <div className='text-xs text-terminal-muted font-ibm'>
+                        <span className='text-terminal-muted'>Due: </span>
                         {bill.dueDate
                           ? formatDate(createLocalDate(bill.dueDate))
                           : '-'}
-                      </span>
-                      <p className='text-lg font-bold text-terminal-red font-ibm-custom'>
+                      </div>
+                      {bill.notes && (
+                        <p className='text-xs text-terminal-muted font-ibm mt-1'>
+                          <span className='text-terminal-muted'>Notes: </span>
+                          {bill.notes}
+                        </p>
+                      )}
+                    </div>
+                    <div className='text-right ml-4'>
+                      <p className='text-base font-bold text-terminal-red font-ibm-custom mb-2'>
+                        <span className='text-terminal-muted text-xs'>
+                          Amount:{' '}
+                        </span>
                         {formatCurrency(bill.amountDue)}
                       </p>
                     </div>
-                    <h4 className='text-terminal-text font-medium font-ibm text-sm mt-1'>
-                      {bill.name}
-                    </h4>
-                    {bill.notes && (
-                      <p className='text-xs text-terminal-muted font-ibm mt-1'>
-                        {bill.notes}
-                      </p>
-                    )}
                   </div>
-                </div>
 
-                {/* Status and Actions */}
-                <div className='flex items-center justify-between'>
-                  <div className='flex items-center space-x-2'>
+                  {/* Status and Actions - Right Side */}
+                  <div className='flex items-center justify-end space-x-2'>
                     <select
                       value={bill.status || ''}
                       onChange={(e) =>
@@ -158,23 +164,100 @@ export default function BillsSection({
                         </option>
                       ))}
                     </select>
-                  </div>
-
-                  <div className='flex items-center space-x-2'>
                     <button
                       onClick={() => onEdit(bill, 'bill')}
                       className='p-1 text-terminal-muted hover:text-terminal-text transition-colors'
                       title='Edit bill'
                     >
-                      <Edit3 size={16} />
+                      <Edit3 size={14} />
                     </button>
                     <button
                       onClick={() => onDelete(bill.id)}
                       className='p-1 text-terminal-muted hover:text-terminal-red transition-colors'
                       title='Delete bill'
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} />
                     </button>
+                  </div>
+                </div>
+
+                {/* Desktop Layout - Original */}
+                <div className='hidden sm:block'>
+                  <div className='flex justify-between items-start'>
+                    <div className='flex-1'>
+                      <div className='mb-2'>
+                        <span className='text-xs text-terminal-muted font-ibm block mb-1'>
+                          Bill Name
+                        </span>
+                        <h4 className='text-terminal-text font-medium font-ibm text-sm'>
+                          {bill.name}
+                        </h4>
+                      </div>
+                      <div className='text-xs text-terminal-muted font-ibm'>
+                        <span className='text-terminal-muted font-ibm block mb-1'>
+                          Due Date
+                        </span>
+                        <span className='text-terminal-muted font-ibm'>
+                          {bill.dueDate
+                            ? formatDate(createLocalDate(bill.dueDate))
+                            : '-'}
+                        </span>
+                      </div>
+                      {bill.notes && (
+                        <div className='mt-2'>
+                          <span className='text-xs text-terminal-muted font-ibm block mb-1'>
+                            Notes
+                          </span>
+                          <p className='text-xs text-terminal-muted font-ibm'>
+                            {bill.notes}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Amount Due and Actions - Right Side */}
+                    <div className='flex flex-col items-end space-y-3 ml-4'>
+                      <div className='text-right'>
+                        <span className='text-xs text-terminal-muted font-ibm block mb-1'>
+                          Amount Due
+                        </span>
+                        <p className='text-base font-bold text-terminal-red font-ibm-custom'>
+                          {formatCurrency(bill.amountDue)}
+                        </p>
+                      </div>
+                      <div className='flex items-center space-x-2'>
+                        <select
+                          value={bill.status || ''}
+                          onChange={(e) =>
+                            handleStatusChange(bill.id, e.target.value || null)
+                          }
+                          className={`px-2 py-1 text-xs rounded font-ibm ${currentStatus.color}`}
+                        >
+                          {statusOptions.map((option) => (
+                            <option
+                              key={option.value || 'null'}
+                              value={option.value || ''}
+                            >
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() => onEdit(bill, 'bill')}
+                          className='p-1 text-terminal-muted hover:text-terminal-text transition-colors'
+                          title='Edit bill'
+                        >
+                          <Edit3 size={16} />
+                        </button>
+                        <button
+                          onClick={() => onDelete(bill.id)}
+                          className='p-1 text-terminal-muted hover:text-terminal-red transition-colors'
+                          title='Delete bill'
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -182,7 +265,7 @@ export default function BillsSection({
           })}
         </div>
       ) : (
-        <div className='p-6 text-center text-terminal-muted font-ibm'>
+        <div className='p-4 sm:p-6 text-center text-terminal-muted font-ibm'>
           No bills found for this month.
         </div>
       )}
