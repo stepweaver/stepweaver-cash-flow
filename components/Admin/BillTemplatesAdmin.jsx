@@ -1,7 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Trash2, Edit3, Plus, X, Eye, FileText } from 'lucide-react';
+import {
+  Trash2,
+  Edit3,
+  Plus,
+  X,
+  Eye,
+  FileText,
+  Info,
+  Calendar,
+  DollarSign,
+} from 'lucide-react';
 
 export default function BillTemplatesAdmin({
   billTemplates,
@@ -22,8 +32,6 @@ export default function BillTemplatesAdmin({
   const [templateForm, setTemplateForm] = useState({
     name: '',
     amount: '',
-    dueDay: '',
-    notes: '',
     url: '',
   });
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -40,7 +48,6 @@ export default function BillTemplatesAdmin({
     const templateData = {
       ...templateForm,
       amount: parseFloat(templateForm.amount) || 0,
-      dueDay: templateForm.dueDay ? parseInt(templateForm.dueDay) : null,
     };
 
     if (editingTemplate) {
@@ -53,8 +60,6 @@ export default function BillTemplatesAdmin({
     setTemplateForm({
       name: '',
       amount: '',
-      dueDay: '',
-      notes: '',
       url: '',
     });
     setShowTemplateForm(false);
@@ -65,8 +70,6 @@ export default function BillTemplatesAdmin({
     setTemplateForm({
       name: template.name || '',
       amount: template.amount?.toString() || '',
-      dueDay: template.dueDay?.toString() || '',
-      notes: template.notes || '',
       url: template.url || '',
     });
     setShowTemplateForm(true);
@@ -78,8 +81,6 @@ export default function BillTemplatesAdmin({
     setTemplateForm({
       name: '',
       amount: '',
-      dueDay: '',
-      notes: '',
       url: '',
     });
   };
@@ -96,9 +97,9 @@ export default function BillTemplatesAdmin({
     <div className='space-y-6'>
       {/* Header Section */}
       <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
-        <div className='px-6 py-4 border-b border-terminal-border'>
-          <div className='flex items-center justify-between'>
-            <div>
+        <div className='px-4 sm:px-6 py-4 border-b border-terminal-border'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+            <div className='flex-1'>
               <h3 className='text-lg font-semibold text-terminal-purple font-ibm-custom mb-2'>
                 Bill Templates Management
               </h3>
@@ -110,7 +111,7 @@ export default function BillTemplatesAdmin({
             </div>
             <button
               onClick={() => setShowTemplateForm(true)}
-              className='flex items-center px-4 py-2 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm cursor-pointer'
+              className='flex items-center justify-center px-4 py-2 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm cursor-pointer w-full sm:w-auto'
             >
               <Plus className='h-4 w-4 mr-2' />
               Add Template
@@ -119,110 +120,84 @@ export default function BillTemplatesAdmin({
         </div>
       </div>
 
-      {/* Template Form */}
+      {/* Template Form Modal */}
       {showTemplateForm && (
-        <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border overflow-hidden'>
-          <div className='px-6 py-4 border-b border-terminal-border bg-terminal-dark'>
-            <div className='flex items-center justify-between mb-4'>
-              <h4 className='text-md font-semibold text-terminal-text font-ibm'>
-                {editingTemplate ? 'Edit Template' : 'Create New Template'}
-              </h4>
-              <button
-                onClick={handleCancel}
-                className='text-terminal-muted hover:text-terminal-text transition-colors'
-              >
-                <X className='h-5 w-5' />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className='space-y-4'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div>
-                  <label className='block text-sm font-medium text-terminal-text mb-2 font-ibm'>
-                    Template Name *
-                  </label>
-                  <input
-                    type='text'
-                    name='name'
-                    value={templateForm.name}
-                    onChange={handleChange}
-                    className='w-full px-3 py-2 bg-terminal-light border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-purple focus:border-transparent font-ibm text-sm'
-                    placeholder='e.g., Rent, Utilities, Insurance'
-                    required
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium text-terminal-text mb-2 font-ibm'>
-                    Typical Amount
-                  </label>
-                  <input
-                    type='number'
-                    name='amount'
-                    value={templateForm.amount}
-                    onChange={handleChange}
-                    step='0.01'
-                    min='0'
-                    className='w-full px-3 py-2 bg-terminal-light border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-purple focus:border-transparent font-ibm text-sm'
-                    placeholder='0.00 (optional)'
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium text-terminal-text mb-2 font-ibm'>
-                    Due Day of Month
-                  </label>
-                  <input
-                    type='number'
-                    name='dueDay'
-                    value={templateForm.dueDay}
-                    onChange={handleChange}
-                    min='1'
-                    max='31'
-                    className='w-full px-3 py-2 bg-terminal-light border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-purple focus:border-transparent font-ibm text-sm'
-                    placeholder='1-31 (optional)'
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium text-terminal-text mb-2 font-ibm'>
-                    Template Notes
-                  </label>
-                  <input
-                    type='text'
-                    name='notes'
-                    value={templateForm.notes}
-                    onChange={handleChange}
-                    className='w-full px-3 py-2 bg-terminal-light border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-purple focus:border-transparent font-ibm text-sm'
-                    placeholder='Optional: payment info, account numbers, etc.'
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium text-terminal-text mb-2 font-ibm'>
-                    Payment URL
-                  </label>
-                  <input
-                    type='url'
-                    name='url'
-                    value={templateForm.url}
-                    onChange={handleChange}
-                    className='w-full px-3 py-2 bg-terminal-light border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-purple focus:border-transparent font-ibm text-sm'
-                    placeholder='https://example.com/payment'
-                  />
-                </div>
-              </div>
-              <div className='flex justify-end space-x-3 pt-4'>
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
+          <div className='bg-terminal-light rounded-lg shadow-lg border border-terminal-border max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
+            <div className='px-6 py-4 border-b border-terminal-border bg-terminal-dark'>
+              <div className='flex items-center justify-between mb-4'>
+                <h4 className='text-lg font-semibold text-terminal-text font-ibm'>
+                  {editingTemplate ? 'Edit Template' : 'Create New Template'}
+                </h4>
                 <button
-                  type='button'
                   onClick={handleCancel}
-                  className='px-4 py-2 text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer text-sm'
+                  className='text-terminal-muted hover:text-terminal-text transition-colors p-1'
                 >
-                  Cancel
-                </button>
-                <button
-                  type='submit'
-                  className='px-6 py-2 bg-terminal-purple text-white rounded hover:bg-terminal-purple/80 transition-colors font-ibm cursor-pointer text-sm'
-                >
-                  {editingTemplate ? 'Update Template' : 'Create Template'}
+                  <X className='h-5 w-5' />
                 </button>
               </div>
-            </form>
+              <form onSubmit={handleSubmit} className='space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                  <div>
+                    <label className='block text-sm font-medium text-terminal-text mb-2 font-ibm'>
+                      Template Name *
+                    </label>
+                    <input
+                      type='text'
+                      name='name'
+                      value={templateForm.name}
+                      onChange={handleChange}
+                      className='w-full px-3 py-2 bg-terminal-light border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-purple focus:border-transparent font-ibm text-sm'
+                      placeholder='e.g., Rent, Utilities, Insurance'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-terminal-text mb-2 font-ibm'>
+                      Amount
+                    </label>
+                    <input
+                      type='number'
+                      name='amount'
+                      value={templateForm.amount}
+                      onChange={handleChange}
+                      step='0.01'
+                      min='0'
+                      className='w-full px-3 py-2 bg-terminal-light border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-purple focus:border-transparent font-ibm text-sm'
+                      placeholder='0.00 (optional)'
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-terminal-text mb-2 font-ibm'>
+                      Payment URL
+                    </label>
+                    <input
+                      type='url'
+                      name='url'
+                      value={templateForm.url}
+                      onChange={handleChange}
+                      className='w-full px-3 py-2 bg-terminal-light border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-purple focus:border-transparent font-ibm text-sm'
+                      placeholder='https://example.com/payment'
+                    />
+                  </div>
+                </div>
+                <div className='flex justify-end space-x-3 pt-4'>
+                  <button
+                    type='button'
+                    onClick={handleCancel}
+                    className='px-4 py-2 text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer text-sm'
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type='submit'
+                    className='px-6 py-2 bg-terminal-purple text-white rounded hover:bg-terminal-purple/80 transition-colors font-ibm cursor-pointer text-sm'
+                  >
+                    {editingTemplate ? 'Update Template' : 'Create Template'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
@@ -247,13 +222,7 @@ export default function BillTemplatesAdmin({
                     Template Name
                   </th>
                   <th className='px-6 py-3 text-right text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Typical Amount
-                  </th>
-                  <th className='px-6 py-3 text-center text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Due Day
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
-                    Template Notes
+                    Amount
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium text-terminal-muted uppercase tracking-wider font-ibm'>
                     Payment URL
@@ -271,12 +240,6 @@ export default function BillTemplatesAdmin({
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ibm'>
                       ${template.amount?.toFixed(2) || '0.00'}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-text text-center font-ibm'>
-                      {template.dueDay || '-'}
-                    </td>
-                    <td className='px-6 py-4 text-sm text-terminal-text font-ibm max-w-xs truncate'>
-                      {template.notes || '-'}
                     </td>
                     <td className='px-6 py-4 text-sm text-terminal-text font-ibm max-w-xs truncate'>
                       {template.url || '-'}
@@ -360,34 +323,11 @@ export default function BillTemplatesAdmin({
                     </span>
                   </div>
                   <div className='flex items-center space-x-3'>
-                    <Calendar className='h-4 w-4 text-terminal-muted' />
-                    <span className='text-sm text-terminal-text font-ibm'>
-                      <strong>Due Date:</strong>{' '}
-                      {selectedTemplate.dueDay &&
-                      selectedTemplate.dueDay >= 1 &&
-                      selectedTemplate.dueDay <= 31 &&
-                      monthNames &&
-                      monthNames[currentMonth - 1]
-                        ? `${monthNames[currentMonth - 1]} ${
-                            selectedTemplate.dueDay
-                          }, ${safeCurrentYear}`
-                        : 'Not set (you specify when generating)'}
-                    </span>
-                  </div>
-                  <div className='flex items-center space-x-3'>
                     <DollarSign className='h-4 w-4 text-terminal-muted' />
                     <span className='text-sm text-terminal-text font-ibm'>
                       <strong>Amount Due:</strong>{' '}
                       <span className='text-terminal-red'>$0.00</span> (blank -
                       you fill in)
-                    </span>
-                  </div>
-                  <div className='flex items-center space-x-3'>
-                    <Info className='h-4 w-4 text-terminal-muted' />
-                    <span className='text-sm text-terminal-text font-ibm'>
-                      <strong>Notes:</strong>{' '}
-                      <span className='text-terminal-muted'>Blank</span> (you
-                      add as needed)
                     </span>
                   </div>
                 </div>
