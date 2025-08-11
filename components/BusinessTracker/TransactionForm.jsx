@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Paperclip } from 'lucide-react';
+import Card from '../common/Card';
 import ReceiptUpload from '../ReceiptUpload';
 import { getCurrentDateString } from '@/lib/utils';
 
@@ -47,7 +48,7 @@ export default function TransactionForm({
   };
 
   return (
-    <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
+    <Card>
       <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm-custom'>
         Add Transaction
       </h3>
@@ -140,6 +141,6 @@ export default function TransactionForm({
           </button>
         </div>
       </form>
-    </div>
+    </Card>
   );
 }

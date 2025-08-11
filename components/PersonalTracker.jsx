@@ -1,7 +1,7 @@
 'use client';
 
 import { usePersonalTracker } from '@/hooks/usePersonalTracker';
-import MonthNavigation from './PersonalTracker/MonthNavigation';
+import MonthNavigation from './common/MonthNavigation';
 import MonthlySummaryCards from './PersonalTracker/MonthlySummaryCards';
 import QuickActionsPanel from './PersonalTracker/QuickActionsPanel';
 import IncomeSection from './PersonalTracker/IncomeSection';

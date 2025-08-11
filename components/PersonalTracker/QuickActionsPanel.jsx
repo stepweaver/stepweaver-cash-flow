@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus, Download, Calendar, Info } from 'lucide-react';
+import Card from '../common/Card';
 
 export default function QuickActionsPanel({
   onAddIncome,
@@ -18,7 +19,7 @@ export default function QuickActionsPanel({
   ).toLocaleDateString('en-US', { month: 'long' });
 
   return (
-    <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
+    <Card>
       <h3 className='text-lg font-semibold text-terminal-green mb-4 font-ibm-custom'>
         Quick Actions
       </h3>
@@ -54,7 +55,7 @@ export default function QuickActionsPanel({
               }
             >
               <Calendar className='h-4 w-4 mr-2' />
-              Generate Bills from Templates
+              Generate Bills
             </button>
 
             {/* Tooltip */}
@@ -81,7 +82,7 @@ export default function QuickActionsPanel({
           <div className='flex items-start space-x-2'>
             <Info className='h-4 w-4 text-terminal-purple mt-0.5 flex-shrink-0' />
             <div className='text-sm text-terminal-purple font-ibm'>
-              <p className='font-medium mb-1'>Generate Bills from Templates</p>
+              <p className='font-medium mb-1'>Generate Bills</p>
               <p className='text-terminal-purple/80'>
                 This will create blank bill entries for {currentMonthName}{' '}
                 {currentYear} based on your {billTemplates.length} template
@@ -109,6 +110,6 @@ export default function QuickActionsPanel({
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

@@ -2,6 +2,7 @@
 
 import { Calendar } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import Card from '../common/Card';
 
 export default function AnnualSummaryCards({
   currentYear,
@@ -14,7 +15,7 @@ export default function AnnualSummaryCards({
   annualDrawableCash,
 }) {
   return (
-    <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
+    <Card>
       <h3 className='text-xl font-semibold text-terminal-green mb-4 flex items-center font-ibm-custom'>
         <Calendar className='h-5 w-5 mr-2 lucide' />[{currentYear}]
       </h3>
@@ -105,6 +106,6 @@ export default function AnnualSummaryCards({
           </p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

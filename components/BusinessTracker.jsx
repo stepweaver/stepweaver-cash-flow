@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { Download } from 'lucide-react';
 import ReceiptViewer from './ReceiptViewer';
 import DateRangePicker from './DateRangePicker';
 import { useBusinessTracker } from '@/hooks/useBusinessTracker';
 import SummaryCards from './BusinessTracker/SummaryCards';
 import AnnualSummaryCards from './BusinessTracker/AnnualSummaryCards';
-import MonthNavigation from './BusinessTracker/MonthNavigation';
+import MonthNavigation from './common/MonthNavigation';
 import TransactionForm from './BusinessTracker/TransactionForm';
 import TransactionTable from './BusinessTracker/TransactionTable';
 import EditTransactionModal from './BusinessTracker/EditTransactionModal';
