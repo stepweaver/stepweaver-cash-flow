@@ -16,7 +16,7 @@ export default function MonthNavigation({
           ←
         </button>
         <span className='text-lg font-semibold text-terminal-text min-w-[140px] text-center font-ibm'>
-          [{monthNames[currentMonth]} {currentYear}]
+          [{monthNames[currentMonth - 1]} {currentYear}]
         </span>
         <button
           onClick={() => onChangeMonth(1)}

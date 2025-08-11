@@ -367,8 +367,10 @@ export default function BillTemplatesAdmin({
                       selectedTemplate.dueDay >= 1 &&
                       selectedTemplate.dueDay <= 31 &&
                       monthNames &&
-                      monthNames[currentMonth]
-                        ? `${monthNames[currentMonth]} ${selectedTemplate.dueDay}, ${safeCurrentYear}`
+                      monthNames[currentMonth - 1]
+                        ? `${monthNames[currentMonth - 1]} ${
+                            selectedTemplate.dueDay
+                          }, ${safeCurrentYear}`
                         : 'Not set (you specify when generating)'}
                     </span>
                   </div>

@@ -21,8 +21,8 @@ export default function MonthlySummaryCards({
   return (
     <div className='bg-terminal-light p-6 rounded-lg shadow-sm border border-terminal-border'>
       <h3 className='text-xl font-semibold text-terminal-green mb-4 flex items-center font-ibm-custom'>
-        <Calendar className='h-5 w-5 mr-2 lucide' />[{monthNames[currentMonth]}{' '}
-        {currentYear}]
+        <Calendar className='h-5 w-5 mr-2 lucide' />[
+        {monthNames[currentMonth - 1]} {currentYear}]
       </h3>
       <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
         <div className='bg-terminal-dark p-6 rounded-lg shadow-sm border border-terminal-border'>

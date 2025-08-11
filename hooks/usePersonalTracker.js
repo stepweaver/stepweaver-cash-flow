@@ -118,8 +118,11 @@ const getInitialPersonalData = (year, month) => {
 
 export function usePersonalTracker() {
   // Initialize with current month and year
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  // getMonth() returns 0-indexed (0-11), but we want to work with 1-indexed months (1-12)
+  // So August (month 7) should become 8, September (month 8) should become 9, etc.
+  const now = new Date();
+  const [currentMonth, setCurrentMonth] = useState(now.getMonth() + 1);
+  const [currentYear, setCurrentYear] = useState(now.getFullYear());
   const [personalData, setPersonalData] = useState({ income: [], bills: [] });
   const [billTemplates, setBillTemplates] = useState([]);
   const [showIncomeModal, setShowIncomeModal] = useState(false);
@@ -131,6 +134,19 @@ export function usePersonalTracker() {
   // Export functionality
   const [showExportModal, setShowExportModal] = useState(false);
 
+  console.log('usePersonalTracker initialized with:', {
+    currentMonth,
+    currentYear,
+    actualCurrentMonth: now.getMonth() + 1,
+    actualCurrentYear: now.getFullYear(),
+    nowMonth: now.getMonth(),
+    nowMonthName: now.toLocaleString('default', { month: 'long' }),
+    expectedMonth: now.getMonth() + 1,
+    fullDate: now.toISOString(),
+    localDate: now.toLocaleDateString(),
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+  });
+
   // Load data function - moved outside useEffect so it can be reused
   const loadData = async (skipFutureMonthCheck = false) => {
     try {
@@ -139,8 +155,15 @@ export function usePersonalTracker() {
       setBillTemplates(templates);
 
       // Load personal data for the month
-      const monthParam = currentMonth + 1; // Convert 0-indexed to 1-indexed
-      console.log('Loading data for month/year:', { monthParam, currentYear });
+      // currentMonth is already 1-indexed (1-12), so use it directly
+      const monthParam = currentMonth;
+      console.log('Loading data for month/year:', {
+        monthParam,
+        currentYear,
+        currentMonth,
+        expectedMonth: monthParam,
+        expectedYear: currentYear
+      });
 
       const data = await getPersonalData(currentYear, monthParam);
 
@@ -168,19 +191,37 @@ export function usePersonalTracker() {
 
       // Clear notes for future months (notes should not persist forward)
       const currentDate = new Date();
-      const viewingDate = new Date(currentYear, currentMonth, 1);
+      // currentMonth is 1-indexed (1-12), but Date constructor expects 0-indexed (0-11)
+      const viewingDate = new Date(currentYear, currentMonth - 1, 1);
+
+      // More precise future month detection - only consider it future if it's the next month or later
+      // Don't treat the current month as future
+      const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const isActuallyFutureMonth = viewingDate > currentMonthStart;
 
       console.log('Date comparison:', {
         currentDate: currentDate.toISOString(),
         viewingDate: viewingDate.toISOString(),
-        isFutureMonth: viewingDate > currentDate,
+        currentMonthStart: currentMonthStart.toISOString(),
+        isActuallyFutureMonth,
         currentYear,
-        currentMonth: currentMonth + 1,
-        skipFutureMonthCheck
+        currentMonth: currentMonth,
+        skipFutureMonthCheck,
+        billsBeforeClearing: data.bills ? data.bills.length : 0
       });
 
       // Only clear bills for future months if we're not skipping the check (e.g., after generating bills)
-      if (viewingDate > currentDate && !skipFutureMonthCheck) {
+      // AND if we're actually viewing a future month (not just the current month)
+      const shouldClearBills = isActuallyFutureMonth && !skipFutureMonthCheck;
+
+      console.log('Future month logic:', {
+        isActuallyFutureMonth,
+        skipFutureMonthCheck,
+        shouldClearBills,
+        billsCount: data.bills ? data.bills.length : 0
+      });
+
+      if (shouldClearBills) {
         // For future months, start with empty bills array - bills must be generated manually
         console.log('Viewing future month, clearing bills array');
         data.bills = [];
@@ -188,8 +229,10 @@ export function usePersonalTracker() {
           ...income,
           notes: '', // Clear notes for future months
         }));
-      } else if (viewingDate > currentDate && skipFutureMonthCheck) {
+      } else if (isActuallyFutureMonth && skipFutureMonthCheck) {
         console.log('Skipping future month bill clearing (bills were just generated)');
+      } else {
+        console.log('Not a future month or bills should be preserved');
       }
 
       // Sort bills by due date
@@ -208,7 +251,7 @@ export function usePersonalTracker() {
       };
 
       // Final check: if this is a future month, ensure bills array is empty (unless skipping)
-      if (viewingDate > currentDate && !skipFutureMonthCheck) {
+      if (isActuallyFutureMonth && !skipFutureMonthCheck) {
         console.log('Final check: ensuring future month has empty bills array');
         safeData.bills = [];
         // Also clear any income notes for future months
@@ -225,9 +268,17 @@ export function usePersonalTracker() {
           console.warn('WARNING: Bills array still has data for future month, forcing empty array');
           safeData.bills = [];
         }
-      } else if (viewingDate > currentDate && skipFutureMonthCheck) {
+      } else if (isActuallyFutureMonth && skipFutureMonthCheck) {
         console.log('Final check: preserving generated bills in future month');
+      } else {
+        console.log('Final check: preserving bills for current/past month');
       }
+
+      console.log('Final data being set:', {
+        billsCount: safeData.bills.length,
+        incomeCount: safeData.income.length,
+        bills: safeData.bills
+      });
 
       setPersonalData(safeData);
     } catch (error) {
@@ -285,14 +336,17 @@ export function usePersonalTracker() {
     }
   };
 
-  // Load data from Firebase on mount
+  // Load data from Firebase on mount and when month/year changes
   useEffect(() => {
-    loadData(); // Only load data on mount, not on month/year changes
-  }, []); // Empty dependency array - only run on mount
+    console.log('useEffect triggered - loading data for:', { currentMonth, currentYear });
+    loadData(); // Load data when month/year changes
+  }, [currentMonth, currentYear]); // Depend on month and year changes
 
   const changeMonth = (offset) => {
-    const newDate = new Date(currentYear, currentMonth + offset, 1);
-    const newMonth = newDate.getMonth();
+    // currentMonth is 1-indexed (1-12), but Date constructor expects 0-indexed (0-11)
+    const newDate = new Date(currentYear, (currentMonth - 1) + offset, 1);
+    // Convert back to 1-indexed for our state
+    const newMonth = newDate.getMonth() + 1;
     const newYear = newDate.getFullYear();
 
     console.log('Month navigation:', {
@@ -307,10 +361,7 @@ export function usePersonalTracker() {
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
 
-    // Load data for the new month after state update
-    setTimeout(() => {
-      loadData();
-    }, 0);
+    // loadData will be called automatically by useEffect when state updates
   };
 
   const handleSaveBill = async (bill) => {
@@ -640,6 +691,13 @@ export function usePersonalTracker() {
   const getBillsWithColorCoding = () => {
     const bills = personalData?.bills || [];
 
+    console.log('getBillsWithColorCoding called:', {
+      personalDataExists: !!personalData,
+      billsArray: bills,
+      billsCount: bills.length,
+      billsData: bills
+    });
+
     // Sort bills by due date first, then by amount (bills without due dates go to the end)
     const sortedBills = [...bills].sort((a, b) => {
       // If both bills have due dates, sort by date first, then by amount
@@ -660,6 +718,12 @@ export function usePersonalTracker() {
       const amountA = a.amountDue || a.amount || 0;
       const amountB = b.amountDue || b.amount || 0;
       return amountB - amountA;
+    });
+
+    console.log('Sorted bills:', {
+      originalCount: bills.length,
+      sortedCount: sortedBills.length,
+      sortedBills: sortedBills
     });
 
     return sortedBills.map((bill) => {
@@ -736,6 +800,14 @@ export function usePersonalTracker() {
   // Computed color coordination
   const billsWithColorCoding = getBillsWithColorCoding();
   const incomeWithColors = getIncomeWithColors();
+
+  console.log('Component render state:', {
+    currentMonth,
+    currentYear,
+    personalDataBillsCount: personalData?.bills?.length || 0,
+    billsWithColorCodingCount: billsWithColorCoding.length,
+    personalData: personalData
+  });
 
   const getColorClasses = (colorIndex) => {
     const colorSchemes = {
