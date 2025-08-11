@@ -130,10 +130,13 @@ export default function BillsSection({
                           : '-'}
                       </div>
                       {bill.notes && (
-                        <p className='text-xs text-terminal-muted font-ibm mt-1'>
-                          <span className='text-terminal-muted'>Notes: </span>
-                          {bill.notes}
-                        </p>
+                        <button
+                          className='text-xs text-terminal-cyan font-ibm mt-1 hover:text-terminal-blue transition-colors'
+                          onClick={() => alert(bill.notes)}
+                          title='Click to view notes'
+                        >
+                          📝 View Notes
+                        </button>
                       )}
                     </div>
                     <div className='text-right ml-4'>
@@ -193,26 +196,28 @@ export default function BillsSection({
                           {bill.name}
                         </h4>
                       </div>
-                      <div className='text-xs text-terminal-muted font-ibm'>
-                        <span className='text-terminal-muted font-ibm block mb-1'>
-                          Due Date
-                        </span>
-                        <span className='text-terminal-muted font-ibm'>
-                          {bill.dueDate
-                            ? formatDate(createLocalDate(bill.dueDate))
-                            : '-'}
-                        </span>
-                      </div>
-                      {bill.notes && (
-                        <div className='mt-2'>
+                      <div className='flex items-center space-x-6'>
+                        <div>
                           <span className='text-xs text-terminal-muted font-ibm block mb-1'>
-                            Notes
+                            Due Date
                           </span>
-                          <p className='text-xs text-terminal-muted font-ibm'>
-                            {bill.notes}
-                          </p>
+                          <span className='text-xs text-terminal-muted font-ibm'>
+                            {bill.dueDate
+                              ? formatDate(createLocalDate(bill.dueDate))
+                              : '-'}
+                          </span>
                         </div>
-                      )}
+                        {bill.notes && (
+                          <div>
+                            <span className='text-xs text-terminal-muted font-ibm block mb-1'>
+                              Notes
+                            </span>
+                            <span className='text-xs text-terminal-text font-ibm max-w-xs truncate'>
+                              {bill.notes}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {/* Amount Due and Actions - Right Side */}
