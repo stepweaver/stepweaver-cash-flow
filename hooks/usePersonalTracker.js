@@ -770,8 +770,8 @@ export function usePersonalTracker() {
   const incomeVariancePercent =
     totalIncomeBudget > 0 ? (incomeVariance / totalIncomeBudget) * 100 : 0;
 
-  // Discretionary income calculation (actual income - bills paid)
-  const discretionaryIncome = totalIncomeActual - totalBillsPaid;
+  // Discretionary income calculation (income budget - bills due)
+  const discretionaryIncome = totalIncomeBudget - totalBillsDue;
 
   const netCashFlow = totalIncomeActual - totalBillsPaid;
   const pendingBillsCount = (personalData?.bills || []).filter(
