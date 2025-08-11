@@ -30,100 +30,79 @@ import {
 
 // Get initial personal data for the current month - matching Google Sheet structure
 const getInitialPersonalData = (year, month) => {
-  const monthStr = String(month).padStart(2, '0');
-  const key = `${year}-${monthStr}`;
-  const sampleData = {
-    [`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(
-      2,
-      '0'
-    )}`]: {
-      income: [
-        {
-          id: '1',
-          source: 'PHM',
-          date: `${new Date().getFullYear()}-${String(
-            new Date().getMonth() + 1
-          ).padStart(2, '0')}-08`,
-          budget: 1662.23,
-          actual: 1662.23,
-          notes: 'Bi-weekly paycheck',
-        },
-        {
-          id: '2',
-          source: 'PHM',
-          date: `${new Date().getFullYear()}-${String(
-            new Date().getMonth() + 1
-          ).padStart(2, '0')}-22`,
-          budget: 1662.23,
-          actual: 1662.23,
-          notes: 'Bi-weekly paycheck',
-        },
-      ],
-      bills: [
-        {
-          id: '1',
-          name: 'Mortgage',
-          dueDate: `${new Date().getFullYear()}-${String(
-            new Date().getMonth() + 1
-          ).padStart(2, '0')}-01`,
-          amountDue: 554.39,
-          amountPaid: 554.39,
-          status: 'Pending',
-          notes: 'Monthly mortgage payment',
-          url: 'https://example.com/mortgage-login',
-        },
-        {
-          id: '2',
-          name: 'NIPSCO',
-          dueDate: `${new Date().getFullYear()}-${String(
-            new Date().getMonth() + 1
-          ).padStart(2, '0')}-01`,
-          amountDue: 90.0,
-          amountPaid: 90.0,
-          status: 'Paid',
-          notes: 'Electric utility',
-          url: 'https://nipsco.com/login',
-        },
-        {
-          id: '3',
-          name: 'Comcast',
-          dueDate: `${new Date().getFullYear()}-${String(
-            new Date().getMonth() + 1
-          ).padStart(2, '0')}-15`,
-          amountDue: 79.99,
-          amountPaid: 79.99,
-          status: 'Paid',
-          notes: 'Internet service',
-          url: 'https://customer.xfinity.com/login',
-        },
-        {
-          id: '4',
-          name: 'Water',
-          dueDate: `${new Date().getFullYear()}-${String(
-            new Date().getMonth() + 1
-          ).padStart(2, '0')}-20`,
-          amountDue: 45.0,
-          amountPaid: 0,
-          status: 'Pending',
-          notes: 'Water utility',
-          url: 'https://example.com/water-login',
-        },
-        {
-          id: '5',
-          name: 'Car Insurance',
-          dueDate: `${new Date().getFullYear()}-${String(
-            new Date().getMonth() + 1
-          ).padStart(2, '0')}-25`,
-          amountDue: 120.0,
-          amountPaid: 0,
-          status: 'Pending',
-          notes: 'Auto insurance premium',
-          url: 'https://example.com/insurance-login',
-        },
-      ],
-    },
+  // Return flat structure directly instead of nested month-keyed structure
+  return {
+    income: [
+      {
+        id: '1',
+        source: 'PHM',
+        date: `${year}-${String(month).padStart(2, '0')}-08`,
+        budget: 1662.23,
+        actual: 1662.23,
+        notes: 'Bi-weekly paycheck',
+      },
+      {
+        id: '2',
+        source: 'PHM',
+        date: `${year}-${String(month).padStart(2, '0')}-22`,
+        budget: 1662.23,
+        actual: 1662.23,
+        notes: 'Bi-weekly paycheck',
+      },
+    ],
+    bills: [
+      {
+        id: '1',
+        name: 'Mortgage',
+        dueDate: `${year}-${String(month).padStart(2, '0')}-01`,
+        amountDue: 554.39,
+        amountPaid: 554.39,
+        status: 'Pending',
+        notes: 'Monthly mortgage payment',
+        url: 'https://example.com/mortgage-login',
+      },
+      {
+        id: '2',
+        name: 'NIPSCO',
+        dueDate: `${year}-${String(month).padStart(2, '0')}-01`,
+        amountDue: 90.0,
+        amountPaid: 90.0,
+        status: 'Paid',
+        notes: 'Electric utility',
+        url: 'https://nipsco.com/login',
+      },
+      {
+        id: '3',
+        name: 'Comcast',
+        dueDate: `${year}-${String(month).padStart(2, '0')}-15`,
+        amountDue: 79.99,
+        amountPaid: 79.99,
+        status: 'Paid',
+        notes: 'Internet service',
+        url: 'https://customer.xfinity.com/login',
+      },
+      {
+        id: '4',
+        name: 'Water',
+        dueDate: `${year}-${String(month).padStart(2, '0')}-20`,
+        amountDue: 45.0,
+        amountPaid: 0,
+        status: 'Pending',
+        notes: 'Water utility',
+        url: 'https://example.com/water-login',
+      },
+      {
+        id: '5',
+        name: 'Car Insurance',
+        dueDate: `${year}-${String(month).padStart(2, '0')}-25`,
+        amountDue: 120.0,
+        amountPaid: 0,
+        status: 'Pending',
+        notes: 'Auto insurance premium',
+        url: 'https://example.com/insurance-login',
+      },
+    ],
   };
-  return sampleData[key] || { income: [], bills: [] };
 };
 
 export function usePersonalTracker() {
@@ -151,6 +130,15 @@ export function usePersonalTracker() {
 
         // Load personal data for the month
         const data = await getPersonalData(currentYear, currentMonth + 1);
+
+        // Debug logging to help identify data structure issues
+        console.log('Loaded personal data:', data);
+        if (data.bills && data.bills.length > 0) {
+          console.log('Sample bill structure:', data.bills[0]);
+        }
+        if (data.income && data.income.length > 0) {
+          console.log('Sample income structure:', data.income[0]);
+        }
 
         // Generate bills from templates if needed (for future months)
         const currentDate = new Date();
@@ -185,13 +173,35 @@ export function usePersonalTracker() {
           });
         }
 
-        setPersonalData(data);
+        // Ensure data has the expected structure with fallbacks
+        const safeData = {
+          income: data.income || [],
+          bills: data.bills || [],
+        };
+
+        setPersonalData(safeData);
       } catch (error) {
         console.error('Error loading personal data:', error);
         // Fallback to localStorage if Firebase fails
         const savedData = localStorage.getItem('personalData');
         if (savedData) {
-          setPersonalData(JSON.parse(savedData));
+          try {
+            const parsedData = JSON.parse(savedData);
+            // Ensure parsed data has the expected structure
+            const safeParsedData = {
+              income: parsedData.income || [],
+              bills: parsedData.bills || [],
+            };
+            setPersonalData(safeParsedData);
+          } catch (parseError) {
+            console.error('Error parsing localStorage data:', parseError);
+            // Load initial sample data if parsing fails
+            const initialData = getInitialPersonalData(
+              currentYear,
+              currentMonth + 1
+            );
+            setPersonalData(initialData);
+          }
         } else {
           // Load initial sample data
           const initialData = getInitialPersonalData(
@@ -215,11 +225,18 @@ export function usePersonalTracker() {
   const handleSaveBill = async (bill) => {
     try {
       if (editingItem) {
-        await updatePersonalBill(editingItem.id, bill);
+        // Map the bill data to the expected structure
+        const billData = {
+          ...bill,
+          amountDue: bill.amount,
+          amountPaid: bill.status === 'paid' ? bill.amount : 0,
+        };
+
+        await updatePersonalBill(editingItem.id, billData);
         setPersonalData((prev) => ({
           ...prev,
-          bills: prev.bills.map((b) =>
-            b.id === editingItem.id ? { ...bill, id: editingItem.id } : b
+          bills: (prev.bills || []).map((b) =>
+            b.id === editingItem.id ? { ...billData, id: editingItem.id } : b
           ),
         }));
 
@@ -229,7 +246,7 @@ export function usePersonalTracker() {
         );
         if (existingTemplate) {
           const templateUpdates = {
-            amount: bill.amountDue,
+            amount: bill.amount,
             dueDate: bill.dueDate,
             notes: bill.notes,
             url: bill.url,
@@ -240,10 +257,17 @@ export function usePersonalTracker() {
         setEditingItem(null);
         setShowBillModal(false);
       } else {
-        const newBill = await addPersonalBill(bill);
+        // Map the bill data to the expected structure
+        const billData = {
+          ...bill,
+          amountDue: bill.amount,
+          amountPaid: bill.status === 'paid' ? bill.amount : 0,
+        };
+
+        const newBill = await addPersonalBill(billData);
         setPersonalData((prev) => ({
           ...prev,
-          bills: [...prev.bills, newBill],
+          bills: [...(prev.bills || []), newBill],
         }));
 
         // Add to bill templates if it doesn't exist
@@ -253,7 +277,7 @@ export function usePersonalTracker() {
         if (!existingTemplate) {
           const newTemplate = await addBillTemplate({
             name: bill.name,
-            amount: bill.amountDue,
+            amount: bill.amount,
             dueDate: bill.dueDate,
             notes: bill.notes,
             url: bill.url,
@@ -310,7 +334,7 @@ export function usePersonalTracker() {
 
   const handleDeleteBill = async (id) => {
     try {
-      const billToDelete = personalData.bills.find((b) => b.id === id);
+      const billToDelete = (personalData?.bills || []).find((b) => b.id === id);
       if (billToDelete) {
         await deletePersonalBillFromCurrentAndFuture(
           id,
@@ -319,7 +343,7 @@ export function usePersonalTracker() {
         );
         setPersonalData((prev) => ({
           ...prev,
-          bills: prev.bills.filter((bill) => bill.id !== id),
+          bills: (prev.bills || []).filter((bill) => bill.id !== id),
         }));
       }
     } catch (error) {
@@ -330,11 +354,22 @@ export function usePersonalTracker() {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const updatedBill = await updatePersonalBill(id, { status: newStatus });
+      // Find the bill to get its amount
+      const bill = (personalData?.bills || []).find((b) => b.id === id);
+      if (!bill) return;
+
+      // Update amountPaid based on status
+      const amountPaid = newStatus === 'paid' ? bill.amountDue : 0;
+
+      const updatedBill = await updatePersonalBill(id, {
+        status: newStatus,
+        amountPaid: amountPaid
+      });
+
       setPersonalData((prev) => ({
         ...prev,
-        bills: prev.bills.map((bill) =>
-          bill.id === id ? { ...bill, status: newStatus } : bill
+        bills: (prev.bills || []).map((bill) =>
+          bill.id === id ? { ...bill, status: newStatus, amountPaid: amountPaid } : bill
         ),
       }));
     } catch (error) {
@@ -393,9 +428,16 @@ export function usePersonalTracker() {
   };
 
   const editItem = (item, type) => {
+    // Close any open modals first
+    setShowIncomeModal(false);
+    setShowBillModal(false);
+
+    // Set the editing state
     setEditingItem(item);
     setModalType(type);
     setEditingType(type);
+
+    // Open the appropriate modal
     if (type === 'income') {
       setShowIncomeModal(true);
     } else {
@@ -410,34 +452,34 @@ export function usePersonalTracker() {
     const allTransactions = [];
 
     // Add income transactions
-    personalData.income.forEach((income) => {
+    (personalData?.income || []).forEach((income) => {
       const incomeDate = createLocalDate(income.date);
       if (incomeDate >= start && incomeDate <= end) {
         allTransactions.push({
           date: income.date,
           type: 'Income',
           description: income.source,
-          amount: income.actual || income.budget,
-          budget: income.budget,
-          actual: income.actual,
-          notes: income.notes,
+          amount: income.actual || income.budget || 0,
+          budget: income.budget || 0,
+          actual: income.actual || income.budget || 0,
+          notes: income.notes || '',
           category: 'Income',
         });
       }
     });
 
     // Add bill transactions
-    personalData.bills.forEach((bill) => {
+    (personalData?.bills || []).forEach((bill) => {
       const billDate = createLocalDate(bill.dueDate);
       if (billDate >= start && billDate <= end) {
         allTransactions.push({
           date: bill.dueDate,
           type: 'Bill',
           description: bill.name,
-          amount: bill.amountDue,
-          amountPaid: bill.amountPaid,
-          status: bill.status,
-          notes: bill.notes,
+          amount: bill.amountDue || bill.amount || 0,
+          amountPaid: bill.amountPaid || 0,
+          status: bill.status || 'pending',
+          notes: bill.notes || '',
           category: 'Bills',
         });
       }
@@ -498,44 +540,105 @@ export function usePersonalTracker() {
   };
 
   const getBillsWithColorCoding = () => {
-    return personalData.bills.map((bill, index) => ({
-      ...bill,
-      colorIndex: index % 10, // 10 different colors
-    }));
+    return (personalData?.bills || []).map((bill) => {
+      // Ensure bill has required properties with fallbacks
+      const safeBill = {
+        ...bill,
+        amountDue: bill.amountDue || bill.amount || 0,
+        amountPaid: bill.amountPaid || 0,
+        status: bill.status || 'pending',
+        dueDate: bill.dueDate || new Date().toISOString().split('T')[0],
+      };
+
+      // Get the income dates for this month to determine color coordination
+      const currentMonthIncome = personalData?.income || [];
+      const firstIncomeDate = currentMonthIncome[0]?.date;
+      const secondIncomeDate = currentMonthIncome[1]?.date;
+
+      // Color bills based on due date to coordinate with income periods
+      const dueDate = new Date(safeBill.dueDate);
+      const firstIncome = firstIncomeDate ? new Date(firstIncomeDate) : null;
+      const secondIncome = secondIncomeDate ? new Date(secondIncomeDate) : null;
+
+      // Period 0: Before first income date (muted)
+      if (firstIncome && dueDate < firstIncome) {
+        return { ...safeBill, colorIndex: 0 }; // Muted
+      }
+      // First income period: On or after first income date, but before second income date (green)
+      else if (firstIncome && dueDate >= firstIncome && (!secondIncome || dueDate < secondIncome)) {
+        return { ...safeBill, colorIndex: 1 }; // Green
+      }
+      // Second income period: On or after second income date (magenta)
+      else if (secondIncome && dueDate >= secondIncome) {
+        return { ...safeBill, colorIndex: 2 }; // Magenta
+      }
+      // Fallback: If no income dates, use muted
+      else {
+        return { ...safeBill, colorIndex: 0 }; // Muted
+      }
+    });
   };
 
   const getIncomeWithColors = () => {
-    return personalData.income.map((income, index) => ({
-      ...income,
-      colorIndex: index % 10, // 10 different colors
-    }));
+    return (personalData?.income || []).map((income, index) => {
+      // Ensure income has required properties with fallbacks
+      const safeIncome = {
+        ...income,
+        budget: income.budget || 0,
+        actual: income.actual || income.budget || 0,
+        date: income.date || new Date().toISOString().split('T')[0],
+      };
+
+      // First income period (around day 8) - green
+      if (index === 0) {
+        return { ...safeIncome, colorIndex: 1 }; // Green
+      }
+      // Second income period (around day 22) - magenta
+      else if (index === 1) {
+        return { ...safeIncome, colorIndex: 2 }; // Magenta
+      }
+      // Default to muted for any additional periods
+      else {
+        return { ...safeIncome, colorIndex: 0 }; // Muted
+      }
+    });
   };
 
-  // Computed values for immediate use
-  const billsWithColorCoding = personalData.bills.map((bill, index) => ({
-    ...bill,
-    colorIndex: index % 10, // 10 different colors
-  }));
-
-  const incomeWithColors = personalData.income.map((income, index) => ({
-    ...income,
-    colorIndex: index % 10, // 10 different colors
-  }));
+  // Computed color coordination
+  const billsWithColorCoding = getBillsWithColorCoding();
+  const incomeWithColors = getIncomeWithColors();
 
   const getColorClasses = (colorIndex) => {
     const colorSchemes = {
-      0: 'border-l-[#8b949e]',
-      1: 'border-l-[#00ff41]',
-      2: 'border-l-[#ff55ff]',
-      3: 'border-l-[#ffff00]',
-      4: 'border-l-[#38beff]',
-      5: 'border-l-[#56b6c2]',
-      6: 'border-l-[#ffa500]',
-      7: 'border-l-[#a855f7]',
-      8: 'border-l-[#ff3e3e]',
-      9: 'border-l-[#ffffff]',
+      0: 'border-l-4 border-l-gray-400', // Muted gray
+      1: 'border-l-4 border-l-green-400', // Green
+      2: 'border-l-4 border-l-pink-400', // Magenta
+      3: 'border-l-4 border-l-yellow-400', // Yellow
+      4: 'border-l-4 border-l-blue-400', // Blue
+      5: 'border-l-4 border-l-cyan-400', // Cyan
+      6: 'border-l-4 border-l-orange-400', // Orange
+      7: 'border-l-4 border-l-purple-400', // Purple
+      8: 'border-l-4 border-l-red-400', // Red
+      9: 'border-l-4 border-l-white', // White
     };
-    return colorSchemes[colorIndex] || 'border-l-[#a855f7]'; // Default to light purple
+    return colorSchemes[colorIndex] || 'border-l-4 border-l-purple-400'; // Default to purple
+  };
+
+  // Alternative function that returns inline styles if Tailwind classes aren't working
+  const getColorStyles = (colorIndex) => {
+    const colorSchemes = {
+      0: { borderLeft: '4px solid #9ca3af' }, // Muted gray
+      1: { borderLeft: '4px solid #4ade80' }, // Green
+      2: { borderLeft: '4px solid #f472b6' }, // Magenta
+      3: { borderLeft: '4px solid #facc15' }, // Yellow
+      4: { borderLeft: '4px solid #60a5fa' }, // Blue
+      5: { borderLeft: '4px solid #22d3ee' }, // Cyan
+      6: { borderLeft: '4px solid #fb923c' }, // Orange
+      7: { borderLeft: '4px solid #a78bfa' }, // Purple
+      8: { borderLeft: '4px solid #f87171' }, // Red
+      9: { borderLeft: '4px solid #ffffff' }, // White
+    };
+    return colorSchemes[colorIndex] || { borderLeft: '4px solid #a78bfa' }; // Default to purple
   };
 
   const getBackgroundColorClasses = (colorIndex) => {
@@ -554,25 +657,25 @@ export function usePersonalTracker() {
     return bgColorSchemes[colorIndex] || 'bg-[#a855f7]/5'; // Default to light purple
   };
 
-  // Calculate summary statistics
-  const totalIncomeBudget = personalData.income.reduce(
-    (sum, item) => sum + (item.budget || 0),
+  // Calculate summary statistics with defensive programming
+  const totalIncomeBudget = (personalData?.income || []).reduce(
+    (sum, item) => sum + (parseFloat(item.budget) || 0),
     0
   );
-  const totalIncomeActual = personalData.income.reduce(
-    (sum, item) => sum + (item.actual || 0),
+  const totalIncomeActual = (personalData?.income || []).reduce(
+    (sum, item) => sum + (parseFloat(item.actual) || parseFloat(item.budget) || 0),
     0
   );
-  const totalBillsDue = personalData.bills.reduce(
-    (sum, item) => sum + (item.amountDue || 0),
+  const totalBillsDue = (personalData?.bills || []).reduce(
+    (sum, item) => sum + (parseFloat(item.amountDue) || parseFloat(item.amount) || 0),
     0
   );
-  const totalBillsPaid = personalData.bills.reduce(
-    (sum, item) => sum + (item.amountPaid || 0),
+  const totalBillsPaid = (personalData?.bills || []).reduce(
+    (sum, item) => sum + (parseFloat(item.amountPaid) || 0),
     0
   );
 
-  // Income variance calculations
+  // Income variance calculations with defensive programming
   const incomeVariance = totalIncomeActual - totalIncomeBudget;
   const incomeVariancePercent =
     totalIncomeBudget > 0 ? (incomeVariance / totalIncomeBudget) * 100 : 0;
@@ -581,11 +684,11 @@ export function usePersonalTracker() {
   const discretionaryIncome = totalIncomeActual - totalBillsPaid;
 
   const netCashFlow = totalIncomeActual - totalBillsPaid;
-  const pendingBillsCount = personalData.bills.filter(
-    (bill) => bill.status === 'Pending'
+  const pendingBillsCount = (personalData?.bills || []).filter(
+    (bill) => (bill.status || '').toLowerCase() === 'pending'
   ).length;
-  const paidBillsCount = personalData.bills.filter(
-    (bill) => bill.status === 'Paid'
+  const paidBillsCount = (personalData?.bills || []).filter(
+    (bill) => (bill.status || '').toLowerCase() === 'paid'
   ).length;
 
   const monthNames = getMonthNames();
@@ -600,6 +703,7 @@ export function usePersonalTracker() {
     showBillModal,
     editingItem,
     modalType,
+    editingType,
     showExportModal,
 
     // Computed values
@@ -619,6 +723,7 @@ export function usePersonalTracker() {
     getBillsWithColorCoding,
     getIncomeWithColors,
     getColorClasses,
+    getColorStyles,
     getBackgroundColorClasses,
 
     // Computed color-coded data

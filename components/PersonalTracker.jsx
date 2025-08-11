@@ -63,6 +63,7 @@ export default function PersonalTracker() {
 
     // Utility functions
     getColorClasses,
+    getColorStyles,
   } = usePersonalTracker();
 
   return (
@@ -102,6 +103,7 @@ export default function PersonalTracker() {
       <IncomeSection
         incomeWithColors={incomeWithColors}
         getColorClasses={getColorClasses}
+        getColorStyles={getColorStyles}
         onEdit={editItem}
         onDelete={handleDeleteIncome}
       />
@@ -110,6 +112,7 @@ export default function PersonalTracker() {
       <BillsSection
         billsWithColorCoding={billsWithColorCoding}
         getColorClasses={getColorClasses}
+        getColorStyles={getColorStyles}
         onEdit={editItem}
         onDelete={handleDeleteBill}
         onStatusChange={handleStatusChange}

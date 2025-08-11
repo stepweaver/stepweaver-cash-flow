@@ -6,6 +6,7 @@ import { formatDate, formatCurrency, createLocalDate } from '@/lib/utils';
 export default function IncomeSection({
   incomeWithColors,
   getColorClasses,
+  getColorStyles,
   onEdit,
   onDelete,
 }) {
@@ -48,29 +49,8 @@ export default function IncomeSection({
                 {incomeWithColors.map((income) => (
                   <tr key={income.id} className='hover:bg-terminal-dark'>
                     <td
-                      className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm ${
-                        income.colorIndex === 0
-                          ? 'border-l-4 border-l-[#8b949e]'
-                          : income.colorIndex === 1
-                          ? 'border-l-4 border-l-[#00ff41]'
-                          : income.colorIndex === 2
-                          ? 'border-l-4 border-l-[#ff55ff]'
-                          : income.colorIndex === 3
-                          ? 'border-l-4 border-l-[#ffff00]'
-                          : income.colorIndex === 4
-                          ? 'border-l-4 border-l-[#38beff]'
-                          : income.colorIndex === 5
-                          ? 'border-l-4 border-l-[#56b6c2]'
-                          : income.colorIndex === 6
-                          ? 'border-l-4 border-l-[#ffa500]'
-                          : income.colorIndex === 7
-                          ? 'border-l-4 border-l-[#a855f7]'
-                          : income.colorIndex === 8
-                          ? 'border-l-4 border-l-[#ff3e3e]'
-                          : income.colorIndex === 9
-                          ? 'border-l-4 border-l-[#ffffff]'
-                          : 'border-l-4 border-l-[#a855f7]'
-                      }`}
+                      className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm'
+                      style={getColorStyles(income.colorIndex)}
                     >
                       {income.source}
                     </td>
@@ -114,9 +94,8 @@ export default function IncomeSection({
             {incomeWithColors.map((income) => (
               <div
                 key={income.id}
-                className={`bg-terminal-dark p-3 rounded border border-terminal-border ${getColorClasses(
-                  income.colorIndex
-                )}`}
+                className='bg-terminal-dark p-3 rounded border border-terminal-border'
+                style={getColorStyles(income.colorIndex)}
               >
                 <div className='flex justify-between items-center mb-2'>
                   <div className='flex-1'>

@@ -6,6 +6,7 @@ import { formatDate, formatCurrency, createLocalDate } from '@/lib/utils';
 export default function BillsSection({
   billsWithColorCoding,
   getColorClasses,
+  getColorStyles,
   onEdit,
   onDelete,
   onStatusChange,
@@ -49,29 +50,8 @@ export default function BillsSection({
                 {billsWithColorCoding.map((bill) => (
                   <tr key={bill.id} className='hover:bg-terminal-dark'>
                     <td
-                      className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm ${
-                        bill.colorIndex === 0
-                          ? 'border-l-4 border-l-[#8b949e]'
-                          : bill.colorIndex === 1
-                          ? 'border-l-4 border-l-[#00ff41]'
-                          : bill.colorIndex === 2
-                          ? 'border-l-4 border-l-[#ff55ff]'
-                          : bill.colorIndex === 3
-                          ? 'border-l-4 border-l-[#ffff00]'
-                          : bill.colorIndex === 4
-                          ? 'border-l-4 border-l-[#38beff]'
-                          : bill.colorIndex === 5
-                          ? 'border-l-4 border-l-[#56b6c2]'
-                          : bill.colorIndex === 6
-                          ? 'border-l-4 border-l-[#ffa500]'
-                          : bill.colorIndex === 7
-                          ? 'border-l-4 border-l-[#a855f7]'
-                          : bill.colorIndex === 8
-                          ? 'border-l-4 border-l-[#ff3e3e]'
-                          : bill.colorIndex === 9
-                          ? 'border-l-4 border-l-[#ffffff]'
-                          : 'border-l-4 border-l-[#a855f7]'
-                      }`}
+                      className='px-6 py-4 whitespace-nowrap text-sm font-medium text-terminal-text font-ibm'
+                      style={getColorStyles(bill.colorIndex)}
                     >
                       {bill.name}
                     </td>
@@ -79,28 +59,28 @@ export default function BillsSection({
                       {formatDate(createLocalDate(bill.dueDate))}
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-terminal-red text-right font-ibm'>
-                      {formatCurrency(bill.amount)}
+                      {formatCurrency(bill.amountDue)}
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-center'>
                       <button
                         onClick={() => onStatusChange(bill.id)}
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-ibm cursor-pointer transition-colors ${
-                          bill.status === 'paid'
+                          (bill.status || '').toLowerCase() === 'paid'
                             ? 'bg-terminal-green/20 text-terminal-green hover:bg-terminal-green/30'
-                            : bill.status === 'pending'
+                            : (bill.status || '').toLowerCase() === 'pending'
                             ? 'bg-terminal-yellow/20 text-terminal-yellow hover:bg-terminal-yellow/30'
                             : 'bg-terminal-red/20 text-terminal-red hover:bg-terminal-red/30'
                         }`}
                       >
-                        {bill.status === 'paid' ? (
+                        {(bill.status || '').toLowerCase() === 'paid' ? (
                           <CheckCircle className='h-3 w-3 mr-1 lucide' />
-                        ) : bill.status === 'pending' ? (
+                        ) : (bill.status || '').toLowerCase() === 'pending' ? (
                           <Clock className='h-3 w-3 mr-1 lucide' />
                         ) : (
                           <AlertCircle className='h-3 w-3 mr-1 lucide' />
                         )}
-                        {bill.status.charAt(0).toUpperCase() +
-                          bill.status.slice(1)}
+                        {(bill.status || 'pending').charAt(0).toUpperCase() +
+                          (bill.status || 'pending').slice(1)}
                       </button>
                     </td>
                     <td className='px-6 py-4 text-sm text-terminal-text font-ibm'>
@@ -135,9 +115,8 @@ export default function BillsSection({
             {billsWithColorCoding.map((bill) => (
               <div
                 key={bill.id}
-                className={`bg-terminal-dark p-3 rounded border border-terminal-border ${getColorClasses(
-                  bill.colorIndex
-                )}`}
+                className='bg-terminal-dark p-3 rounded border border-terminal-border'
+                style={getColorStyles(bill.colorIndex)}
               >
                 <div className='flex justify-between items-center mb-2'>
                   <div className='flex-1'>
@@ -146,7 +125,7 @@ export default function BillsSection({
                         {formatDate(createLocalDate(bill.dueDate))}
                       </span>
                       <p className='text-lg font-bold text-terminal-red font-ibm-custom'>
-                        {formatCurrency(bill.amount)}
+                        {formatCurrency(bill.amountDue)}
                       </p>
                     </div>
                     <h4 className='text-terminal-text font-medium font-ibm text-sm mt-1'>
@@ -164,9 +143,9 @@ export default function BillsSection({
                   <button
                     onClick={() => onStatusChange(bill.id)}
                     className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium font-ibm cursor-pointer transition-colors ${
-                      bill.status === 'paid'
+                      (bill.status || '').toLowerCase() === 'paid'
                         ? 'bg-terminal-green/20 text-terminal-green hover:bg-terminal-green/30'
-                        : bill.status === 'pending'
+                        : (bill.status || '').toLowerCase() === 'pending'
                         ? 'bg-terminal-yellow/20 text-terminal-yellow hover:bg-terminal-yellow/30'
                         : 'bg-terminal-red/20 text-terminal-red hover:bg-terminal-red/30'
                     }`}
