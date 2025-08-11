@@ -9,6 +9,7 @@ import {
   getBillTemplates,
   addBillTemplate,
   updateBillTemplate,
+  deleteBillTemplate,
   deletePersonalBillFromCurrentAndFuture,
   generateBillsForMonth,
 } from '@/lib/firebase';
@@ -135,6 +136,7 @@ export function usePersonalTracker() {
   const [showBillModal, setShowBillModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [modalType, setModalType] = useState('income');
+  const [editingType, setEditingType] = useState('income');
 
   // Export functionality
   const [showExportModal, setShowExportModal] = useState(false);
@@ -341,6 +343,43 @@ export function usePersonalTracker() {
     }
   };
 
+  // Bill template handlers
+  const handleSaveTemplate = async (template) => {
+    try {
+      await addBillTemplate(template);
+      await loadData(); // Reload data to reflect changes
+    } catch (error) {
+      console.error('Error saving bill template:', error);
+    }
+  };
+
+  const handleDeleteTemplate = async (templateId) => {
+    try {
+      await deleteBillTemplate(templateId);
+      await loadData(); // Reload data to reflect changes
+    } catch (error) {
+      console.error('Error deleting bill template:', error);
+    }
+  };
+
+  const handleUpdateTemplate = async (templateId, updatedTemplate) => {
+    try {
+      await updateBillTemplate(templateId, updatedTemplate);
+      await loadData(); // Reload data to reflect changes
+    } catch (error) {
+      console.error('Error updating bill template:', error);
+    }
+  };
+
+  const handleGenerateBills = async (month, year) => {
+    try {
+      await generateBillsForMonth(month, year);
+      await loadData(); // Reload data to reflect changes
+    } catch (error) {
+      console.error('Error generating bills:', error);
+    }
+  };
+
   const openIncomeModal = () => {
     setModalType('income');
     setEditingItem(null);
@@ -356,6 +395,7 @@ export function usePersonalTracker() {
   const editItem = (item, type) => {
     setEditingItem(item);
     setModalType(type);
+    setEditingType(type);
     if (type === 'income') {
       setShowIncomeModal(true);
     } else {
@@ -471,6 +511,17 @@ export function usePersonalTracker() {
     }));
   };
 
+  // Computed values for immediate use
+  const billsWithColorCoding = personalData.bills.map((bill, index) => ({
+    ...bill,
+    colorIndex: index % 10, // 10 different colors
+  }));
+
+  const incomeWithColors = personalData.income.map((income, index) => ({
+    ...income,
+    colorIndex: index % 10, // 10 different colors
+  }));
+
   const getColorClasses = (colorIndex) => {
     const colorSchemes = {
       0: 'border-l-[#8b949e]',
@@ -570,6 +621,10 @@ export function usePersonalTracker() {
     getColorClasses,
     getBackgroundColorClasses,
 
+    // Computed color-coded data
+    billsWithColorCoding,
+    incomeWithColors,
+
     // Actions
     changeMonth,
     handleSaveBill,
@@ -577,6 +632,10 @@ export function usePersonalTracker() {
     handleDeleteIncome,
     handleDeleteBill,
     handleStatusChange,
+    handleSaveTemplate,
+    handleDeleteTemplate,
+    handleUpdateTemplate,
+    handleGenerateBills,
     openIncomeModal,
     openBillModal,
     editItem,
@@ -586,6 +645,7 @@ export function usePersonalTracker() {
     setShowIncomeModal,
     setShowBillModal,
     setEditingItem,
+    setEditingType,
     setShowExportModal,
   };
 }

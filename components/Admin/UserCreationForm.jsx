@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, EyeOff, UserPlus, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, Loader2, AlertCircle } from 'lucide-react';
 
 export default function UserCreationForm({
   email,
@@ -18,127 +18,144 @@ export default function UserCreationForm({
   onClearMessage,
 }) {
   return (
-    <div className='bg-terminal-light rounded-lg shadow-sm border border-terminal-border p-6'>
-      <div className='flex items-center space-x-3 mb-6'>
-        <UserPlus className='h-6 w-6 text-terminal-blue lucide' />
-        <h2 className='text-xl font-bold text-terminal-text font-ibm-custom'>
-          Create New User Account
-        </h2>
+    <div className='bg-terminal-light border border-terminal-border rounded-lg p-6 shadow-lg'>
+      <div className='flex items-center space-x-3 mb-4'>
+        <div className='p-2 bg-terminal-blue/10 rounded-lg border border-terminal-blue/30'>
+          <UserPlus className='h-5 w-5 text-terminal-blue' />
+        </div>
+        <h3 className='text-lg font-semibold text-terminal-text font-ibm-custom'>
+          Add New User
+        </h3>
       </div>
+
+      {/* Info Note */}
+      <div className='mb-4 p-3 bg-terminal-blue/10 border border-terminal-blue/30 rounded-md'>
+        <div className='flex items-start space-x-2'>
+          <AlertCircle className='h-4 w-4 text-terminal-blue mt-0.5 flex-shrink-0' />
+          <div className='text-sm text-terminal-blue font-ibm'>
+            <p className='font-medium mb-1'>Important:</p>
+            <p>
+              After creating a user account, you will be signed out and need to
+              sign in again. This is a security feature to ensure only the
+              intended user can access the new account.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <form onSubmit={onSubmit} className='space-y-4'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div>
+            <label
+              htmlFor='user-email'
+              className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
+            >
+              Email Address
+            </label>
+            <input
+              id='user-email'
+              type='email'
+              value={email}
+              onChange={onEmailChange}
+              required
+              className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ibm'
+              placeholder='Enter email address'
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor='user-password'
+              className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
+            >
+              Password
+            </label>
+            <div className='relative'>
+              <input
+                id='user-password'
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={onPasswordChange}
+                required
+                minLength={6}
+                className='w-full px-3 py-2 pr-10 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ibm'
+                placeholder='Enter password (min 6 chars)'
+              />
+              <button
+                type='button'
+                onClick={onShowPasswordToggle}
+                className='absolute inset-y-0 right-0 pr-3 flex items-center text-terminal-muted hover:text-terminal-text'
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor='user-display-name'
+              className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
+            >
+              Display Name (Optional)
+            </label>
+            <input
+              id='user-display-name'
+              type='text'
+              value={displayName}
+              onChange={onDisplayNameChange}
+              className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ibm'
+              placeholder='Enter display name'
+            />
+          </div>
+        </div>
+
+        <div className='flex justify-end'>
+          <button
+            type='submit'
+            disabled={isLoading || !email.trim() || !password.trim()}
+            className='px-6 py-2 bg-terminal-blue text-white rounded-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 focus:ring-offset-terminal-dark disabled:opacity-50 disabled:cursor-not-allowed font-ibm transition-colors flex items-center space-x-2'
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className='animate-spin' size={18} />
+                <span>Creating...</span>
+              </>
+            ) : (
+              <>
+                <UserPlus size={18} />
+                <span>Create User</span>
+              </>
+            )}
+          </button>
+        </div>
+      </form>
 
       {message && (
         <div
-          className={`mb-4 p-3 rounded-md border ${
+          className={`mt-4 p-3 rounded-md border ${
             messageType === 'success'
-              ? 'bg-terminal-green/20 text-terminal-green border-terminal-green/50'
-              : 'bg-terminal-red/20 text-terminal-red border-terminal-red/50'
+              ? 'bg-green-900/20 border-green-500/50'
+              : 'bg-red-900/20 border-red-500/50'
           }`}
         >
-          <div className='flex justify-between items-center'>
-            <span className='font-ibm'>{message}</span>
-            <button
-              onClick={onClearMessage}
-              className='text-current hover:opacity-70 transition-opacity'
+          <div className='flex items-center'>
+            {messageType === 'success' ? (
+              <div className='h-4 w-4 text-terminal-green mr-2'>✓</div>
+            ) : (
+              <div className='h-4 w-4 text-terminal-red mr-2'>⚠</div>
+            )}
+            <p
+              className={`text-sm font-ibm ${
+                messageType === 'success'
+                  ? 'text-terminal-green'
+                  : 'text-terminal-red'
+              }`}
             >
-              ×
-            </button>
+              {message}
+            </p>
           </div>
         </div>
       )}
-
-      <form onSubmit={onSubmit} className='space-y-4'>
-        <div>
-          <label
-            htmlFor='email'
-            className='block text-sm font-medium text-terminal-text font-ibm mb-2'
-          >
-            Email Address
-          </label>
-          <input
-            type='email'
-            id='email'
-            value={email}
-            onChange={onEmailChange}
-            className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text font-ibm focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent'
-            placeholder='Enter email address'
-            required
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor='password'
-            className='block text-sm font-medium text-terminal-text font-ibm mb-2'
-          >
-            Password
-          </label>
-          <div className='relative'>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id='password'
-              value={password}
-              onChange={onPasswordChange}
-              className='w-full px-3 py-2 pr-10 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text font-ibm focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent'
-              placeholder='Enter password (min 6 characters)'
-              required
-            />
-            <button
-              type='button'
-              onClick={onShowPasswordToggle}
-              className='absolute inset-y-0 right-0 pr-3 flex items-center text-terminal-muted hover:text-terminal-text transition-colors'
-            >
-              {showPassword ? (
-                <EyeOff className='h-4 w-4 lucide' />
-              ) : (
-                <Eye className='h-4 w-4 lucide' />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label
-            htmlFor='displayName'
-            className='block text-sm font-medium text-terminal-text font-ibm mb-2'
-          >
-            Display Name (Optional)
-          </label>
-          <input
-            type='text'
-            id='displayName'
-            value={displayName}
-            onChange={onDisplayNameChange}
-            className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text font-ibm focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent'
-            placeholder='Enter display name'
-          />
-        </div>
-
-        <button
-          type='submit'
-          disabled={isLoading || !email.trim() || !password.trim()}
-          className='w-full bg-terminal-blue hover:bg-terminal-blue/80 disabled:bg-terminal-muted disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-md transition-colors font-ibm flex items-center justify-center space-x-2'
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className='h-4 w-4 animate-spin lucide' />
-              <span>Creating Account...</span>
-            </>
-          ) : (
-            <>
-              <UserPlus className='h-4 w-4 lucide' />
-              <span>Create User Account</span>
-            </>
-          )}
-        </button>
-      </form>
-
-      <div className='mt-4 p-3 bg-terminal-yellow/20 border border-terminal-yellow/50 rounded-md'>
-        <p className='text-xs text-terminal-yellow font-ibm'>
-          <strong>Note:</strong> After creating a user account, you will be
-          automatically signed out and need to sign in again. This is a security
-          feature.
-        </p>
-      </div>
     </div>
   );
 }
