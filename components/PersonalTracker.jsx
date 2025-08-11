@@ -102,6 +102,7 @@ export default function PersonalTracker() {
         onGenerateBills={handleGenerateBills}
         currentMonth={currentMonth}
         currentYear={currentYear}
+        billTemplates={billTemplates}
       />
 
       {/* Income Section */}

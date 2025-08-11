@@ -36,7 +36,7 @@ export default function UserManagement() {
   return (
     <div className='space-y-6'>
       {/* Header */}
-      <div className='flex items-center space-x-3'>
+      <div className='flex items-center space-x-3 mt-10'>
         <div className='p-2 bg-terminal-blue/10 rounded-lg border border-terminal-blue/30'>
           <Users className='h-6 w-6 text-terminal-blue' />
         </div>

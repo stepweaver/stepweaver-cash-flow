@@ -121,7 +121,18 @@ export default function BillsSection({
                         <span className='text-terminal-muted text-xs'>
                           Bill:{' '}
                         </span>
-                        {bill.name}
+                        {bill.url ? (
+                          <a
+                            href={bill.url}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='text-terminal-cyan hover:text-terminal-blue transition-colors underline'
+                          >
+                            {bill.name}
+                          </a>
+                        ) : (
+                          bill.name
+                        )}
                       </h4>
                       <div className='text-xs text-terminal-muted font-ibm'>
                         <span className='text-terminal-muted'>Due: </span>
@@ -193,7 +204,18 @@ export default function BillsSection({
                           Bill Name
                         </span>
                         <h4 className='text-terminal-text font-medium font-ibm text-sm'>
-                          {bill.name}
+                          {bill.url ? (
+                            <a
+                              href={bill.url}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              className='text-terminal-cyan hover:text-terminal-blue transition-colors underline'
+                            >
+                              {bill.name}
+                            </a>
+                          ) : (
+                            bill.name
+                          )}
                         </h4>
                       </div>
                       <div className='flex items-center space-x-6'>

@@ -638,7 +638,31 @@ export function usePersonalTracker() {
   };
 
   const getBillsWithColorCoding = () => {
-    return (personalData?.bills || []).map((bill) => {
+    const bills = personalData?.bills || [];
+
+    // Sort bills by due date first, then by amount (bills without due dates go to the end)
+    const sortedBills = [...bills].sort((a, b) => {
+      // If both bills have due dates, sort by date first, then by amount
+      if (a.dueDate && b.dueDate) {
+        const dateComparison = createLocalDate(a.dueDate) - createLocalDate(b.dueDate);
+        if (dateComparison !== 0) return dateComparison;
+
+        // If dates are the same, sort by amount (higher amounts first)
+        const amountA = a.amountDue || a.amount || 0;
+        const amountB = b.amountDue || b.amount || 0;
+        return amountB - amountA;
+      }
+      // If only one has a due date, the one with a date comes first
+      if (a.dueDate && !b.dueDate) return -1;
+      if (!a.dueDate && b.dueDate) return 1;
+
+      // If neither has a due date, sort by amount (higher amounts first)
+      const amountA = a.amountDue || a.amount || 0;
+      const amountB = b.amountDue || b.amount || 0;
+      return amountB - amountA;
+    });
+
+    return sortedBills.map((bill) => {
       // Ensure bill has required properties with fallbacks
       const safeBill = {
         ...bill,
