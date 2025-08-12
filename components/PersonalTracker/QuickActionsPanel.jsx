@@ -78,12 +78,12 @@ export default function QuickActionsPanel({
 
       {/* Generate Bills Info */}
       {hasTemplates && (
-        <div className='mt-4 p-3 bg-purple-100 border border-purple-300 rounded-md'>
+        <div className='mt-4 p-3 bg-terminal-purple/10 border border-purple-300/30 rounded-md'>
           <div className='flex items-start space-x-2'>
-            <Info className='h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0' />
-            <div className='text-sm text-purple-700 font-ibm'>
+            <Info className='h-4 w-4 text-terminal-purple mt-0.5 flex-shrink-0' />
+            <div className='text-sm text-terminal-purple font-ibm'>
               <p className='font-medium mb-1'>Generate Bills</p>
-              <p className='text-purple-600'>
+              <p className='text-terminal-purple'>
                 This will create blank bill entries for {currentMonthName}{' '}
                 {currentYear} based on your {billTemplates.length} template
                 {billTemplates.length !== 1 ? 's' : ''}. Each generated bill
@@ -96,10 +96,10 @@ export default function QuickActionsPanel({
       )}
 
       {!hasTemplates && (
-        <div className='mt-4 p-3 bg-terminal-purple/40 border border-purple-300 rounded-md'>
+        <div className='mt-4 p-3 bg-terminal-purple/10 border border-purple-300/30 rounded-md'>
           <div className='flex items-start space-x-2'>
             <Info className='h-4 w-4 text-terminal-purple mt-0.5 flex-shrink-0' />
-            <div className='text-sm text-white font-ibm'>
+            <div className='text-sm text-terminal-purple font-ibm'>
               <p className='font-medium mb-1'>No Bill Templates Available</p>
               <p className='text-white'>
                 To generate bills automatically, first create bill templates in
