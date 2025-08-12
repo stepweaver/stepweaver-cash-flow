@@ -60,6 +60,7 @@ export default function BusinessTracker() {
     setShowReceiptViewer,
     setShowExportModal,
     setShowEditModal,
+    setShowTransactionFilter,
     setEditingTransaction,
   } = useBusinessTracker();
 
@@ -116,6 +117,8 @@ export default function BusinessTracker() {
         filterType={filterType}
         onFilterChange={handleFilterChange}
         onClearFilters={clearFilters}
+        currentMonth={currentMonth}
+        currentYear={currentYear}
       />
 
       {/* Receipt Viewer Modal */}
@@ -144,6 +147,8 @@ export default function BusinessTracker() {
             </div>
             <div className='p-6'>
               <DateRangePicker
+                isOpen={showExportModal}
+                onClose={() => setShowExportModal(false)}
                 onExport={async (
                   startDate,
                   endDate,

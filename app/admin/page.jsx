@@ -4,6 +4,7 @@ import UserManagement from '@/components/Admin/UserManagement.jsx';
 import BillTemplatesAdmin from '@/components/Admin/BillTemplatesAdmin.jsx';
 import PageLayout from '@/components/Layout/PageLayout';
 import { useAdminData } from '@/hooks/useAdminData';
+import { getMonthNames } from '@/lib/utils';
 
 export default function AdminPage() {
   const {
@@ -22,20 +23,7 @@ export default function AdminPage() {
         onUpdateTemplate={handleUpdateTemplate}
         currentMonth={new Date().getMonth() + 1}
         currentYear={new Date().getFullYear()}
-        monthNames={[
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December',
-        ]}
+        monthNames={getMonthNames()}
       />
       <UserManagement />
     </PageLayout>

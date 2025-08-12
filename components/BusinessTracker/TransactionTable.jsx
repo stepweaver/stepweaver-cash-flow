@@ -18,6 +18,8 @@ export default function TransactionTable({
   filterType,
   onFilterChange,
   onClearFilters,
+  currentMonth,
+  currentYear,
 }) {
   const getTypeBadge = (type) => {
     const baseClasses =
@@ -88,7 +90,7 @@ export default function TransactionTable({
               className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer'
             >
               <Filter className='h-3 w-3 mr-1 lucide' />
-              Filter
+              {showTransactionFilter ? 'Hide Month Filter' : 'Filter by Month'}
             </button>
           </div>
           <button
@@ -133,7 +135,18 @@ export default function TransactionTable({
       {/* Transaction Filter */}
       {showTransactionFilter && (
         <div className='px-4 md:px-6 py-4 border-b border-terminal-border bg-terminal-dark'>
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4'>
+            <div>
+              <label className='block text-sm font-medium text-terminal-text mb-1 font-ibm'>
+                Month/Year Filter
+              </label>
+              <div className='px-3 py-2 bg-terminal-light text-terminal-text font-ibm border border-terminal-border rounded-md'>
+                {new Date(0, currentMonth - 1).toLocaleDateString('en-US', {
+                  month: 'long',
+                })}{' '}
+                {currentYear}
+              </div>
+            </div>
             <div>
               <label className='block text-sm font-medium text-terminal-text mb-1 font-ibm'>
                 Start Date

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { createLocalDate, safeParseFloat } from '@/lib/utils';
+import { createLocalDate, safeParseFloat, formatDate } from '@/lib/utils';
 
 export default function EditTransactionModal({
   isOpen,
@@ -14,17 +14,6 @@ export default function EditTransactionModal({
   const [amount, setAmount] = useState('');
   const [type, setType] = useState('revenue');
   const [date, setDate] = useState('');
-
-  // Helper function to format date as YYYY-MM-DD
-  const formatDate = (date) => {
-    if (!(date instanceof Date) || isNaN(date)) {
-      return '';
-    }
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
 
   useEffect(() => {
     if (transaction) {
@@ -112,7 +101,6 @@ export default function EditTransactionModal({
               <option value='revenue'>Revenue</option>
               <option value='expense'>Expense</option>
               <option value='draw'>Draw</option>
-              <option value='tax payment'>Tax Payment</option>
             </select>
           </div>
 
@@ -129,18 +117,18 @@ export default function EditTransactionModal({
             />
           </div>
 
-          {/* Footer */}
-          <div className='flex items-center justify-end space-x-3 pt-4'>
+          {/* Actions */}
+          <div className='flex space-x-3 pt-4'>
             <button
               type='button'
               onClick={onClose}
-              className='px-4 py-2 text-sm bg-terminal-muted text-terminal-text rounded hover:bg-terminal-muted/80 transition-colors font-ibm'
+              className='flex-1 px-4 py-2 text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer'
             >
               Cancel
             </button>
             <button
               type='submit'
-              className='px-4 py-2 text-sm bg-terminal-green text-black rounded hover:bg-terminal-green/80 focus:outline-none focus:ring-2 focus:ring-terminal-green focus:ring-offset-2 transition-colors font-ibm'
+              className='flex-1 px-4 py-2 bg-terminal-green text-black rounded hover:bg-terminal-green/80 transition-colors font-ibm cursor-pointer'
             >
               Save Changes
             </button>

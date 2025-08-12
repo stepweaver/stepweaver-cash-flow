@@ -134,16 +134,23 @@ export const useBusinessTracker = () => {
       const uploadedReceipts = [];
 
       for (const file of files) {
-        // For now, we'll store receipt metadata locally
-        // In a production system, you'd upload to a secure server endpoint
+        // Convert file to base64 for storage and display
+        const reader = new FileReader();
+        const fileData = await new Promise((resolve, reject) => {
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
         const receiptData = {
           id: `receipt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           name: file.name,
           size: file.size,
           type: file.type,
+          mimeType: file.type,
           uploadDate: new Date().toISOString(),
-          // Note: File content is not stored - only metadata
-          // For actual file storage, implement a secure upload endpoint
+          data: fileData, // Store the actual file data as base64
+          url: fileData, // Also store as URL for compatibility
         };
         uploadedReceipts.push(receiptData);
       }
@@ -304,32 +311,46 @@ export const useBusinessTracker = () => {
 
   // Filter transactions based on current month/year and filters
   const filteredDisplayTransactions = useMemo(() => {
-    let filtered = transactions.filter((transaction) => {
-      const transactionDate = new Date(transaction.date);
-      const transactionMonth = transactionDate.getMonth() + 1;
-      const transactionYear = transactionDate.getFullYear();
+    let filtered = transactions;
 
-      // Filter by month and year
-      if (transactionMonth !== currentMonth || transactionYear !== currentYear) {
-        return false;
-      }
+    // Only apply month/year filter if explicitly enabled
+    if (showTransactionFilter) {
+      filtered = filtered.filter((transaction) => {
+        const transactionDate = new Date(transaction.date);
+        const transactionMonth = transactionDate.getMonth() + 1;
+        const transactionYear = transactionDate.getFullYear();
 
-      // Apply additional filters
-      if (filterStartDate && new Date(transaction.date) < new Date(filterStartDate)) {
-        return false;
-      }
-      if (filterEndDate && new Date(transaction.date) > new Date(filterEndDate)) {
-        return false;
-      }
-      if (filterType !== 'all' && transaction.type !== filterType) {
-        return false;
-      }
+        // Filter by month and year
+        if (transactionMonth !== currentMonth || transactionYear !== currentYear) {
+          return false;
+        }
 
-      return true;
-    });
+        return true;
+      });
+    }
+
+    // Apply additional filters (date range and type)
+    if (filterStartDate || filterEndDate || filterType !== 'all') {
+      filtered = filtered.filter((transaction) => {
+        // Apply date range filters
+        if (filterStartDate && new Date(transaction.date) < new Date(filterStartDate)) {
+          return false;
+        }
+        if (filterEndDate && new Date(transaction.date) > new Date(filterEndDate)) {
+          return false;
+        }
+
+        // Apply type filter
+        if (filterType !== 'all' && transaction.type !== filterType) {
+          return false;
+        }
+
+        return true;
+      });
+    }
 
     return filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-  }, [transactions, currentMonth, currentYear, filterStartDate, filterEndDate, filterType]);
+  }, [transactions, currentMonth, currentYear, filterStartDate, filterEndDate, filterType, showTransactionFilter]);
 
   // Filter transactions for annual summary (current year)
   const filteredAnnualTransactions = useMemo(() => {
@@ -406,6 +427,7 @@ export const useBusinessTracker = () => {
     setFilterStartDate('');
     setFilterEndDate('');
     setFilterType('all');
+    setShowTransactionFilter(false);
   };
 
   return {

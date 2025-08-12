@@ -13,9 +13,7 @@
     "prebuild": "npm run security:check"
   },
   "dependencies": {
-    "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.21",
-    "dotenv": "^17.2.1",
     "firebase": "^12.1.0",
     "firebase-admin": "^13.4.0",
     "jsonwebtoken": "^9.0.2",
@@ -31,7 +29,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "eslint": "^9",
-    "eslint-config-next": "15.4.6",
-    "node-fetch": "^3.3.2"
+    "eslint-config-next": "15.4.6"
   }
 }
