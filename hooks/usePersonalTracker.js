@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useTokenManager } from '@/lib/client-token-manager';
 import { useAuth } from '@/lib/authContext';
 import {
@@ -16,93 +16,7 @@ import {
   safeParseFloat,
 } from '@/lib/utils';
 
-// Get initial personal data for the current month - matching Google Sheet structure
-const getInitialPersonalData = (year, month) => {
-  const currentDate = new Date();
-  const requestedDate = new Date(year, month - 1, 1);
 
-  // Only return sample data for current month, not for future months
-  if (requestedDate > currentDate) {
-    return {
-      income: [],
-      bills: [],
-    };
-  }
-
-  // Return flat structure directly instead of nested month-keyed structure
-  return {
-    income: [
-      {
-        id: '1',
-        source: 'PHM',
-        date: `${year}-${String(month).padStart(2, '0')}-08`,
-        budget: 1662.23,
-        actual: 1662.23,
-        notes: 'Bi-weekly paycheck',
-      },
-      {
-        id: '2',
-        source: 'PHM',
-        date: `${year}-${String(month).padStart(2, '0')}-22`,
-        budget: 1662.23,
-        actual: 1662.23,
-        notes: 'Bi-weekly paycheck',
-      },
-    ],
-    bills: [
-      {
-        id: '1',
-        name: 'Mortgage',
-        dueDate: `${year}-${String(month).padStart(2, '0')}-01`,
-        amountDue: 554.39,
-        amountPaid: 554.39,
-        status: 'Pending',
-        notes: 'Monthly mortgage payment',
-        url: 'https://example.com/mortgage-login',
-      },
-      {
-        id: '2',
-        name: 'NIPSCO',
-        dueDate: `${year}-${String(month).padStart(2, '0')}-01`,
-        amountDue: 90.0,
-        amountPaid: 90.0,
-        status: 'Paid',
-        notes: 'Electric utility',
-        url: 'https://nipsco.com/login',
-      },
-      {
-        id: '3',
-        name: 'Comcast',
-        dueDate: `${year}-${String(month).padStart(2, '0')}-15`,
-        amountDue: 79.99,
-        amountPaid: 79.99,
-        status: 'Paid',
-        notes: 'Internet service',
-        url: 'https://customer.xfinity.com/login',
-      },
-      {
-        id: '4',
-        name: 'Water',
-        dueDate: `${year}-${String(month).padStart(2, '0')}-20`,
-        amountDue: 45.0,
-        amountPaid: 0,
-        status: 'Pending',
-        notes: 'Water utility',
-        url: 'https://example.com/water-login',
-      },
-      {
-        id: '5',
-        name: 'Car Insurance',
-        dueDate: `${year}-${String(month).padStart(2, '0')}-25`,
-        amountDue: 120.0,
-        amountPaid: 0,
-        status: 'Pending',
-        notes: 'Auto insurance premium',
-        url: 'https://example.com/insurance-login',
-      },
-    ],
-  };
-};
 
 export function usePersonalTracker() {
   // Initialize with current month and year
@@ -118,52 +32,31 @@ export function usePersonalTracker() {
   const [editingItem, setEditingItem] = useState(null);
   const [modalType, setModalType] = useState('income');
   const [editingType, setEditingType] = useState('income');
-  const tokenManager = useTokenManager();
   const { user } = useAuth();
+  const tokenManager = useTokenManager();
+
+
 
   // Export functionality
   const [showExportModal, setShowExportModal] = useState(false);
+  const isLoadingDataRef = useRef(false);
 
-  // Load data function - moved outside useEffect so it can be reused
-  const loadData = async (skipFutureMonthCheck = false) => {
+  // Load data function
+  const loadData = useCallback(async () => {
+    if (isLoadingDataRef.current) {
+      return;
+    }
+
+    isLoadingDataRef.current = true;
     try {
       // Load bill templates
       // TODO: Implement bill templates API
-      // const templates = await getBillTemplates();
       setBillTemplates([]);
 
       // Load personal data for the month
-      // currentMonth is already 1-indexed (1-12), so use it directly
-      const monthParam = currentMonth;
+      const data = await tokenManager.getPersonalData(currentYear, currentMonth);
 
-      const data = await tokenManager.getPersonalData();
 
-      // Clear notes for future months (notes should not persist forward)
-      const currentDate = new Date();
-      // currentMonth is 1-indexed (1-12), but Date constructor expects 0-indexed (0-11)
-      const viewingDate = new Date(currentYear, currentMonth - 1, 1);
-
-      // More precise future month detection - only consider it future if it's the next month or later
-      // Don't treat the current month as future
-      const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const isActuallyFutureMonth = viewingDate > currentMonthStart;
-
-      // Only clear bills for future months if we're not skipping the check (e.g., after generating bills)
-      // AND if we're actually viewing a future month (not just the current month)
-      const shouldClearBills = isActuallyFutureMonth && !skipFutureMonthCheck;
-
-      if (shouldClearBills) {
-        // For future months, start with empty bills array - bills must be generated manually
-        data.bills = [];
-        data.income = data.income.map((income) => ({
-          ...income,
-          notes: '', // Clear notes for future months
-        }));
-      } else if (isActuallyFutureMonth && skipFutureMonthCheck) {
-        // Skipping future month bill clearing (bills were just generated)
-      } else {
-        // Not a future month or bills should be preserved
-      }
 
       // Sort bills by due date
       if (data.bills) {
@@ -175,96 +68,33 @@ export function usePersonalTracker() {
       }
 
       // Ensure data has the expected structure with fallbacks
-      const safeData = {
+      let safeData = {
         income: data.income || [],
         bills: data.bills || [],
       };
 
-      // Final check: if this is a future month, ensure bills array is empty (unless skipping)
-      if (isActuallyFutureMonth && !skipFutureMonthCheck) {
-        safeData.bills = [];
-        // Also clear any income notes for future months
-        safeData.income = safeData.income.map(income => ({
-          ...income,
-          notes: ''
-        }));
-
-        // Force the state update to ensure UI reflects empty bills
-        // Additional safety: ensure we're not showing any bills for future months
-        if (safeData.bills.length > 0) {
-          safeData.bills = [];
-        }
-      } else if (isActuallyFutureMonth && skipFutureMonthCheck) {
-        // Preserving generated bills in future month
-      } else {
-        // Preserving bills for current/past month
-      }
-
       setPersonalData(safeData);
     } catch (error) {
-      // Fallback to localStorage if Firebase fails
-      const savedData = localStorage.getItem('personalData');
-      if (savedData) {
-        try {
-          const parsedData = JSON.parse(savedData);
-          // Ensure parsed data has the expected structure
-          const safeParsedData = {
-            income: parsedData.income || [],
-            bills: parsedData.bills || [],
-          };
-          setPersonalData(safeParsedData);
-        } catch (parseError) {
-          console.error('Error parsing localStorage data:', parseError);
-          // Only load initial sample data for current month, not future months
-          const currentDate = new Date();
-          const viewingDate = new Date(currentYear, currentMonth, 1);
-
-          if (viewingDate <= currentDate) {
-            // Load initial sample data only for current/past months
-            const monthParam = currentMonth + 1;
-            const initialData = getInitialPersonalData(
-              currentYear,
-              monthParam
-            );
-            setPersonalData(initialData);
-          } else {
-            // For future months, start with empty data
-            setPersonalData({ income: [], bills: [] });
-          }
-        }
-      } else {
-        // Only load initial sample data for current month, not future months
-        const currentDate = new Date();
-        const viewingDate = new Date(currentYear, currentMonth, 1);
-
-        if (viewingDate <= currentDate) {
-          // Load initial sample data only for current/past months
-          const monthParam = currentMonth + 1;
-          const initialData = getInitialPersonalData(
-            currentYear,
-            monthParam
-          );
-          setPersonalData(initialData);
-        } else {
-          // For future months, start with empty data
-          setPersonalData({ income: [], bills: [] });
-        }
-      }
+      console.error('Error in loadData:', error);
+      // Set empty data on error
+      setPersonalData({ income: [], bills: [] });
+    } finally {
+      isLoadingDataRef.current = false;
     }
-  };
+  }, [tokenManager, currentYear, currentMonth]);
 
   // Load data from Firebase on mount and when month/year changes
   useEffect(() => {
-    console.log('usePersonalTracker useEffect triggered:', { user: !!user, currentMonth, currentYear });
-
-    // Don't load if user is not authenticated or if we're still loading
     if (!user || user === null) {
-      console.log('User not authenticated, skipping data load');
       return;
     }
-    console.log('Loading personal data...');
-    loadData(); // Load data when month/year changes
-  }, [currentMonth, currentYear, user]); // Depend on month and year changes and user authentication
+
+    if (isLoadingDataRef.current) {
+      return;
+    }
+
+    loadData();
+  }, [currentMonth, currentYear, user?.uid]);
 
   const changeMonth = (offset) => {
     // currentMonth is 1-indexed (1-12), but Date constructor expects 0-indexed (0-11)

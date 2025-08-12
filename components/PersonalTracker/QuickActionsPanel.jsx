@@ -45,8 +45,8 @@ export default function QuickActionsPanel({
               disabled={!hasTemplates}
               className={`flex items-center px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors font-ibm cursor-pointer ${
                 hasTemplates
-                  ? 'bg-terminal-purple text-white hover:bg-terminal-purple/80 focus:ring-terminal-purple'
-                  : 'bg-terminal-muted text-terminal-muted cursor-not-allowed'
+                  ? 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500'
+                  : 'bg-purple-800 text-white cursor-not-allowed'
               }`}
               title={
                 hasTemplates
@@ -78,12 +78,12 @@ export default function QuickActionsPanel({
 
       {/* Generate Bills Info */}
       {hasTemplates && (
-        <div className='mt-4 p-3 bg-terminal-purple/10 border border-terminal-purple/20 rounded-md'>
+        <div className='mt-4 p-3 bg-purple-100 border border-purple-300 rounded-md'>
           <div className='flex items-start space-x-2'>
-            <Info className='h-4 w-4 text-terminal-purple mt-0.5 flex-shrink-0' />
-            <div className='text-sm text-terminal-purple font-ibm'>
+            <Info className='h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0' />
+            <div className='text-sm text-purple-700 font-ibm'>
               <p className='font-medium mb-1'>Generate Bills</p>
-              <p className='text-terminal-purple/80'>
+              <p className='text-purple-600'>
                 This will create blank bill entries for {currentMonthName}{' '}
                 {currentYear} based on your {billTemplates.length} template
                 {billTemplates.length !== 1 ? 's' : ''}. Each generated bill
@@ -96,12 +96,12 @@ export default function QuickActionsPanel({
       )}
 
       {!hasTemplates && (
-        <div className='mt-4 p-3 bg-terminal-muted/10 border border-terminal-muted/20 rounded-md'>
+        <div className='mt-4 p-3 bg-terminal-purple/40 border border-purple-300 rounded-md'>
           <div className='flex items-start space-x-2'>
-            <Info className='h-4 w-4 text-terminal-muted mt-0.5 flex-shrink-0' />
-            <div className='text-sm text-terminal-muted font-ibm'>
+            <Info className='h-4 w-4 text-terminal-purple mt-0.5 flex-shrink-0' />
+            <div className='text-sm text-white font-ibm'>
               <p className='font-medium mb-1'>No Bill Templates Available</p>
-              <p className='text-terminal-muted/80'>
+              <p className='text-white'>
                 To generate bills automatically, first create bill templates in
                 the Admin panel. Templates define the structure of bills that
                 will be generated each month.

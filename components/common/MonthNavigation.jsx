@@ -12,7 +12,7 @@ export default function MonthNavigation({
   const monthNames = customMonthNames || getMonthNames();
 
   // Handle different month indexing (PersonalTracker uses 1-based, BusinessTracker uses 0-based)
-  const monthIndex = currentMonth >= 0 ? currentMonth : currentMonth - 1;
+  const monthIndex = currentMonth >= 0 ? currentMonth - 1 : currentMonth;
   const displayMonth = monthNames[monthIndex];
 
   return (

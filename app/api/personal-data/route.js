@@ -15,7 +15,7 @@ export async function GET(request) {
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
     const { success } = await limiter.check(30, ip);
-    
+
     if (!success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
@@ -33,7 +33,7 @@ export async function GET(request) {
     }
 
     const token = authHeader.substring(7);
-    
+
     // Verify the scoped token
     let decodedToken;
     try {
@@ -129,7 +129,7 @@ export async function POST(request) {
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
     const { success } = await limiter.check(10, ip);
-    
+
     if (!success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
@@ -147,7 +147,7 @@ export async function POST(request) {
     }
 
     const token = authHeader.substring(7);
-    
+
     // Verify the scoped token
     let decodedToken;
     try {
@@ -160,7 +160,7 @@ export async function POST(request) {
     }
 
     const { type, data } = await request.json();
-    
+
     if (!type || !data) {
       return NextResponse.json(
         { error: 'Type and data are required' },
@@ -193,11 +193,11 @@ export async function POST(request) {
     }
 
     const docRef = await adminDb.collection(collectionName).add(newItem);
-    
+
     return NextResponse.json(
-      { 
-        id: docRef.id, 
-        ...newItem 
+      {
+        id: docRef.id,
+        ...newItem
       },
       { status: 201 }
     );
