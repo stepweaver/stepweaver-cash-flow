@@ -11,8 +11,9 @@ export default function MonthNavigation({
   // Use custom month names if provided, otherwise get from utils
   const monthNames = customMonthNames || getMonthNames();
 
-  // Handle different month indexing (PersonalTracker uses 1-based, BusinessTracker uses 0-based)
-  const monthIndex = currentMonth >= 0 ? currentMonth - 1 : currentMonth;
+  // Both PersonalTracker and BusinessTracker now use 1-indexed months
+  // Convert to 0-indexed for array access (January = 1 -> index 0)
+  const monthIndex = currentMonth - 1;
   const displayMonth = monthNames[monthIndex];
 
   return (

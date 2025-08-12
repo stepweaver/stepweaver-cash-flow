@@ -214,7 +214,70 @@ export default function BillTemplatesAdmin({
               month.
             </p>
           </div>
-          <div className='overflow-x-auto'>
+
+          {/* Mobile Card View */}
+          <div className='block md:hidden'>
+            <div className='p-4 space-y-4'>
+              {safeBillTemplates.map((template) => (
+                <div
+                  key={template.id}
+                  className='bg-terminal-dark rounded-lg border border-terminal-border p-4 space-y-3'
+                >
+                  <div className='flex items-center justify-between'>
+                    <h5 className='text-sm font-medium text-terminal-text font-ibm'>
+                      {template.name}
+                    </h5>
+                    <div className='flex space-x-2'>
+                      <button
+                        onClick={() => setSelectedTemplate(template)}
+                        className='text-terminal-cyan hover:text-terminal-cyan/80 transition-colors cursor-pointer p-1'
+                        title='Preview generated bill'
+                      >
+                        <Eye className='h-4 w-4' />
+                      </button>
+                      <button
+                        onClick={() => handleEdit(template)}
+                        className='text-terminal-blue hover:text-terminal-blue/80 transition-colors cursor-pointer p-1'
+                        title='Edit template'
+                        disabled={!template.id}
+                      >
+                        <Edit3 className='h-4 w-4' />
+                      </button>
+                      <button
+                        onClick={() => onDeleteTemplate(template.id)}
+                        className='text-terminal-red hover:text-terminal-red/80 transition-colors cursor-pointer p-1'
+                        title='Delete template'
+                        disabled={!template.id}
+                      >
+                        <Trash2 className='h-4 w-4' />
+                      </button>
+                    </div>
+                  </div>
+                  <div className='space-y-2'>
+                    <div className='flex justify-between items-center'>
+                      <span className='text-xs text-terminal-muted font-ibm uppercase tracking-wider'>
+                        Amount:
+                      </span>
+                      <span className='text-sm text-terminal-red font-ibm font-medium'>
+                        ${template.amount?.toFixed(2) || '0.00'}
+                      </span>
+                    </div>
+                    <div className='flex justify-between items-start'>
+                      <span className='text-xs text-terminal-muted font-ibm uppercase tracking-wider'>
+                        Payment URL:
+                      </span>
+                      <span className='text-sm text-terminal-text font-ibm text-right max-w-[200px] truncate'>
+                        {template.url || '-'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop Table View */}
+          <div className='hidden md:block overflow-x-auto'>
             <table className='min-w-full divide-y divide-terminal-border'>
               <thead className='bg-terminal-dark'>
                 <tr>

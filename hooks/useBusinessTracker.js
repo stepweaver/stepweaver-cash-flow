@@ -31,8 +31,8 @@ export const useBusinessTracker = () => {
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  // Initialize with current month and year
-  const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
+  // Initialize with current month and year (1-indexed: January = 1, July = 7, August = 8)
+  const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
 
   // Transaction filter state
@@ -297,8 +297,8 @@ export const useBusinessTracker = () => {
   };
 
   const changeMonth = (offset) => {
-    const newDate = new Date(currentYear, currentMonth + offset, 1);
-    setCurrentMonth(newDate.getMonth());
+    const newDate = new Date(currentYear, currentMonth + offset - 1, 1);
+    setCurrentMonth(newDate.getMonth() + 1);
     setCurrentYear(newDate.getFullYear());
   };
 
@@ -306,7 +306,7 @@ export const useBusinessTracker = () => {
   const filteredDisplayTransactions = useMemo(() => {
     let filtered = transactions.filter((transaction) => {
       const transactionDate = new Date(transaction.date);
-      const transactionMonth = transactionDate.getMonth();
+      const transactionMonth = transactionDate.getMonth() + 1;
       const transactionYear = transactionDate.getFullYear();
 
       // Filter by month and year
@@ -344,7 +344,7 @@ export const useBusinessTracker = () => {
   const filteredMonthlyTransactions = transactions.filter((transaction) => {
     const transactionDate = new Date(transaction.date);
     return (
-      transactionDate.getMonth() === currentMonth &&
+      transactionDate.getMonth() + 1 === currentMonth &&
       transactionDate.getFullYear() === currentYear
     );
   });

@@ -21,7 +21,7 @@ export default function TransactionTable({
 }) {
   const getTypeBadge = (type) => {
     const baseClasses =
-      'inline-flex px-2 py-1 text-xs font-semibold rounded-full border bg-opacity-40';
+      'inline-flex px-2 py-1 text-xs font-semibold rounded-md border bg-opacity-40';
 
     switch (type) {
       case 'revenue':
