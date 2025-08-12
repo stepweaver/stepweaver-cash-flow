@@ -41,20 +41,19 @@ export function usePersonalTracker() {
   const [showExportModal, setShowExportModal] = useState(false);
   const isLoadingDataRef = useRef(false);
 
-  // Load data function
+  // Load data function with debouncing
   const loadData = useCallback(async () => {
     if (isLoadingDataRef.current) {
       return;
     }
 
+    // Add a small delay to prevent rapid successive calls
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     isLoadingDataRef.current = true;
     try {
-
-
       // Load personal data for the month
       const data = await tokenManager.getPersonalData(currentYear, currentMonth);
-
-
 
       // Sort bills by due date
       if (data.bills) {
@@ -136,7 +135,7 @@ export function usePersonalTracker() {
           amountPaid: bill.status === 'paid' ? bill.amount : 0, // 0 for null, pending, or any other status
         };
 
-        await updatePersonalBill(editingItem.id, billData);
+        await tokenManager.updatePersonalBill(editingItem.id, billData);
         setPersonalData((prev) => ({
           ...prev,
           bills: (prev.bills || []).map((b) =>
@@ -169,7 +168,7 @@ export function usePersonalTracker() {
           amountPaid: bill.status === 'paid' ? bill.amount : 0, // 0 for null, pending, or any other status
         };
 
-        const newBill = await createPersonalBill(billData);
+        const newBill = await tokenManager.createPersonalBill(billData);
         setPersonalData((prev) => ({
           ...prev,
           bills: [...(prev.bills || []), newBill],
@@ -202,7 +201,7 @@ export function usePersonalTracker() {
   const handleSaveIncome = async (incomeData) => {
     try {
       if (editingItem) {
-        await updatePersonalBill(editingItem.id, incomeData);
+        await tokenManager.updatePersonalBill(editingItem.id, incomeData);
         setPersonalData((prev) => ({
           ...prev,
           income: prev.income.map((i) =>
@@ -212,7 +211,7 @@ export function usePersonalTracker() {
         setEditingItem(null);
         setShowIncomeModal(false);
       } else {
-        const newIncome = await createPersonalIncome(incomeData);
+        const newIncome = await tokenManager.createPersonalIncome(incomeData);
         setPersonalData((prev) => ({
           ...prev,
           income: [...prev.income, newIncome],
@@ -227,7 +226,7 @@ export function usePersonalTracker() {
 
   const handleDeleteIncome = async (id) => {
     try {
-      await deletePersonalIncome(id);
+      await tokenManager.deletePersonalIncome(id);
       setPersonalData((prev) => ({
         ...prev,
         income: prev.income.filter((item) => item.id !== id),
@@ -240,7 +239,7 @@ export function usePersonalTracker() {
 
   const handleDeleteBill = async (id) => {
     try {
-      await deletePersonalBill(id);
+      await tokenManager.deletePersonalBill(id);
       setPersonalData((prev) => ({
         ...prev,
         bills: (prev.bills || []).filter((bill) => bill.id !== id),
@@ -266,7 +265,7 @@ export function usePersonalTracker() {
       }
       // For null status (-), amountPaid remains 0
 
-      const updatedBill = await updatePersonalBill(id, {
+      const updatedBill = await tokenManager.updatePersonalBill(id, {
         status: newStatus,
         amountPaid: amountPaid
       });

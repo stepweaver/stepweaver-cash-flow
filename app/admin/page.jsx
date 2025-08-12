@@ -3,7 +3,7 @@
 import UserManagement from '@/components/Admin/UserManagement.jsx';
 import BillTemplatesAdmin from '@/components/Admin/BillTemplatesAdmin.jsx';
 import PageLayout from '@/components/Layout/PageLayout';
-import { usePersonalTracker } from '@/hooks/usePersonalTracker';
+import { useAdminData } from '@/hooks/useAdminData';
 
 export default function AdminPage() {
   const {
@@ -11,10 +11,7 @@ export default function AdminPage() {
     handleSaveTemplate,
     handleDeleteTemplate,
     handleUpdateTemplate,
-    currentMonth,
-    currentYear,
-    monthNames,
-  } = usePersonalTracker();
+  } = useAdminData();
 
   return (
     <PageLayout currentPage='admin'>
@@ -23,9 +20,22 @@ export default function AdminPage() {
         onSaveTemplate={handleSaveTemplate}
         onDeleteTemplate={handleDeleteTemplate}
         onUpdateTemplate={handleUpdateTemplate}
-        currentMonth={currentMonth}
-        currentYear={currentYear}
-        monthNames={monthNames}
+        currentMonth={new Date().getMonth() + 1}
+        currentYear={new Date().getFullYear()}
+        monthNames={[
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ]}
       />
       <UserManagement />
     </PageLayout>

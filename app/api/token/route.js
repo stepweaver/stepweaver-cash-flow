@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { mintScopedToken, TOKEN_SCOPES } from '@/lib/session-tokens.js';
 import { rateLimit } from '@/lib/rate-limit.js';
 
-// Rate limiting: 10 requests per minute per IP
+// Rate limiting: Configurable based on environment
+const isDevelopment = process.env.NODE_ENV === 'development';
+const requestsPerMinute = isDevelopment ? 100 : 50; // Higher limit in development
+
 const limiter = rateLimit({
   interval: 60 * 1000, // 1 minute
   uniqueTokenPerInterval: 500
@@ -12,7 +15,7 @@ export async function POST(request) {
   try {
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
-    const { success } = await limiter.check(10, ip);
+    const { success } = await limiter.check(requestsPerMinute, ip);
 
     if (!success) {
       return NextResponse.json(
