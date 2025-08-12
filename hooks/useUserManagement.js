@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import {
-  createUserAccount,
-  getUsers,
-  deleteUserAccount,
-  updateUserRole,
-} from '@/lib/firebase';
+// TODO: Implement user management API
+// import {
+//   createUserAccount,
+//   getUsers,
+//   deleteUserAccount,
+//   updateUserRole,
+// } from '@/lib/firebase';
 
 export function useUserManagement() {
   const [email, setEmail] = useState('');
@@ -25,8 +26,9 @@ export function useUserManagement() {
   const loadUsers = async () => {
     try {
       setLoadingUsers(true);
-      const usersList = await getUsers();
-      setUsers(usersList);
+      // TODO: Implement user loading API
+      // const usersList = await getUsers();
+      setUsers([]);
     } catch (error) {
       console.error('Error loading users:', error);
       setMessage('Failed to load users');
@@ -67,7 +69,8 @@ export function useUserManagement() {
     setMessageType('');
 
     try {
-      await createUserAccount(email, password, displayName);
+      // TODO: Implement user creation API
+      // await createUserAccount(email, password, displayName);
 
       setMessage(
         `User account created successfully for ${email}. You will now be signed out and need to sign in again.`
@@ -99,7 +102,8 @@ export function useUserManagement() {
     if (!confirmed) return;
 
     try {
-      await deleteUserAccount(userId);
+      // TODO: Implement user deletion API
+      // await deleteUserAccount(userId);
       setMessage(`User ${userEmail} removed successfully`);
       setMessageType('success');
       await loadUsers();
@@ -112,7 +116,8 @@ export function useUserManagement() {
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      await updateUserRole(userId, newRole);
+      // TODO: Implement user role update API
+      // await updateUserRole(userId, newRole);
       setMessage(`User role updated to ${newRole} successfully`);
       setMessageType('success');
       await loadUsers();

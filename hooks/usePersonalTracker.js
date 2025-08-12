@@ -1,18 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  getPersonalData,
-  addPersonalIncome,
-  addPersonalBill,
-  updatePersonalBill,
-  deletePersonalIncome,
-  deletePersonalBill,
-  getBillTemplates,
-  addBillTemplate,
-  updateBillTemplate,
-  deleteBillTemplate,
-
-  generateBillsForMonth,
-} from '@/lib/firebase';
+import { useTokenManager } from '@/lib/client-token-manager';
+import { useAuth } from '@/lib/authContext';
 import {
   exportToCSV,
   exportToJSON,
@@ -130,6 +118,8 @@ export function usePersonalTracker() {
   const [editingItem, setEditingItem] = useState(null);
   const [modalType, setModalType] = useState('income');
   const [editingType, setEditingType] = useState('income');
+  const tokenManager = useTokenManager();
+  const { user } = useAuth();
 
   // Export functionality
   const [showExportModal, setShowExportModal] = useState(false);
@@ -138,14 +128,15 @@ export function usePersonalTracker() {
   const loadData = async (skipFutureMonthCheck = false) => {
     try {
       // Load bill templates
-      const templates = await getBillTemplates();
-      setBillTemplates(templates);
+      // TODO: Implement bill templates API
+      // const templates = await getBillTemplates();
+      setBillTemplates([]);
 
       // Load personal data for the month
       // currentMonth is already 1-indexed (1-12), so use it directly
       const monthParam = currentMonth;
 
-      const data = await getPersonalData(currentYear, monthParam);
+      const data = await tokenManager.getPersonalData();
 
       // Clear notes for future months (notes should not persist forward)
       const currentDate = new Date();
@@ -264,8 +255,16 @@ export function usePersonalTracker() {
 
   // Load data from Firebase on mount and when month/year changes
   useEffect(() => {
+    console.log('usePersonalTracker useEffect triggered:', { user: !!user, currentMonth, currentYear });
+
+    // Don't load if user is not authenticated or if we're still loading
+    if (!user || user === null) {
+      console.log('User not authenticated, skipping data load');
+      return;
+    }
+    console.log('Loading personal data...');
     loadData(); // Load data when month/year changes
-  }, [currentMonth, currentYear]); // Depend on month and year changes
+  }, [currentMonth, currentYear, user]); // Depend on month and year changes and user authentication
 
   const changeMonth = (offset) => {
     // currentMonth is 1-indexed (1-12), but Date constructor expects 0-indexed (0-11)
@@ -309,7 +308,8 @@ export function usePersonalTracker() {
             notes: bill.notes || '',
             url: bill.url || '',
           };
-          await updateBillTemplate(existingTemplate.id, templateUpdates);
+          // TODO: Implement bill template update API
+          // await updateBillTemplate(existingTemplate.id, templateUpdates);
         }
 
         setEditingItem(null);
@@ -322,7 +322,7 @@ export function usePersonalTracker() {
           amountPaid: bill.status === 'paid' ? bill.amount : 0, // 0 for null, pending, or any other status
         };
 
-        const newBill = await addPersonalBill(billData);
+        const newBill = await createPersonalBill(billData);
         setPersonalData((prev) => ({
           ...prev,
           bills: [...(prev.bills || []), newBill],
@@ -333,14 +333,15 @@ export function usePersonalTracker() {
           (t) => t.name === bill.name
         );
         if (!existingTemplate) {
-          const newTemplate = await addBillTemplate({
-            name: bill.name,
-            amount: bill.amount,
-            dueDate: bill.dueDate,
-            notes: bill.notes || '',
-            url: bill.url || '',
-          });
-          setBillTemplates((prev) => [...prev, newTemplate]);
+          // TODO: Implement bill template creation API
+          // const newTemplate = await addBillTemplate({
+          //   name: bill.name,
+          //   amount: bill.amount,
+          //   dueDate: bill.dueDate,
+          //   notes: bill.notes || '',
+          //   url: bill.url || '',
+          // });
+          // setBillTemplates((prev) => [...prev, newTemplate]);
         }
 
         setShowBillModal(false);
@@ -364,7 +365,7 @@ export function usePersonalTracker() {
         setEditingItem(null);
         setShowIncomeModal(false);
       } else {
-        const newIncome = await addPersonalIncome(incomeData);
+        const newIncome = await createPersonalIncome(incomeData);
         setPersonalData((prev) => ({
           ...prev,
           income: [...prev.income, newIncome],
@@ -438,7 +439,8 @@ export function usePersonalTracker() {
   // Bill template handlers
   const handleSaveTemplate = async (template) => {
     try {
-      await addBillTemplate(template);
+      // TODO: Implement bill template creation API
+      // await addBillTemplate(template);
       await loadData(); // Reload data to reflect changes
     } catch (error) {
       console.error('Error saving bill template:', error);
@@ -447,7 +449,8 @@ export function usePersonalTracker() {
 
   const handleDeleteTemplate = async (templateId) => {
     try {
-      await deleteBillTemplate(templateId);
+      // TODO: Implement bill template deletion API
+      // await deleteBillTemplate(templateId);
       await loadData(); // Reload data to reflect changes
     } catch (error) {
       console.error('Error deleting bill template:', error);
@@ -456,7 +459,8 @@ export function usePersonalTracker() {
 
   const handleUpdateTemplate = async (templateId, updatedTemplate) => {
     try {
-      await updateBillTemplate(templateId, updatedTemplate);
+      // TODO: Implement bill template update API
+      // await updateBillTemplate(templateId, updatedTemplate);
       await loadData(); // Reload data to reflect changes
     } catch (error) {
       console.error('Error updating bill template:', error);
@@ -465,7 +469,8 @@ export function usePersonalTracker() {
 
   const handleGenerateBills = async (month, year) => {
     try {
-      await generateBillsForMonth(year, month, billTemplates);
+      // TODO: Implement bill generation API
+      // await generateBillsForMonth(year, month, billTemplates);
       await loadData(true); // Reload data to reflect changes, skip future month check
     } catch (error) {
       console.error('Error generating bills:', error);

@@ -13,7 +13,7 @@ export async function POST(request) {
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
     const { success } = await limiter.check(10, ip);
-    
+
     if (!success) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
@@ -23,8 +23,16 @@ export async function POST(request) {
 
     const { firebaseIdToken, scope, resourceId, additionalClaims } = await request.json();
 
+    console.log('Token request received:', {
+      hasFirebaseToken: !!firebaseIdToken,
+      scope,
+      resourceId: !!resourceId,
+      claims: Object.keys(additionalClaims || {})
+    });
+
     // Validate required fields
     if (!firebaseIdToken) {
+      console.error('Missing Firebase ID token');
       return NextResponse.json(
         { error: 'Firebase ID token is required' },
         { status: 400 }
@@ -32,14 +40,19 @@ export async function POST(request) {
     }
 
     if (!scope || !Object.values(TOKEN_SCOPES).includes(scope)) {
+      console.error('Invalid scope requested:', scope, 'Valid scopes:', Object.values(TOKEN_SCOPES));
       return NextResponse.json(
         { error: 'Valid scope is required' },
         { status: 400 }
       );
     }
 
+    console.log('Minting scoped token for scope:', scope);
+
     // Mint the scoped token
     const tokenData = await mintScopedToken(firebaseIdToken, scope, resourceId, additionalClaims);
+
+    console.log('Token minted successfully for scope:', scope);
 
     // Return the token with security headers
     return NextResponse.json(tokenData, {
@@ -54,7 +67,7 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Error minting token:', error);
-    
+
     // Don't expose internal error details to the client
     return NextResponse.json(
       { error: 'Failed to mint token' },

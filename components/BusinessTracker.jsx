@@ -69,7 +69,7 @@ export default function BusinessTracker() {
       <MonthNavigation
         currentMonth={currentMonth}
         currentYear={currentYear}
-        onMonthChange={changeMonth}
+        onChangeMonth={changeMonth}
       />
 
       {/* Annual Summary Cards */}

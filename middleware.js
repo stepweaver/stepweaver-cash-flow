@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
 // Middleware to enforce authentication and security
 export async function middleware(request) {
@@ -7,7 +6,7 @@ export async function middleware(request) {
 
   // Security headers for all routes
   const response = NextResponse.next();
-  
+
   // Add security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'DENY');

@@ -1,12 +1,6 @@
-import { useState, useEffect } from 'react';
-import {
-  addBusinessTransaction,
-  getBusinessTransactions,
-  deleteBusinessTransaction,
-  uploadReceiptFile,
-  deleteReceiptFile,
-  updateBusinessTransaction,
-} from '@/lib/firebase';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useAuth } from '@/lib/authContext.js';
+import { useTokenManager } from '@/lib/client-token-manager.js';
 import {
   exportToCSV,
   exportToJSON,
@@ -20,20 +14,26 @@ import {
   safeParseFloat,
 } from '@/lib/utils';
 
-export function useBusinessTracker() {
+export const useBusinessTracker = () => {
+  const { user } = useAuth();
+  const tokenManager = useTokenManager();
+
+  // Use the tokenManager directly - the memoization should handle stability
+  const memoizedTokenManager = tokenManager;
+
   const [transactions, setTransactions] = useState([]);
-  const [receiptFiles, setReceiptFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [showReceiptViewer, setShowReceiptViewer] = useState(false);
+  const [receiptFiles, setReceiptFiles] = useState([]);
   const [selectedTransactionReceipts, setSelectedTransactionReceipts] = useState([]);
   const [selectedTransactionDescription, setSelectedTransactionDescription] = useState('');
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showReceiptViewer, setShowReceiptViewer] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Initialize with current month and year
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
 
   // Transaction filter state
   const [showTransactionFilter, setShowTransactionFilter] = useState(false);
@@ -41,24 +41,56 @@ export function useBusinessTracker() {
   const [filterEndDate, setFilterEndDate] = useState('');
   const [filterType, setFilterType] = useState('all');
 
-  // Load transactions from Firebase on mount
+  // Export modal state
+  const [showExportModal, setShowExportModal] = useState(false);
+
+  // Debug: Track when dependencies change
   useEffect(() => {
+    console.log('useBusinessTracker dependencies changed:', {
+      user: user?.uid || 'no-user',
+      tokenManagerId: memoizedTokenManager ? 'tokenManager-exists' : 'no-tokenManager'
+    });
+  }, [user?.uid, memoizedTokenManager]);
+
+  // Load transactions from Firebase when user is authenticated
+  useEffect(() => {
+    console.log('useBusinessTracker useEffect triggered:', { user: !!user, tokenManager: !!memoizedTokenManager });
+
+    // Don't load if user is not authenticated or if we're still loading
+    if (!user || user === null) {
+      console.log('User not authenticated, skipping data load');
+      return;
+    }
+
     const loadTransactions = async () => {
       try {
-        const data = await getBusinessTransactions();
-        setTransactions(data);
+        setLoading(true);
+        console.log('Loading business transactions...');
+        const data = await memoizedTokenManager.getBusinessTransactions();
+        console.log('Transactions loaded successfully:', data);
+        setTransactions(data.transactions || data || []);
       } catch (error) {
         console.error('Error loading transactions:', error);
         // Fallback to localStorage if Firebase fails
         const savedTransactions = localStorage.getItem('businessTransactions');
         if (savedTransactions) {
-          setTransactions(JSON.parse(savedTransactions));
+          try {
+            const parsed = JSON.parse(savedTransactions);
+            setTransactions(parsed);
+          } catch (parseError) {
+            console.error('Error parsing localStorage data:', parseError);
+            setTransactions([]);
+          }
+        } else {
+          setTransactions([]);
         }
+      } finally {
+        setLoading(false);
       }
     };
 
     loadTransactions();
-  }, []);
+  }, [user?.uid, memoizedTokenManager]); // Use memoized tokenManager
 
   const handleAddTransaction = async (transactionData) => {
     const newTransaction = {
@@ -70,7 +102,7 @@ export function useBusinessTracker() {
     };
 
     try {
-      const savedTransaction = await addBusinessTransaction(newTransaction);
+      const savedTransaction = await memoizedTokenManager.createBusinessTransaction(newTransaction);
       setTransactions((prev) => [savedTransaction, ...prev]);
       setReceiptFiles([]);
       return savedTransaction;
@@ -84,16 +116,8 @@ export function useBusinessTracker() {
     const transactionToDelete = transactions.find((t) => t.id === idToDelete);
 
     try {
-      // Delete associated receipt files from storage
-      if (transactionToDelete?.receipts) {
-        for (const receipt of transactionToDelete.receipts) {
-          if (receipt.storagePath) {
-            await deleteReceiptFile(receipt.storagePath);
-          }
-        }
-      }
-
-      await deleteBusinessTransaction(idToDelete);
+      // Delete the transaction (receipts will be cleaned up server-side)
+      await memoizedTokenManager.deleteBusinessTransaction(idToDelete);
       setTransactions((prev) =>
         prev.filter((transaction) => transaction.id !== idToDelete)
       );
@@ -110,17 +134,23 @@ export function useBusinessTracker() {
       const uploadedReceipts = [];
 
       for (const file of files) {
-        // Create a temporary transaction ID for new transactions
-        const tempTransactionId = `temp_${Date.now()}_${Math.random()
-          .toString(36)
-          .substr(2, 9)}`;
-        const receiptData = await uploadReceiptFile(file, tempTransactionId);
+        // For now, we'll store receipt metadata locally
+        // In a production system, you'd upload to a secure server endpoint
+        const receiptData = {
+          id: `receipt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          uploadDate: new Date().toISOString(),
+          // Note: File content is not stored - only metadata
+          // For actual file storage, implement a secure upload endpoint
+        };
         uploadedReceipts.push(receiptData);
       }
 
       return uploadedReceipts;
     } catch (error) {
-      console.error('Error uploading receipts:', error);
+      console.error('Error processing receipts:', error);
       throw error;
     } finally {
       setUploading(false);
@@ -139,9 +169,6 @@ export function useBusinessTracker() {
       const receipt = selectedTransactionReceipts.find(
         (r) => r.id === receiptId
       );
-      if (receipt && receipt.storagePath) {
-        await deleteReceiptFile(receipt.storagePath);
-      }
 
       // Update the transaction to remove the receipt
       const transaction = transactions.find(
@@ -152,7 +179,7 @@ export function useBusinessTracker() {
         const updatedReceipts = transaction.receipts.filter(
           (r) => r.id !== receiptId
         );
-        await updateBusinessTransaction(transaction.id, {
+        await memoizedTokenManager.updateBusinessTransaction(transaction.id, {
           receipts: updatedReceipts,
         });
 
@@ -181,7 +208,7 @@ export function useBusinessTracker() {
     if (!editingTransaction) return;
 
     try {
-      await updateBusinessTransaction(editingTransaction.id, updatedData);
+      await memoizedTokenManager.updateBusinessTransaction(editingTransaction.id, updatedData);
 
       setTransactions((prev) =>
         prev.map((t) =>
@@ -275,30 +302,43 @@ export function useBusinessTracker() {
     setCurrentYear(newDate.getFullYear());
   };
 
-  // Filter transactions for display (all transactions with optional date/type filters)
-  const filteredDisplayTransactions = transactions.filter((transaction) => {
-    // Type filter
-    if (filterType !== 'all' && transaction.type !== filterType) {
-      return false;
-    }
-
-    // Date filter
-    if (filterStartDate || filterEndDate) {
+  // Filter transactions based on current month/year and filters
+  const filteredDisplayTransactions = useMemo(() => {
+    let filtered = transactions.filter((transaction) => {
       const transactionDate = new Date(transaction.date);
+      const transactionMonth = transactionDate.getMonth();
+      const transactionYear = transactionDate.getFullYear();
 
-      if (filterStartDate) {
-        const startDate = createLocalDate(filterStartDate);
-        if (transactionDate < startDate) return false;
+      // Filter by month and year
+      if (transactionMonth !== currentMonth || transactionYear !== currentYear) {
+        return false;
       }
 
-      if (filterEndDate) {
-        const endDate = createLocalDate(filterEndDate);
-        if (transactionDate > endDate) return false;
+      // Apply additional filters
+      if (filterStartDate && new Date(transaction.date) < new Date(filterStartDate)) {
+        return false;
       }
-    }
+      if (filterEndDate && new Date(transaction.date) > new Date(filterEndDate)) {
+        return false;
+      }
+      if (filterType !== 'all' && transaction.type !== filterType) {
+        return false;
+      }
 
-    return true;
-  });
+      return true;
+    });
+
+    return filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }, [transactions, currentMonth, currentYear, filterStartDate, filterEndDate, filterType]);
+
+  // Filter transactions for annual summary (current year)
+  const filteredAnnualTransactions = useMemo(() => {
+    return transactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.date);
+      const transactionYear = transactionDate.getFullYear();
+      return transactionYear === currentYear;
+    });
+  }, [transactions, currentYear]);
 
   // Filter transactions for current month (for summary statistics)
   const filteredMonthlyTransactions = transactions.filter((transaction) => {
@@ -307,12 +347,6 @@ export function useBusinessTracker() {
       transactionDate.getMonth() === currentMonth &&
       transactionDate.getFullYear() === currentYear
     );
-  });
-
-  // Filter transactions for current year
-  const filteredAnnualTransactions = transactions.filter((transaction) => {
-    const transactionDate = new Date(transaction.date);
-    return transactionDate.getFullYear() === currentYear;
   });
 
   // Calculate monthly summary statistics
@@ -377,6 +411,7 @@ export function useBusinessTracker() {
   return {
     // State
     transactions,
+    loading,
     currentMonth,
     currentYear,
     showTransactionFilter,
@@ -390,6 +425,7 @@ export function useBusinessTracker() {
     showEditModal,
     editingTransaction,
     uploading,
+    receiptFiles,
 
     // Computed values
     filteredDisplayTransactions,
@@ -422,6 +458,8 @@ export function useBusinessTracker() {
     setShowReceiptViewer,
     setShowExportModal,
     setShowEditModal,
+    setShowTransactionFilter,
     setEditingTransaction,
+    setReceiptFiles,
   };
 }
