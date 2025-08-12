@@ -8,7 +8,6 @@ import IncomeSection from './PersonalTracker/IncomeSection';
 import BillsSection from './PersonalTracker/BillsSection';
 import IncomeModal from './PersonalTracker/IncomeModal';
 import BillModal from './PersonalTracker/BillModal';
-import ExportModal from './PersonalTracker/ExportModal';
 
 export default function PersonalTracker() {
   const {
@@ -20,7 +19,6 @@ export default function PersonalTracker() {
     billTemplates,
     showIncomeModal,
     showBillModal,
-    showExportModal,
     editingItem,
     editingType,
 
@@ -48,7 +46,6 @@ export default function PersonalTracker() {
     handleDeleteIncome,
     handleDeleteBill,
     handleStatusChange,
-    handleExport,
     handleSaveTemplate,
     handleDeleteTemplate,
     handleUpdateTemplate,
@@ -58,7 +55,6 @@ export default function PersonalTracker() {
     // Modal controls
     setShowIncomeModal,
     setShowBillModal,
-    setShowExportModal,
     setEditingItem,
     setEditingType,
 
@@ -98,7 +94,6 @@ export default function PersonalTracker() {
       <QuickActionsPanel
         onAddIncome={openIncomeModal}
         onAddBill={openBillModal}
-        onExport={() => setShowExportModal(true)}
         onGenerateBills={handleGenerateBills}
         currentMonth={currentMonth}
         currentYear={currentYear}
@@ -142,16 +137,6 @@ export default function PersonalTracker() {
         onClose={() => setShowBillModal(false)}
         onSave={handleSaveBill}
         editingBill={editingType === 'bill' ? editingItem : null}
-        monthNames={monthNames}
-        currentMonth={currentMonth}
-        currentYear={currentYear}
-      />
-
-      {/* Export Modal */}
-      <ExportModal
-        isOpen={showExportModal}
-        onClose={() => setShowExportModal(false)}
-        onExport={handleExport}
         monthNames={monthNames}
         currentMonth={currentMonth}
         currentYear={currentYear}

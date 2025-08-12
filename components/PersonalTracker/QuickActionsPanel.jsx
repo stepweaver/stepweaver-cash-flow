@@ -1,12 +1,11 @@
 'use client';
 
-import { Plus, Download, Calendar, Info } from 'lucide-react';
+import { Plus, Calendar, Info } from 'lucide-react';
 import Card from '../common/Card';
 
 export default function QuickActionsPanel({
   onAddIncome,
   onAddBill,
-  onExport,
   onGenerateBills,
   currentMonth,
   currentYear,
@@ -67,13 +66,6 @@ export default function QuickActionsPanel({
             </div>
           </div>
         </div>
-        <button
-          onClick={onExport}
-          className='flex items-center px-3 py-1 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-muted hover:bg-terminal-dark/20 transition-all duration-200 font-ibm cursor-pointer'
-        >
-          <Download className='h-3 w-3 mr-1' />
-          Export
-        </button>
       </div>
 
       {/* Generate Bills Info */}

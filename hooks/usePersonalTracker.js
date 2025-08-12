@@ -1,12 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useTokenManager } from '@/lib/client-token-manager';
 import { useAuth } from '@/lib/authContext';
-import {
-  exportToCSV,
-  exportToJSON,
-  generatePDFHTML,
-  downloadFile,
-} from '@/lib/exportUtils';
+
 import {
   formatDate,
   createLocalDate,
@@ -37,8 +32,6 @@ export function usePersonalTracker() {
 
 
 
-  // Export functionality
-  const [showExportModal, setShowExportModal] = useState(false);
   const isLoadingDataRef = useRef(false);
 
   // Load data function with debouncing
@@ -373,99 +366,18 @@ export function usePersonalTracker() {
     }
   };
 
-  const getTransactionsForExport = (startDate, endDate) => {
-    const start = createLocalDate(startDate);
-    const end = createLocalDate(endDate);
 
-    const allTransactions = [];
 
-    // Add income transactions
-    (personalData?.income || []).forEach((income) => {
-      const incomeDate = createLocalDate(income.date);
-      if (incomeDate >= start && incomeDate <= end) {
-        allTransactions.push({
-          date: income.date,
-          type: 'Income',
-          description: income.source,
-          amount: income.actual || income.budget || 0,
-          budget: income.budget || 0,
-          actual: income.actual || income.budget || 0,
-          notes: income.notes || '',
-          category: 'Income',
-        });
-      }
-    });
 
-    // Add bill transactions
-    (personalData?.bills || []).forEach((bill) => {
-      const billDate = createLocalDate(bill.dueDate);
-      if (billDate >= start && billDate <= end) {
-        allTransactions.push({
-          date: bill.dueDate,
-          type: 'Bill',
-          description: bill.name,
-          amount: bill.amountDue || bill.amount || 0,
-          amountPaid: bill.amountPaid || 0,
-          status: bill.status || 'pending',
-          notes: bill.notes || '',
-          category: 'Bills',
-        });
-      }
-    });
 
-    // Sort by date
-    allTransactions.sort((a, b) => createLocalDate(a.date) - createLocalDate(b.date));
 
-    return allTransactions;
-  };
 
-  const handleExport = async ({
-    startDate,
-    endDate,
-    format,
-    includeReceipts,
-  }) => {
-    const exportTransactions = getTransactionsForExport(startDate, endDate);
 
-    if (exportTransactions.length === 0) {
-      throw new Error('No transactions found in the selected date range.');
-    }
 
-    const dateRange = `${startDate}_to_${endDate}`;
 
-    try {
-      switch (format) {
-        case 'csv':
-          exportToCSV(
-            exportTransactions,
-            `personal_transactions_${dateRange}.csv`
-          );
-          break;
-        case 'json':
-          exportToJSON(
-            exportTransactions,
-            `personal_transactions_${dateRange}.json`
-          );
-          break;
-        case 'pdf':
-          const htmlContent = generatePDFHTML(
-            exportTransactions,
-            `Personal Transactions (${startDate} to ${endDate})`
-          );
-          downloadFile(
-            htmlContent,
-            `personal_transactions_${dateRange}.html`,
-            'text/html'
-          );
-          break;
-        default:
-          throw new Error('Unsupported export format');
-      }
-    } catch (error) {
-      console.error('Export error:', error);
-      throw error;
-    }
-  };
+
+
+
 
   const getBillsWithColorCoding = () => {
     const bills = personalData?.bills || [];
@@ -666,7 +578,7 @@ export function usePersonalTracker() {
     editingItem,
     modalType,
     editingType,
-    showExportModal,
+
 
     // Computed values
     totalIncomeBudget,
@@ -707,7 +619,7 @@ export function usePersonalTracker() {
     openIncomeModal,
     openBillModal,
     editItem,
-    handleExport,
+
     loadData,
 
     // Modal controls
@@ -715,6 +627,6 @@ export function usePersonalTracker() {
     setShowBillModal,
     setEditingItem,
     setEditingType,
-    setShowExportModal,
+
   };
 }
