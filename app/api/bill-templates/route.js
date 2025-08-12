@@ -3,7 +3,10 @@ import { verifyScopedToken, TOKEN_SCOPES } from '@/lib/session-tokens.js';
 import { adminDb } from '@/lib/firebase-admin.js';
 import { rateLimit } from '@/lib/rate-limit.js';
 
-// Rate limiting: 30 requests per minute per IP
+// Rate limiting: Configurable based on environment
+const isDevelopment = process.env.NODE_ENV === 'development';
+const requestsPerMinute = isDevelopment ? 100 : 30; // Higher limit in development
+
 const limiter = rateLimit({
   interval: 60 * 1000, // 1 minute
   uniqueTokenPerInterval: 500
@@ -14,7 +17,7 @@ export async function GET(request) {
   try {
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
-    const { success } = await limiter.check(30, ip);
+    const { success } = await limiter.check(requestsPerMinute, ip);
 
     if (!success) {
       return NextResponse.json(
@@ -72,7 +75,7 @@ export async function POST(request) {
   try {
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
-    const { success } = await limiter.check(10, ip);
+    const { success } = await limiter.check(requestsPerMinute, ip);
 
     if (!success) {
       return NextResponse.json(
@@ -143,7 +146,7 @@ export async function PUT(request) {
   try {
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
-    const { success } = await limiter.check(10, ip);
+    const { success } = await limiter.check(requestsPerMinute, ip);
 
     if (!success) {
       return NextResponse.json(
@@ -223,7 +226,7 @@ export async function DELETE(request) {
   try {
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
-    const { success } = await limiter.check(10, ip);
+    const { success } = await limiter.check(requestsPerMinute, ip);
 
     if (!success) {
       return NextResponse.json(
