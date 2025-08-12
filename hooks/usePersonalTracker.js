@@ -319,10 +319,10 @@ export function usePersonalTracker() {
 
       const generatedBills = billTemplates.map(template => ({
         name: template.name,
-        dueDate: template.dueDate || `${year}-${String(month).padStart(2, '0')}-01`, // Use template dueDate or default to 1st
-        amountDue: template.amount || 0,
+        // No dueDate - bills will be generated without a due date
+        amountDue: 0, // Always 0 for newly generated bills
         amountPaid: 0, // Always 0 for newly generated bills
-        status: 'pending', // Always pending for newly generated bills
+        status: '-', // Use '-' status instead of 'pending'
         notes: template.notes || '',
         url: template.url || '',
         month: month,
