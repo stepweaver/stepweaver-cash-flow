@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/authContext';
 // TODO: Implement user management API
 // import {
 //   createUserAccount,
@@ -8,10 +9,9 @@ import { useState, useEffect } from 'react';
 // } from '@/lib/firebase';
 
 export function useUserManagement() {
+  const { user } = useAuth();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
@@ -40,26 +40,19 @@ export function useUserManagement() {
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) return;
+    if (!email.trim()) return;
 
     // Additional validation
-    if (password.length < 6) {
-      setMessage('Password must be at least 6 characters long');
-      setMessageType('error');
-      return;
-    }
-
     if (!email.includes('@')) {
       setMessage('Please enter a valid email address');
       setMessageType('error');
       return;
     }
 
-    // Confirm with user about the session limitation
+    // Confirm invitation
     const confirmed = confirm(
-      `Are you sure you want to create a user account for ${email}?\n\n` +
-      `⚠️  IMPORTANT: After creating this account, you will be automatically signed out and need to sign in again.\n\n` +
-      `This is a security feature to ensure only the intended user can access the new account.`
+      `Are you sure you want to send an invitation to ${email}?\n\n` +
+      `The user will receive an email to set up their own account and password.`
     );
 
     if (!confirmed) return;
@@ -69,18 +62,61 @@ export function useUserManagement() {
     setMessageType('');
 
     try {
-      // TODO: Implement user creation API
-      // await createUserAccount(email, password, displayName);
+      // Get the current user's Firebase ID token
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
 
-      setMessage(
-        `User account created successfully for ${email}. You will now be signed out and need to sign in again.`
-      );
-      setMessageType('success');
+      const idToken = await user.getIdToken();
 
-      // Reset form
-      setEmail('');
-      setPassword('');
-      setDisplayName('');
+      // First, mint a scoped token for user management
+      const tokenResponse = await fetch('/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firebaseIdToken: idToken,
+          scope: 'write_users',
+          resourceId: false,
+          additionalClaims: []
+        }),
+      });
+
+      if (!tokenResponse.ok) {
+        const tokenData = await tokenResponse.json();
+        throw new Error(`Failed to get authorization token: ${tokenData.error || 'Unknown error'}`);
+      }
+
+      const { token: scopedToken } = await tokenResponse.json();
+
+      // Send invitation using the invitation API with the scoped token
+      const response = await fetch('/api/invitations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${scopedToken}`,
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          displayName: displayName.trim() || undefined
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(
+          `Invitation sent successfully to ${email}. The user will receive an email to set up their account.`
+        );
+        setMessageType('success');
+
+        // Reset form
+        setEmail('');
+        setDisplayName('');
+      } else {
+        throw new Error(data.error || 'Failed to send invitation');
+      }
 
       // Reload users list
       await loadUsers();
@@ -151,9 +187,7 @@ export function useUserManagement() {
   return {
     // State
     email,
-    password,
     displayName,
-    showPassword,
     isLoading,
     message,
     messageType,
@@ -162,9 +196,7 @@ export function useUserManagement() {
 
     // Actions
     setEmail,
-    setPassword,
     setDisplayName,
-    setShowPassword,
     handleCreateUser,
     handleRemoveUser,
     handleRoleChange,

@@ -56,7 +56,8 @@ const SCAN_DIRECTORIES = [
 const EXCLUDE_FILES = [
   'firebase-admin.js',
   'session-tokens.js',
-  'rate-limit.js'
+  'rate-limit.js',
+  'invitations.server.js'
 ];
 
 function log(message, type = 'info') {

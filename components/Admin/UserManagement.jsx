@@ -9,9 +9,7 @@ export default function UserManagement() {
   const {
     // State
     email,
-    password,
     displayName,
-    showPassword,
     isLoading,
     message,
     messageType,
@@ -20,9 +18,7 @@ export default function UserManagement() {
 
     // Actions
     setEmail,
-    setPassword,
     setDisplayName,
-    setShowPassword,
     handleCreateUser,
     handleRemoveUser,
     handleRoleChange,
@@ -45,7 +41,7 @@ export default function UserManagement() {
             User Management
           </h2>
           <p className='text-terminal-muted font-ibm'>
-            Add and manage users directly
+            Send invitations and manage users securely
           </p>
         </div>
       </div>
@@ -53,16 +49,12 @@ export default function UserManagement() {
       {/* Create User Form */}
       <UserCreationForm
         email={email}
-        password={password}
         displayName={displayName}
-        showPassword={showPassword}
         isLoading={isLoading}
         message={message}
         messageType={messageType}
         onEmailChange={(e) => setEmail(e.target.value)}
-        onPasswordChange={(e) => setPassword(e.target.value)}
         onDisplayNameChange={(e) => setDisplayName(e.target.value)}
-        onShowPasswordToggle={() => setShowPassword(!showPassword)}
         onSubmit={handleCreateUser}
         onClearMessage={clearMessage}
       />

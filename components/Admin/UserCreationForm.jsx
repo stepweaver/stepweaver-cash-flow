@@ -1,19 +1,15 @@
 'use client';
 
-import { Eye, EyeOff, UserPlus, Loader2, AlertCircle } from 'lucide-react';
+import { UserPlus, Loader2, AlertCircle } from 'lucide-react';
 
 export default function UserCreationForm({
   email,
-  password,
   displayName,
-  showPassword,
   isLoading,
   message,
   messageType,
   onEmailChange,
-  onPasswordChange,
   onDisplayNameChange,
-  onShowPasswordToggle,
   onSubmit,
   onClearMessage,
 }) {
@@ -33,18 +29,18 @@ export default function UserCreationForm({
         <div className='flex items-start space-x-2'>
           <AlertCircle className='h-4 w-4 text-terminal-blue mt-0.5 flex-shrink-0' />
           <div className='text-sm text-terminal-blue font-ibm'>
-            <p className='font-medium mb-1'>Important:</p>
+            <p className='font-medium mb-1'>Secure User Invitation:</p>
             <p>
-              After creating a user account, you will be signed out and need to
-              sign in again. This is a security feature to ensure only the
-              intended user can access the new account.
+              Users will receive an email invitation to set up their own account
+              and password. This is the most secure way to add new users - you
+              never see their passwords.
             </p>
           </div>
         </div>
       </div>
 
       <form onSubmit={onSubmit} className='space-y-4'>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div>
             <label
               htmlFor='user-email'
@@ -61,34 +57,6 @@ export default function UserCreationForm({
               className='w-full px-3 py-2 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ibm'
               placeholder='Enter email address'
             />
-          </div>
-
-          <div>
-            <label
-              htmlFor='user-password'
-              className='block text-sm font-medium text-terminal-text mb-2 font-ibm'
-            >
-              Password
-            </label>
-            <div className='relative'>
-              <input
-                id='user-password'
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={onPasswordChange}
-                required
-                minLength={6}
-                className='w-full px-3 py-2 pr-10 bg-terminal-dark border border-terminal-border rounded-md text-terminal-text placeholder-terminal-muted focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:border-transparent font-ibm'
-                placeholder='Enter password (min 6 chars)'
-              />
-              <button
-                type='button'
-                onClick={onShowPasswordToggle}
-                className='absolute inset-y-0 right-0 pr-3 flex items-center text-terminal-muted hover:text-terminal-text'
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
           </div>
 
           <div>
@@ -112,18 +80,18 @@ export default function UserCreationForm({
         <div className='flex justify-end'>
           <button
             type='submit'
-            disabled={isLoading || !email.trim() || !password.trim()}
+            disabled={isLoading || !email.trim()}
             className='px-6 py-2 bg-terminal-blue text-white rounded-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-terminal-blue focus:ring-offset-2 focus:ring-offset-terminal-dark disabled:opacity-50 disabled:cursor-not-allowed font-ibm transition-colors flex items-center space-x-2'
           >
             {isLoading ? (
               <>
                 <Loader2 className='animate-spin' size={18} />
-                <span>Creating...</span>
+                <span>Sending Invitation...</span>
               </>
             ) : (
               <>
                 <UserPlus size={18} />
-                <span>Create User</span>
+                <span>Send Invitation</span>
               </>
             )}
           </button>
