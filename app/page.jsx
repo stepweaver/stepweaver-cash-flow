@@ -45,6 +45,7 @@ export default function Home() {
   return (
     <ProtectedRoute>
       <div className='min-h-screen bg-terminal-dark'>
+        test
         {/* Header */}
         <header className='bg-terminal-light shadow-sm border-b border-terminal-border'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
