@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { verifyUserSession } from '@/lib/firebase-admin';
-import { adminDb } from '@/lib/firebase-admin';
+import { verifyScopedToken, TOKEN_SCOPES } from '@/lib/session-tokens.js';
+import { adminDb } from '@/lib/firebase-admin.js';
 
 export async function GET(request) {
   try {
@@ -12,14 +12,30 @@ export async function GET(request) {
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
-    // Verify the session token
-    const decodedToken = await verifyUserSession(token);
+    // Verify the scoped token has admin access
+    const decodedToken = verifyScopedToken(token, TOKEN_SCOPES.ADMIN_ACCESS);
     if (!decodedToken) {
       return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
     }
 
-    // Check if the user has admin role in the database
-    const userDoc = await adminDb.collection('users').doc(decodedToken.uid).get();
+    const userId = decodedToken.sub;
+
+    // Get or create the user document
+    let userDoc = await adminDb.collection('users').doc(userId).get();
+
+    // If user doesn't exist, create them as admin (for initial setup)
+    if (!userDoc.exists) {
+      await adminDb.collection('users').doc(userId).set({
+        email: 'stephen@stepweaver.dev',
+        displayName: 'Stephen (StepWeaver Admin)',
+        role: 'admin',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isActive: true
+      });
+
+      userDoc = await adminDb.collection('users').doc(userId).get();
+    }
 
     if (!userDoc.exists) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -31,12 +47,12 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Insufficient privileges' }, { status: 403 });
     }
 
-    // Return success with user info (without sensitive data)
+    // Return success with user info
     return NextResponse.json({
       success: true,
       user: {
-        uid: decodedToken.uid,
-        email: decodedToken.email,
+        uid: decodedToken.sub,
+        email: userData.email,
         role: userData.role,
         displayName: userData.displayName
       }

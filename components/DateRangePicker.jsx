@@ -33,12 +33,19 @@ export default function DateRangePicker({
         0
       );
 
-      setStartDate(formatDate(firstDayOfMonth));
-      setEndDate(formatDate(lastDayOfMonth));
+      const formattedStartDate = formatDate(firstDayOfMonth);
+      const formattedEndDate = formatDate(lastDayOfMonth);
+
+      // Set the formatted dates as defaults
+
+      setStartDate(formattedStartDate);
+      setEndDate(formattedEndDate);
     }
   }, [isOpen]);
 
   const handleExport = async () => {
+    // Validate export parameters
+
     if (!startDate || !endDate) {
       alert('Please select both start and end dates.');
       return;

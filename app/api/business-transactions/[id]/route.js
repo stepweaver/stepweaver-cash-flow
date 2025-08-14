@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyScopedToken, TOKEN_SCOPES } from '@/lib/session-tokens.js';
-import { adminDb } from '@/lib/firebase-admin.js';
+import { adminDb, adminStorage } from '@/lib/firebase-admin.js';
 import { rateLimit } from '@/lib/rate-limit.js';
 
 // Rate limiting: Configurable based on environment
@@ -73,10 +73,110 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // Update the transaction
+    // Handle receipt updates separately
+    let updatedReceiptIds = existingTransaction.receiptIds || [];
+
+    if (updateData.receipts !== undefined) {
+      // If receipts are being updated, handle them properly
+      try {
+        // Delete old receipts if they exist
+        if (existingTransaction.receiptIds && existingTransaction.receiptIds.length > 0) {
+          const bucket = adminStorage?.bucket();
+          for (const receiptId of existingTransaction.receiptIds) {
+            const receiptDoc = await adminDb.collection('receipts').doc(receiptId).get();
+            if (receiptDoc.exists) {
+              const receiptData = receiptDoc.data();
+              // Delete from Storage if path exists
+              if (bucket && receiptData.storagePath) {
+                try {
+                  await bucket.file(receiptData.storagePath).delete();
+                } catch (storageError) {
+                  console.error(`Error deleting receipt from storage: ${receiptData.storagePath}`, storageError);
+                }
+              }
+              // Delete from Firestore
+              await adminDb.collection('receipts').doc(receiptId).delete();
+            }
+          }
+        }
+
+        // Store new receipts using Firebase Storage
+        updatedReceiptIds = [];
+        if (updateData.receipts && updateData.receipts.length > 0) {
+          if (!adminStorage) {
+            throw new Error('Storage service not available');
+          }
+
+          const bucket = adminStorage.bucket();
+
+          for (const receipt of updateData.receipts) {
+            if (!receipt.data) continue;
+
+            // Extract base64 data (remove data URL prefix if present)
+            const base64Data = receipt.data.includes(',')
+              ? receipt.data.split(',')[1]
+              : receipt.data;
+
+            // Convert base64 to buffer
+            const fileBuffer = Buffer.from(base64Data, 'base64');
+
+            // Generate unique filename
+            const timestamp = Date.now();
+            const randomId = Math.random().toString(36).substr(2, 9);
+            const fileExtension = receipt.name.split('.').pop() || 'bin';
+            const fileName = `receipts/${decodedToken.sub}/${timestamp}_${randomId}.${fileExtension}`;
+
+            // Upload to Firebase Storage
+            const file = bucket.file(fileName);
+            await file.save(fileBuffer, {
+              metadata: {
+                contentType: receipt.type || 'application/octet-stream',
+                metadata: {
+                  originalName: receipt.name,
+                  userId: decodedToken.sub,
+                  uploadDate: new Date().toISOString()
+                }
+              }
+            });
+
+            // Get download URL
+            const [downloadURL] = await file.getSignedUrl({
+              action: 'read',
+              expires: '03-01-2030'
+            });
+
+            // Store receipt metadata in Firestore
+            const receiptDoc = {
+              userId: decodedToken.sub,
+              name: receipt.name,
+              size: receipt.size,
+              type: receipt.type,
+              mimeType: receipt.mimeType || receipt.type,
+              uploadDate: receipt.uploadDate || new Date().toISOString(),
+              storagePath: fileName,
+              downloadURL: downloadURL,
+              createdAt: new Date().toISOString()
+            };
+
+            const receiptRef = await adminDb.collection('receipts').add(receiptDoc);
+            updatedReceiptIds.push(receiptRef.id);
+          }
+        }
+      } catch (receiptError) {
+        console.error('Error updating receipts:', receiptError);
+        return NextResponse.json(
+          { error: 'Failed to update receipts' },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Update the transaction (exclude receipts data, use receiptIds instead)
+    const { receipts, ...updateDataWithoutReceipts } = updateData;
     const updatedTransaction = {
       ...existingTransaction,
-      ...updateData,
+      ...updateDataWithoutReceipts,
+      receiptIds: updatedReceiptIds,
       updatedAt: new Date().toISOString()
     };
 
@@ -153,6 +253,32 @@ export async function DELETE(request, { params }) {
         { error: 'Access denied' },
         { status: 403 }
       );
+    }
+
+    // Delete associated receipts first
+    if (existingTransaction.receiptIds && existingTransaction.receiptIds.length > 0) {
+      try {
+        const bucket = adminStorage?.bucket();
+        for (const receiptId of existingTransaction.receiptIds) {
+          const receiptDoc = await adminDb.collection('receipts').doc(receiptId).get();
+          if (receiptDoc.exists) {
+            const receiptData = receiptDoc.data();
+            // Delete from Storage if path exists
+            if (bucket && receiptData.storagePath) {
+              try {
+                await bucket.file(receiptData.storagePath).delete();
+              } catch (storageError) {
+                console.error(`Error deleting receipt from storage: ${receiptData.storagePath}`, storageError);
+              }
+            }
+            // Delete from Firestore
+            await adminDb.collection('receipts').doc(receiptId).delete();
+          }
+        }
+      } catch (receiptError) {
+        console.error('Error deleting receipts:', receiptError);
+        // Continue with transaction deletion even if receipt deletion fails
+      }
     }
 
     // Delete the transaction

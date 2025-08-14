@@ -40,7 +40,7 @@ export default function ReceiptUpload({ onUpload, uploading = false }) {
         'image/gif',
         'application/pdf',
       ];
-      const maxSize = 10 * 1024 * 1024; // 10MB
+      const maxSize = 5 * 1024 * 1024; // 5MB (reduced for better compatibility)
 
       if (!validTypes.includes(file.type)) {
         alert(
@@ -51,7 +51,7 @@ export default function ReceiptUpload({ onUpload, uploading = false }) {
 
       if (file.size > maxSize) {
         alert(
-          `${file.name} is too large. Please upload files smaller than 10MB.`
+          `${file.name} is too large. Please upload files smaller than 5MB.\n\nNote: Files larger than ~500KB require Firebase Storage to be configured. For best compatibility, use smaller files.`
         );
         return false;
       }
@@ -106,7 +106,7 @@ export default function ReceiptUpload({ onUpload, uploading = false }) {
           Drag and drop receipt files here, or click to select
         </p>
         <p className='text-sm text-terminal-muted font-ibm mb-4'>
-          Supports: JPG, PNG, GIF, PDF (max 10MB each)
+          Supports: JPG, PNG, GIF, PDF (max 5MB each, 500KB recommended)
         </p>
         <input
           type='file'

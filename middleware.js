@@ -21,7 +21,7 @@ export async function middleware(request) {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
-    "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com",
+    "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://storage.googleapis.com https://*.firebasestorage.app",
     "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",

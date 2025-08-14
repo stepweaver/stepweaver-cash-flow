@@ -236,6 +236,11 @@ export const useBusinessTracker = () => {
     const start = createLocalDate(startDate);
     const end = createLocalDate(endDate);
 
+    if (!start || !end) {
+      console.error('Invalid date range for export:', { startDate, endDate, start, end });
+      return [];
+    }
+
     return transactions.filter((transaction) => {
       const transactionDate = new Date(transaction.date);
       return transactionDate >= start && transactionDate <= end;
@@ -248,15 +253,18 @@ export const useBusinessTracker = () => {
     format,
     includeReceipts,
   }) => {
-    const exportTransactions = getTransactionsForExport(startDate, endDate);
-
-    if (exportTransactions.length === 0) {
-      throw new Error('No transactions found in the selected date range.');
-    }
-
-    const dateRange = `${startDate}_to_${endDate}`;
-
     try {
+      const exportTransactions = getTransactionsForExport(startDate, endDate);
+
+      if (exportTransactions.length === 0) {
+        throw new Error('No transactions found in the selected date range.');
+      }
+
+      // Safely create date range string
+      const startDateStr = startDate ? String(startDate).split('T')[0] : 'unknown';
+      const endDateStr = endDate ? String(endDate).split('T')[0] : 'unknown';
+      const dateRange = `${startDateStr}_to_${endDateStr}`;
+
       switch (format) {
         case 'csv':
           exportToCSV(
@@ -273,7 +281,7 @@ export const useBusinessTracker = () => {
         case 'pdf':
           const htmlContent = generatePDFHTML(
             exportTransactions,
-            `Business Transactions (${startDate} to ${endDate})`
+            `Business Transactions (${startDateStr} to ${endDateStr})`
           );
           downloadFile(
             htmlContent,
@@ -291,10 +299,19 @@ export const useBusinessTracker = () => {
           (t) => t.receipts && t.receipts.length > 0
         );
         if (transactionsWithReceipts.length > 0) {
-          await downloadReceiptsAsZip(
-            transactionsWithReceipts,
-            `business_receipts_${dateRange}.zip`
+          // Flatten all receipts from all transactions into a single array
+          const allReceipts = transactionsWithReceipts.flatMap((transaction, transactionIndex) =>
+            transaction.receipts.map((receipt, receiptIndex) => ({
+              ...receipt,
+              transactionDescription: transaction.description,
+              transactionIndex,
+              receiptIndex
+            }))
           );
+
+          if (allReceipts.length > 0) {
+            await downloadReceiptsAsZip(allReceipts, dateRange, tokenManager);
+          }
         }
       }
     } catch (error) {

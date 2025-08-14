@@ -149,19 +149,13 @@ export default function BusinessTracker() {
               <DateRangePicker
                 isOpen={showExportModal}
                 onClose={() => setShowExportModal(false)}
-                onExport={async (
-                  startDate,
-                  endDate,
-                  format,
-                  includeReceipts
-                ) => {
+                onExport={async (exportParams) => {
+                  console.log(
+                    'BusinessTracker onExport received:',
+                    exportParams
+                  );
                   try {
-                    await handleExport({
-                      startDate,
-                      endDate,
-                      format,
-                      includeReceipts,
-                    });
+                    await handleExport(exportParams);
                     setShowExportModal(false);
                   } catch (error) {
                     console.error('Export error:', error);
