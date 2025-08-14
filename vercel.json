@@ -10,10 +10,5 @@
     "app/api/**/*.js": {
       "maxDuration": 30
     }
-  },
-  "cache": [
-    ".next/cache/**",
-    "node_modules/.cache/**"
-  ],
-  "crons": []
+  }
 }
