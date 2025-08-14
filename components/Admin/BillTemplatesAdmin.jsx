@@ -24,6 +24,13 @@ export default function BillTemplatesAdmin({
 }) {
   // Defensive programming - ensure props have safe defaults
   const safeBillTemplates = billTemplates || [];
+
+  // Debug: Check for duplicate IDs
+  const templateIds = safeBillTemplates.map((t) => t.id);
+  const uniqueIds = new Set(templateIds);
+  if (templateIds.length !== uniqueIds.size) {
+    console.warn('Duplicate template IDs detected:', templateIds);
+  }
   const safeCurrentYear =
     typeof currentYear === 'number' ? currentYear : new Date().getFullYear();
 

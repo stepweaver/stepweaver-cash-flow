@@ -203,12 +203,21 @@ export async function PUT(request) {
       );
     }
 
-    await templateRef.update({
+    const updatedData = {
       ...updateData,
       updatedAt: new Date().toISOString()
-    });
+    };
 
-    return NextResponse.json({ success: true });
+    await templateRef.update(updatedData);
+
+    // Return the complete updated template
+    const updatedDoc = await templateRef.get();
+    const updatedTemplate = {
+      id: updatedDoc.id,
+      ...updatedDoc.data()
+    };
+
+    return NextResponse.json(updatedTemplate);
 
   } catch (error) {
     console.error('Error updating bill template:', error);
