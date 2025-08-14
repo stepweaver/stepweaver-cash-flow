@@ -1,6 +1,6 @@
 {
-  "buildCommand": "pnpm run build:ci",
-  "installCommand": "pnpm install --frozen-lockfile --prefer-offline",
+  "buildCommand": "npm run build:ci",
+  "installCommand": "npm ci --prefer-offline",
   "build": {
     "env": {
       "NODE_ENV": "production"
