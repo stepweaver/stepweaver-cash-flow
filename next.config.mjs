@@ -4,9 +4,24 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
+  output: 'standalone',
+
+  // Disable source maps in production for faster builds
+  productionBrowserSourceMaps: false,
 
   // Performance optimizations
   // swcMinify is enabled by default in Next.js 15
+  experimental: {
+    optimizeCss: true,
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
+  },
 
   // Image optimization
   images: {

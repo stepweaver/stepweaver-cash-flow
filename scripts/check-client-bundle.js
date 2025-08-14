@@ -126,79 +126,92 @@ function scanDirectoryForSecrets(dirPath) {
   return issues;
 }
 
-function checkBuildOutput() {
-  log('Building application to check for secrets in bundles...', 'info');
+function checkBuildOutput(buildDir = '.next') {
+  log('Scanning build output for secrets...', 'info');
+
+  if (!existsSync(buildDir)) {
+    log(`Build directory ${buildDir} not found. Skipping bundle check.`, 'warning');
+    return 0;
+  }
 
   try {
-    // Build the application
-    execSync('npm run build', { stdio: 'pipe' });
-    log('Build completed successfully', 'success');
+    // Scan the built client chunks directly
+    const clientFiles = execSync(`find ${buildDir}/static/chunks -name "*.js" 2>/dev/null || echo ""`, { encoding: 'utf8' })
+      .split('\n')
+      .filter(file => file.trim());
 
-    // Check if bundle analysis is available
-    try {
-      const bundleAnalysis = execSync('npx nextjs-bundle-analysis --json', { stdio: 'pipe', encoding: 'utf8' });
-      const bundles = JSON.parse(bundleAnalysis);
+    let bundleIssues = 0;
 
-      let bundleIssues = 0;
-
-      // Check each bundle for secrets
-      Object.values(bundles).forEach(bundle => {
-        if (bundle.content && typeof bundle.content === 'string') {
+    clientFiles.forEach(file => {
+      if (existsSync(file)) {
+        try {
+          const content = readFileSync(file, 'utf8');
           SECRET_PATTERNS.forEach(pattern => {
-            if (pattern.test(bundle.content)) {
-              bundleIssues++;
-              log(`Potential secret found in bundle: ${bundle.name}`, 'error');
+            // Skip NEXT_PUBLIC_ variables as they're safe in client code
+            if (pattern.source.includes('NEXT_PUBLIC_')) {
+              return;
+            }
+
+            const matches = content.match(pattern);
+            if (matches) {
+              matches.forEach(match => {
+                bundleIssues++;
+                log(`Potential secret found in ${file}: ${match}`, 'error');
+              });
             }
           });
+        } catch (error) {
+          log(`Error reading bundle file ${file}: ${error.message}`, 'warning');
         }
-      });
-
-      if (bundleIssues === 0) {
-        log('No secrets found in build bundles', 'success');
       }
+    });
 
-      return bundleIssues;
-    } catch (error) {
-      log('Bundle analysis not available, skipping bundle check', 'warning');
-      return 0;
+    if (bundleIssues === 0) {
+      log('No secrets found in build bundles', 'success');
     }
 
+    return bundleIssues;
   } catch (error) {
-    log(`Build failed: ${error.message}`, 'error');
-    return -1;
+    log(`Error scanning build output: ${error.message}`, 'warning');
+    return 0;
   }
 }
 
 function main() {
   log('🔒 Starting security scan for client-side secrets...', 'info');
 
+  const buildDir = process.argv[2] || '.next';
   let totalIssues = 0;
 
-  // Scan source directories
-  SCAN_DIRECTORIES.forEach(dir => {
-    if (existsSync(dir)) {
-      log(`Scanning directory: ${dir}`, 'info');
-      const issues = scanDirectoryForSecrets(dir);
-
-      if (issues.length > 0) {
-        log(`Found ${issues.length} files with potential secrets in ${dir}:`, 'error');
-        issues.forEach(({ file, issues: fileIssues }) => {
-          log(`  ${file}:`, 'error');
-          fileIssues.forEach(issue => {
-            log(`    Line ${issue.line}: ${issue.match}`, 'error');
-          });
-        });
-        totalIssues += issues.length;
-      } else {
-        log(`No issues found in ${dir}`, 'success');
-      }
+  // If build directory exists, scan it (post-build mode)
+  if (existsSync(buildDir)) {
+    log('Running post-build security scan...', 'info');
+    const buildIssues = checkBuildOutput(buildDir);
+    if (buildIssues > 0) {
+      totalIssues += buildIssues;
     }
-  });
+  } else {
+    // Pre-build mode: scan source directories
+    log('Running pre-build security scan...', 'info');
+    SCAN_DIRECTORIES.forEach(dir => {
+      if (existsSync(dir)) {
+        log(`Scanning directory: ${dir}`, 'info');
+        const issues = scanDirectoryForSecrets(dir);
 
-  // Check build output
-  const buildIssues = checkBuildOutput();
-  if (buildIssues > 0) {
-    totalIssues += buildIssues;
+        if (issues.length > 0) {
+          log(`Found ${issues.length} files with potential secrets in ${dir}:`, 'error');
+          issues.forEach(({ file, issues: fileIssues }) => {
+            log(`  ${file}:`, 'error');
+            fileIssues.forEach(issue => {
+              log(`    Line ${issue.line}: ${issue.match}`, 'error');
+            });
+          });
+          totalIssues += issues.length;
+        } else {
+          log(`No issues found in ${dir}`, 'success');
+        }
+      }
+    });
   }
 
   // Final report

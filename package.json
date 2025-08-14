@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@9",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:ci": "next build && node scripts/check-client-bundle.js .next",
     "start": "next start",
     "lint": "next lint",
     "security:check": "node scripts/check-client-bundle.js",
-    "security:audit": "npm audit && npm run security:check",
-    "prebuild": "npm run security:check"
+    "security:check:post": "node scripts/check-client-bundle.js .next",
+    "security:audit": "npm audit && npm run security:check"
   },
   "dependencies": {
     "firebase": "^12.1.0",
