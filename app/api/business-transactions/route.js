@@ -328,13 +328,64 @@ export async function POST(request) {
 
     const docRef = await adminDb.collection('businessTransactions').add(newTransaction);
 
-    return NextResponse.json(
-      {
-        id: docRef.id,
-        ...newTransaction
-      },
-      { status: 201 }
-    );
+    // Fetch and return the complete transaction with populated receipts (like GET does)
+    const createdTransaction = {
+      id: docRef.id,
+      ...newTransaction
+    };
+
+    // Populate receipts for the response (similar to GET logic)
+    const receipts = [];
+    if (receiptIds && receiptIds.length > 0) {
+      try {
+        for (const receiptId of receiptIds) {
+          const receiptDoc = await adminDb.collection('receipts').doc(receiptId).get();
+          if (receiptDoc.exists) {
+            const receiptData = receiptDoc.data();
+            let receiptInfo;
+
+            if (receiptData.storageType === 'firebase-storage' && receiptData.downloadURL) {
+              // Receipt stored in Firebase Storage
+              receiptInfo = {
+                id: receiptDoc.id,
+                name: receiptData.name,
+                size: receiptData.size,
+                type: receiptData.type,
+                mimeType: receiptData.mimeType,
+                uploadDate: receiptData.uploadDate,
+                data: receiptData.downloadURL,
+                url: receiptData.downloadURL,
+                storagePath: receiptData.storagePath,
+                storageType: 'firebase-storage'
+              };
+            } else {
+              // Receipt stored in Firestore (legacy or small files)
+              receiptInfo = {
+                id: receiptDoc.id,
+                name: receiptData.name,
+                size: receiptData.size,
+                type: receiptData.type,
+                mimeType: receiptData.mimeType,
+                uploadDate: receiptData.uploadDate,
+                data: receiptData.data,
+                url: receiptData.data,
+                storageType: 'firestore'
+              };
+            }
+
+            receipts.push(receiptInfo);
+          }
+        }
+        createdTransaction.receipts = receipts;
+      } catch (receiptError) {
+        console.error('Error fetching receipts for response:', receiptError);
+        createdTransaction.receipts = [];
+      }
+    } else {
+      createdTransaction.receipts = [];
+    }
+
+    return NextResponse.json(createdTransaction, { status: 201 });
 
   } catch (error) {
     console.error('Error creating business transaction:', error);

@@ -7,10 +7,17 @@ import { rateLimit } from '@/lib/rate-limit.js';
 const isDevelopment = process.env.NODE_ENV === 'development';
 const requestsPerMinute = isDevelopment ? 100 : 20; // Higher limit in development
 
-const limiter = rateLimit({
-  interval: 60 * 1000, // 1 minute
-  uniqueTokenPerInterval: 500
-});
+// Initialize rate limiter (async)
+let limiter = null;
+async function getRateLimiter() {
+  if (!limiter) {
+    limiter = await rateLimit({
+      interval: 60 * 1000, // 1 minute
+      uniqueTokenPerInterval: 500
+    });
+  }
+  return limiter;
+}
 
 // PUT: Update business transaction
 export async function PUT(request, { params }) {
@@ -19,7 +26,8 @@ export async function PUT(request, { params }) {
 
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
-    const { success } = await limiter.check(requestsPerMinute, ip);
+    const rateLimiter = await getRateLimiter();
+    const { success } = await rateLimiter.check(requestsPerMinute, ip);
 
     if (!success) {
       return NextResponse.json(
@@ -203,7 +211,8 @@ export async function DELETE(request, { params }) {
 
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
-    const { success } = await limiter.check(requestsPerMinute, ip);
+    const rateLimiter = await getRateLimiter();
+    const { success } = await rateLimiter.check(requestsPerMinute, ip);
 
     if (!success) {
       return NextResponse.json(
