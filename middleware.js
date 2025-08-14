@@ -14,6 +14,22 @@ export async function middleware(request) {
   response.headers.set('Referrer-Policy', 'no-referrer');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()');
 
+  // Content Security Policy - strict CSP for production
+  const cspHeader = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://www.googleapis.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https: blob:",
+    "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com",
+    "frame-src 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'"
+  ].join('; ');
+
+  response.headers.set('Content-Security-Policy', cspHeader);
+
   // Protected API routes that require authentication
   const protectedApiRoutes = [
     '/api/token',

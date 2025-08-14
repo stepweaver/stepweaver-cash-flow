@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mintScopedToken, TOKEN_SCOPES } from '@/lib/session-tokens.js';
-import { rateLimit } from '@/lib/rate-limit.js';
+import { getAuthRateLimiter } from '@/lib/rate-limit-helper.js';
+import { isFirebaseAdminInitialized } from '@/lib/firebase-admin.js';
 
 // Rate limiting: Configurable based on environment
 const isDevelopment = process.env.NODE_ENV === 'development';
 const requestsPerMinute = isDevelopment ? 100 : 50; // Higher limit in development
 
-const limiter = rateLimit({
-  interval: 60 * 1000, // 1 minute
-  uniqueTokenPerInterval: 500
-});
-
 export async function POST(request) {
   try {
+    console.log('=== TOKEN REQUEST START ===');
+
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
-    const { success } = await limiter.check(requestsPerMinute, ip);
+    const rateLimiter = await getAuthRateLimiter();
+    const { success } = await rateLimiter.check(requestsPerMinute, ip);
 
     if (!success) {
+      console.log('Rate limit exceeded');
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
         { status: 429 }
@@ -30,7 +30,9 @@ export async function POST(request) {
       hasFirebaseToken: !!firebaseIdToken,
       scope,
       resourceId: !!resourceId,
-      claims: Object.keys(additionalClaims || {})
+      claims: Object.keys(additionalClaims || {}),
+      firebaseAdminInitialized: isFirebaseAdminInitialized(),
+      nodeEnv: process.env.NODE_ENV
     });
 
     // Validate required fields
@@ -50,12 +52,17 @@ export async function POST(request) {
       );
     }
 
-    console.log('Minting scoped token for scope:', scope);
+    console.log('About to call mintScopedToken...');
 
     // Mint the scoped token
     const tokenData = await mintScopedToken(firebaseIdToken, scope, resourceId, additionalClaims);
 
-    console.log('Token minted successfully for scope:', scope);
+    console.log('Token minted successfully! Token data:', {
+      hasToken: !!tokenData.token,
+      expiresIn: tokenData.expiresIn,
+      scope: tokenData.scope,
+      isDev: tokenData.dev
+    });
 
     // Return the token with security headers
     return NextResponse.json(tokenData, {
@@ -69,7 +76,11 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error('Error minting token:', error);
+    console.error('=== ERROR IN TOKEN ENDPOINT ===');
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    console.error('Error stack:', error.stack);
+    console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
 
     // Don't expose internal error details to the client
     return NextResponse.json(

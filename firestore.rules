@@ -1,0 +1,117 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isBusinessOwner(businessId) {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/businesses/$(businessId)) &&
+        get(/databases/$(database)/documents/businesses/$(businessId)).data.ownerId == request.auth.uid;
+    }
+    
+    function isBusinessMember(businessId) {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/businesses/$(businessId)/members/$(request.auth.uid));
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+      
+      // User subcollections
+      match /{document=**} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+    
+    // Business transactions
+    match /business-transactions/{transactionId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || 
+         isBusinessMember(resource.data.businessId) ||
+         isAdmin());
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Personal data
+    match /personal-data/{dataId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(resource.data.userId);
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+    
+    // Businesses
+    match /businesses/{businessId} {
+      allow read: if isBusinessMember(businessId) || isAdmin();
+      allow create: if isAuthenticated();
+      allow update: if isBusinessOwner(businessId) || isAdmin();
+      allow delete: if isBusinessOwner(businessId) || isAdmin();
+      
+      // Business members
+      match /members/{memberId} {
+        allow read: if isBusinessMember(businessId) || isAdmin();
+        allow write: if isBusinessOwner(businessId) || isAdmin();
+      }
+    }
+    
+    // Invitations
+    match /invitations/{invitationId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.invitedEmail == request.auth.token.email ||
+         resource.data.businessId != null && isBusinessMember(resource.data.businessId) ||
+         isAdmin());
+      allow create: if isAuthenticated() && 
+        (request.resource.data.invitedBy == request.auth.uid ||
+         isAdmin());
+      allow update: if isAuthenticated() && 
+        (resource.data.invitedBy == request.auth.uid ||
+         resource.data.invitedEmail == request.auth.token.email ||
+         isAdmin());
+      allow delete: if isAuthenticated() && 
+        (resource.data.invitedBy == request.auth.uid ||
+         isAdmin());
+    }
+    
+    // Bill templates (admin only)
+    match /bill-templates/{templateId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Receipts
+    match /receipts/{receiptId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(resource.data.userId);
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+    
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
