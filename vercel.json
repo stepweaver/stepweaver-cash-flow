@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build:ci",
-  "installCommand": "npm ci --prefer-offline",
+  "installCommand": "npm ci",
   "build": {
     "env": {
       "NODE_ENV": "production"
