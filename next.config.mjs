@@ -12,7 +12,6 @@ const nextConfig = {
   // Performance optimizations
   // swcMinify is enabled by default in Next.js 15
   experimental: {
-    optimizeCss: true,
     turbo: {
       rules: {
         '*.svg': {
