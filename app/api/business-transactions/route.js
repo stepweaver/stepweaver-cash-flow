@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyScopedToken, TOKEN_SCOPES } from '@/lib/session-tokens.js';
-import { adminDb, adminStorage } from '@/lib/firebase-admin.js';
+import { adminDb, adminStorage, ensureFirebaseAdminReady, getFirebaseAdminStatus } from '@/lib/firebase-admin.js';
 import { getStandardRateLimiter } from '@/lib/rate-limit-helper.js';
 
 // Rate limiting: Configurable based on environment
@@ -10,6 +10,22 @@ const requestsPerMinute = isDevelopment ? 100 : 30; // Higher limit in developme
 // GET: Retrieve business transactions
 export async function GET(request) {
   try {
+    // Check Firebase Admin status first
+    try {
+      ensureFirebaseAdminReady();
+    } catch (firebaseError) {
+      console.error('❌ Firebase Admin not ready for business transactions GET:', firebaseError.message);
+      const status = getFirebaseAdminStatus();
+      return NextResponse.json(
+        {
+          error: 'Service temporarily unavailable',
+          details: process.env.NODE_ENV === 'development' ? firebaseError.message : undefined,
+          status: process.env.NODE_ENV === 'development' ? status : undefined
+        },
+        { status: 503 }
+      );
+    }
+
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
     const rateLimiter = await getStandardRateLimiter();
@@ -135,6 +151,22 @@ export async function GET(request) {
 // POST: Create new business transaction
 export async function POST(request) {
   try {
+    // Check Firebase Admin status first
+    try {
+      ensureFirebaseAdminReady();
+    } catch (firebaseError) {
+      console.error('❌ Firebase Admin not ready for business transactions POST:', firebaseError.message);
+      const status = getFirebaseAdminStatus();
+      return NextResponse.json(
+        {
+          error: 'Service temporarily unavailable',
+          details: process.env.NODE_ENV === 'development' ? firebaseError.message : undefined,
+          status: process.env.NODE_ENV === 'development' ? status : undefined
+        },
+        { status: 503 }
+      );
+    }
+
     // Rate limiting
     const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
     const rateLimiter = await getStandardRateLimiter();

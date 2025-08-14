@@ -1,9 +1,25 @@
 import { NextResponse } from 'next/server';
 import { verifyScopedToken, TOKEN_SCOPES } from '@/lib/session-tokens.js';
-import { adminDb } from '@/lib/firebase-admin.js';
+import { adminDb, ensureFirebaseAdminReady, getFirebaseAdminStatus } from '@/lib/firebase-admin.js';
 
 export async function GET(request) {
   try {
+    // Check Firebase Admin status first
+    try {
+      ensureFirebaseAdminReady();
+    } catch (firebaseError) {
+      console.error('❌ Firebase Admin not ready for admin verification:', firebaseError.message);
+      const status = getFirebaseAdminStatus();
+      return NextResponse.json(
+        {
+          error: 'Admin privileges not confirmed',
+          details: process.env.NODE_ENV === 'development' ? firebaseError.message : undefined,
+          status: process.env.NODE_ENV === 'development' ? status : undefined
+        },
+        { status: 500 }
+      );
+    }
+
     // Get the authorization header
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
