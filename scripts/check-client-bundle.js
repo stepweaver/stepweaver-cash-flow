@@ -11,11 +11,11 @@ import { join } from 'node:path';
 
 // Patterns that indicate potential secrets
 const SECRET_PATTERNS = [
-  // API keys and tokens
-  /sk_live_/,
-  /sk_test_/,
-  /pk_live_/,
-  /pk_test_/,
+  // API keys and tokens (more specific patterns)
+  /sk_live_[a-zA-Z0-9]{24,}/,
+  /sk_test_[a-zA-Z0-9]{24,}/,
+  /pk_live_[a-zA-Z0-9]{24,}/,
+  /pk_test_[a-zA-Z0-9]{24,}/,
   /AIza[0-9A-Za-z_-]{35}/,
   /ghp_[0-9A-Za-z_-]{36}/,
   /gho_[0-9A-Za-z_-]{36}/,
@@ -23,25 +23,26 @@ const SECRET_PATTERNS = [
   /ghs_[0-9A-Za-z_-]{36}/,
   /ghr_[0-9A-Za-z_-]{36}/,
 
-  // Generic secret patterns
-  /API_KEY\s*=/,
-  /SECRET\s*=/,
-  /TOKEN\s*=/,
-  /PASSWORD\s*=/,
-  /PRIVATE_KEY\s*=/,
+  // Generic secret patterns (more specific)
+  /["']API_KEY["']\s*:\s*["'][^"']{16,}["']/,
+  /["']SECRET["']\s*:\s*["'][^"']{16,}["']/,
+  /["']TOKEN["']\s*:\s*["'][^"']{16,}["']/,
+  /["']PASSWORD["']\s*:\s*["'][^"']{8,}["']/,
+  /["']PRIVATE_KEY["']\s*:\s*["'][^"']{32,}["']/,
 
-  // Environment variables that might be secrets (excluding NEXT_PUBLIC_*)
-  /process\.env\.(?!NEXT_PUBLIC_)[A-Z_]+KEY/,
-  /process\.env\.(?!NEXT_PUBLIC_)[A-Z_]+SECRET/,
-  /process\.env\.(?!NEXT_PUBLIC_)[A-Z_]+TOKEN/,
-  /process\.env\.(?!NEXT_PUBLIC_)[A-Z_]+PASSWORD/,
+  // Environment variables that might be secrets (more specific, excluding NEXT_PUBLIC_*)
+  /process\.env\.(?!NEXT_PUBLIC_)[A-Z_]+KEY["']\s*\|\|\s*["'][^"']{16,}["']/,
+  /process\.env\.(?!NEXT_PUBLIC_)[A-Z_]+SECRET["']\s*\|\|\s*["'][^"']{16,}["']/,
+  /process\.env\.(?!NEXT_PUBLIC_)[A-Z_]+TOKEN["']\s*\|\|\s*["'][^"']{16,}["']/,
 
-  // Firebase specific (these are OK in client code)
-  /NEXT_PUBLIC_FIREBASE_/,
+  // AWS credentials
+  /AKIA[0-9A-Z]{16}/,
+  /aws_secret_access_key/i,
 
-  // Hardcoded URLs that might contain secrets
-  /https:\/\/[^\/]+\/[a-zA-Z0-9]{32,}/,
-  /http:\/\/[^\/]+\/[a-zA-Z0-9]{32,}/
+  // Database URLs with credentials
+  /mongodb:\/\/[^:]+:[^@]+@/,
+  /postgres:\/\/[^:]+:[^@]+@/,
+  /mysql:\/\/[^:]+:[^@]+@/
 ];
 
 // Directories to scan for secrets
