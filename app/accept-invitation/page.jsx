@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import {
@@ -12,7 +12,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 
-export default function AcceptInvitationPage() {
+function AcceptInvitationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { signIn } = useAuth();
@@ -302,5 +302,31 @@ export default function AcceptInvitationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className='min-h-screen bg-terminal-dark flex items-center justify-center p-4'>
+      <div className='bg-terminal-light border border-terminal-border rounded-lg p-8 shadow-lg max-w-md w-full'>
+        <div className='text-center'>
+          <Loader2 className='h-16 w-16 text-terminal-green mx-auto mb-4 animate-spin' />
+          <h1 className='text-2xl font-bold text-terminal-text font-ibm-custom mb-2'>
+            Loading Invitation
+          </h1>
+          <p className='text-terminal-muted font-ibm'>
+            Please wait while we validate your invitation...
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function AcceptInvitationPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AcceptInvitationContent />
+    </Suspense>
   );
 }
